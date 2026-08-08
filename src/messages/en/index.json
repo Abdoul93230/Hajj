@@ -1,0 +1,114 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "hajjUmrah": "Hajj & Umrah",
+    "tools": "Pilgrim Tools",
+    "shop": "Shop",
+    "ticketing": "Ticketing",
+    "pilgrimSpace": "Pilgrim Portal",
+    "contact": "Contact",
+    "cart": "Cart"
+  },
+  "home": {
+    "heroAnnouncement": "Registration has opened for Hajj and Umrah 2027!",
+    "heroTitle": "Accomplish your Hajj and Umrah with complete peace of mind",
+    "heroSubtitle": "Your trusted agency for an unforgettable spiritual pilgrimage",
+    "ctaUmrah2026": "Umrah 2026",
+    "ctaUmrahRamadan": "Umrah Ramadan 2027",
+    "ctaHajj2027": "Hajj 2027",
+    "statsTitle": "They trust us",
+    "statsPilgrims": "+1,000 pilgrims accompanied",
+    "statsSatisfaction": "4.9/5 customer satisfaction",
+    "statsCompletion": "100% file completion rate",
+    "offersTitle": "Our Offers",
+    "offersSubtitle": "Choose the spiritual journey that suits you",
+    "reserve": "Book",
+    "learnMore": "Learn More",
+    "aboutTitle": "Who are we?",
+    "aboutText": "Bin Bab Makka is a travel agency specializing in organizing Hajj and Umrah since 2018.",
+    "toolsTitle": "Pilgrim Tools",
+    "toolsSubtitle": "Resources to prepare and live your pilgrimage",
+    "quranTool": "Read the Quran",
+    "qiblaTool": "Find the Qibla",
+    "reviewsTitle": "Our pilgrims' reviews",
+    "seeAllReviews": "See all reviews"
+  },
+  "offers": {
+    "title": "Our Hajj & Umrah Offers",
+    "subtitle": "Complete packages for your pilgrimage",
+    "umrah": "Umrah",
+    "hajj": "Hajj",
+    "baby": "Baby",
+    "child": "Child",
+    "adult": "Adult",
+    "couple": "Couple / Private Room",
+    "provisional": "Provisional price",
+    "from": "Starting from",
+    "reserve": "Book this offer",
+    "departure": "Departure",
+    "return": "Return"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Your trusted partner for pilgrimage",
+    "accreditation": "COHO Accreditation No. NE-2018-0421",
+    "group": "Groupe Bab Makka — 25+ years of experience",
+    "address": "Kalley-Est District, Lako, BP 919, Niamey, Niger",
+    "phone1": "+227 96 96 39 61",
+    "phone2": "+227 96 87 27 87"
+  },
+  "guide": {
+    "title": "Pilgrim's Guide",
+    "subtitle": "Everything you need to know for your pilgrimage",
+    "toc": "Table of contents",
+    "section1": "Introduction to pilgrimage types",
+    "section2": "What is Umrah?",
+    "section3": "Umrah rituals",
+    "section4": "What is Hajj?",
+    "section5": "Hajj rites",
+    "section6": "Conclusion"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We are here to answer all your questions",
+    "name": "Full name",
+    "email": "Email",
+    "phone": "Phone",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send via WhatsApp",
+    "sendEmail": "Send message",
+    "success": "Message sent successfully!",
+    "whatsapp": "Contact on WhatsApp"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "cgv": "Terms and Conditions",
+    "legal": "Legal Notice",
+    "cookies": "Cookie Policy",
+    "manageCookies": "Manage cookies",
+    "accreditations": "Accreditations"
+  },
+  "pilgrim": {
+    "title": "Pilgrim Portal",
+    "login": "Sign in",
+    "register": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full name",
+    "myReservations": "My reservations",
+    "profile": "My profile",
+    "logout": "Sign out"
+  },
+  "comingSoon": {
+    "title": "Coming Soon",
+    "message": "We apologize for the inconvenience! We are preparing something extraordinary — come back soon!",
+    "newsletter": "Get notified at launch",
+    "emailPlaceholder": "Your email",
+    "subscribe": "Subscribe"
+  },
+  "placeholder": {
+    "message": "The content of this page will be provided shortly."
+  }
+}

@@ -1,0 +1,62 @@
+import type { Metadata } from "next";
+import { Inter, Playfair_Display } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import { getSession } from "@/lib/session";
+import "../../globals.css";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | Hajj et Oumra ZAM",
+    default: "Hajj et Oumra ZAM — Agence Hadj & Oumra",
+  },
+  description:
+    "Hajj et Oumra ZAM, fidèle à ses engagements. Organisation de forfaits Hadj et Oumra adaptés aux besoins des pèlerins depuis Niamey, Niger.",
+};
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+
+  if (!routing.locales.includes(locale as "fr" | "en" | "ar")) {
+    notFound();
+  }
+
+  const messages = await getMessages();
+  const session = await getSession();
+
+  return (
+    <div
+      className={`${inter.variable} ${playfair.variable} min-h-screen flex flex-col`}
+      style={{ fontFamily: "var(--font-inter), Arial, sans-serif", backgroundColor: "#f8fafc", color: "#111827" }}
+    >
+      <NextIntlClientProvider messages={messages}>
+        <Header user={session ? { name: session.name, role: session.role } : null} />
+        <main className="flex-1">{children}</main>
+        <Footer />
+        <WhatsAppButton />
+      </NextIntlClientProvider>
+    </div>
+  );
+}

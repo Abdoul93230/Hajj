@@ -1,0 +1,114 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "Qui sommes-nous",
+    "hajjUmrah": "Hadj et Oumra",
+    "tools": "Outils du pèlerin",
+    "shop": "Boutique",
+    "ticketing": "Billetterie",
+    "pilgrimSpace": "Espace pèlerin",
+    "contact": "Contact",
+    "cart": "Panier"
+  },
+  "home": {
+    "heroAnnouncement": "Les inscriptions ont commencé pour le Hadj et l'Oumra 2027 !",
+    "heroTitle": "Accomplissez votre Hadj et votre Oumra en toute sérénité",
+    "heroSubtitle": "Votre agence de confiance pour un pèlerinage spirituel inoubliable",
+    "ctaUmrah2026": "Oumra 2026",
+    "ctaUmrahRamadan": "Oumra Ramadan 2027",
+    "ctaHajj2027": "Hadj 2027",
+    "statsTitle": "Ils nous font confiance",
+    "statsPilgrims": "+1 000 pèlerins accompagnés",
+    "statsSatisfaction": "4,9/5 satisfaction client",
+    "statsCompletion": "100% taux de complétion des dossiers",
+    "offersTitle": "Nos offres",
+    "offersSubtitle": "Choisissez le voyage spirituel qui vous correspond",
+    "reserve": "Réserver",
+    "learnMore": "En savoir plus",
+    "aboutTitle": "Qui sommes-nous ?",
+    "aboutText": "Bin Bab Makka est une agence de voyages spécialisée dans l'organisation du Hadj et de la Oumra depuis 2018.",
+    "toolsTitle": "Outils du pèlerin",
+    "toolsSubtitle": "Des ressources pour préparer et vivre votre pèlerinage",
+    "quranTool": "Lire le Coran",
+    "qiblaTool": "Trouver la Qibla",
+    "reviewsTitle": "Avis de nos pèlerins",
+    "seeAllReviews": "Voir tous les avis"
+  },
+  "offers": {
+    "title": "Nos offres Hadj & Oumra",
+    "subtitle": "Des packages complets pour votre pèlerinage",
+    "umrah": "Oumra",
+    "hajj": "Hadj",
+    "baby": "Bébé",
+    "child": "Enfant",
+    "adult": "Adulte",
+    "couple": "Couple / Chambre privée",
+    "provisional": "Tarif provisoire",
+    "from": "À partir de",
+    "reserve": "Réserver cette offre",
+    "departure": "Départ",
+    "return": "Retour"
+  },
+  "about": {
+    "title": "Qui sommes-nous",
+    "subtitle": "Votre partenaire de confiance pour le pèlerinage",
+    "accreditation": "Agrément COHO n° NE-2018-0421",
+    "group": "Groupe Bab Makka — 25+ ans d'expérience",
+    "address": "Quartier Kalley-Est, Lako, BP 919, Niamey, Niger",
+    "phone1": "+227 96 96 39 61",
+    "phone2": "+227 96 87 27 87"
+  },
+  "guide": {
+    "title": "Guide du Pèlerin",
+    "subtitle": "Tout ce que vous devez savoir pour votre pèlerinage",
+    "toc": "Table des matières",
+    "section1": "Introduction aux types de pèlerinage",
+    "section2": "Qu'est-ce que la Oumra ?",
+    "section3": "Les rituels de la Oumra",
+    "section4": "Qu'est-ce que le Hadj ?",
+    "section5": "Les rites du Hadj",
+    "section6": "Conclusion"
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Nous sommes là pour répondre à toutes vos questions",
+    "name": "Nom complet",
+    "email": "Email",
+    "phone": "Téléphone",
+    "subject": "Sujet",
+    "message": "Message",
+    "send": "Envoyer via WhatsApp",
+    "sendEmail": "Envoyer le message",
+    "success": "Message envoyé avec succès !",
+    "whatsapp": "Contacter sur WhatsApp"
+  },
+  "footer": {
+    "rights": "Tous droits réservés",
+    "cgv": "Conditions générales de vente",
+    "legal": "Mentions légales",
+    "cookies": "Politique de cookies",
+    "manageCookies": "Gérer les cookies",
+    "accreditations": "Accréditations"
+  },
+  "pilgrim": {
+    "title": "Espace pèlerin",
+    "login": "Se connecter",
+    "register": "Créer un compte",
+    "email": "Email",
+    "password": "Mot de passe",
+    "name": "Nom complet",
+    "myReservations": "Mes réservations",
+    "profile": "Mon profil",
+    "logout": "Se déconnecter"
+  },
+  "comingSoon": {
+    "title": "Bientôt disponible",
+    "message": "Veuillez nous excuser pour la gêne occasionnée ! Nous préparons quelque chose d'extraordinaire — revenez bientôt !",
+    "newsletter": "Être notifié à l'ouverture",
+    "emailPlaceholder": "Votre email",
+    "subscribe": "S'inscrire"
+  },
+  "placeholder": {
+    "message": "Le contenu de cette page sera fourni prochainement."
+  }
+}

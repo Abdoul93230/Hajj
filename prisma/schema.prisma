@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ─── TENANT ──────────────────────────────────────────────────────────────────
+
+model Tenant {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  slug          String       @unique
+  name          String
+  email         String
+  phone         String?
+  address       String?
+  country       String       @default("NE")
+  customDomain  String?      @unique
+  plan          Plan         @default(STARTER)
+  status        TenantStatus @default(ACTIVE)
+  trialEndsAt   DateTime?
+  theme         Json?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  createdBy     String?
+
+  users         User[]
+  offers        Offer[]
+  reservations  Reservation[]
+  reviews       Review[]
+  messages      ContactMessage[]
+  auditLogs     AuditLog[]
+  documents     PilgrimDocument[]
+}
+
+// ─── USER ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId     String     @db.ObjectId
+  email        String
+  name         String
+  phone        String?
+  password     String
+  role         UserRole   @default(PILGRIM)
+  permissions  String[]   @default([])
+  active       Boolean    @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  createdBy    String?    @db.ObjectId
+
+  // Pilgrim profile fields
+  gender         String?
+  birthDate      DateTime?
+  city           String?
+  country        String?
+  address        String?
+  profession     String?
+  photoUrl       String?
+  emergencyName  String?
+  emergencyPhone String?
+  hasPassport    Boolean   @default(false)
+  hasCni         Boolean   @default(false)
+  hasVaccine     Boolean   @default(false)
+  pilgrimStatus  String    @default("PENDING")
+
+  tenant       Tenant            @relation(fields: [tenantId], references: [id])
+  reservations Reservation[]
+  auditLogs    AuditLog[]
+  documents    PilgrimDocument[]
+
+  @@unique([tenantId, email])
+}
+
+// ─── OFFER ────────────────────────────────────────────────────────────────────
+
+model Offer {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId      String    @db.ObjectId
+  slug          String
+  type          OfferType
+  titleFr       String
+  titleEn       String?
+  titleAr       String?
+  descFr        String
+  descEn        String?
+  descAr        String?
+  departureDate DateTime?
+  returnDate    DateTime?
+  priceBaby     Float?
+  priceChild    Float?
+  priceAdult    Float
+  priceCouple   Float?
+  currency      String    @default("FCFA")
+  provisional   Boolean   @default(false)
+  active        Boolean   @default(true)
+  data          Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  createdBy     String?   @db.ObjectId
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  reservations Reservation[]
+
+  @@unique([tenantId, slug])
+}
+
+// ─── RESERVATION ──────────────────────────────────────────────────────────────
+
+model Reservation {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId    String            @db.ObjectId
+  userId      String?           @db.ObjectId
+  offerId     String            @db.ObjectId
+  category    PilgrimCategory
+  status      ReservationStatus @default(PENDING)
+  deposit     Float?
+  totalAmount Float?
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  createdBy   String?           @db.ObjectId
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User?  @relation(fields: [userId], references: [id])
+  offer  Offer  @relation(fields: [offerId], references: [id])
+}
+
+
+
+// ─── PILGRIM DOCUMENT ────────────────────────────────────────────────────────
+
+model PilgrimDocument {
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId   String         @db.ObjectId
+  userId     String         @db.ObjectId
+  type       DocumentType
+  status     DocumentStatus @default(RECEIVED)
+  label      String?        // nom libre optionnel (ex: "Passeport enfant")
+  fileUrl    String?        // URL du fichier uploadé
+  expiresAt  DateTime?      // date d'expiration (passeport, vaccin…)
+  notes      String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  createdBy  String?        @db.ObjectId
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+// ─── REVIEW ───────────────────────────────────────────────────────────────────
+
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId  String   @db.ObjectId
+  name      String
+  rating    Int
+  comment   String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  createdBy String?  @db.ObjectId
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+}
+
+// ─── CONTACT MESSAGE ──────────────────────────────────────────────────────────
+
+model ContactMessage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId  String   @db.ObjectId
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+}
+
+// ─── AUDIT LOG ────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId   String   @db.ObjectId
+  userId     String   @db.ObjectId
+  userEmail  String
+  userName   String
+  action     String
+  resource   String
+  resourceId String?
+  before     Json?
+  after      Json?
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+// ─── ENUMS ────────────────────────────────────────────────────────────────────
+
+enum DocumentType {
+  PASSPORT
+  CNI
+  VACCINE
+  VISA
+  PHOTO
+  MEDICAL
+  OTHER
+}
+
+enum DocumentStatus {
+  RECEIVED    // reçu mais pas encore vérifié
+  VALID       // vérifié et valide
+  EXPIRED     // expiré
+  REJECTED    // rejeté (problème qualité, faux doc…)
+}
+
+enum Plan {
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum TenantStatus {
+  PLATFORM   // tenant interne réservé à la plateforme
+  ACTIVE
+  SUSPENDED
+  TRIAL
+  CANCELLED
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  AGENCY_ADMIN
+  AGENCY_AGENT
+  PILGRIM
+}
+
+enum OfferType {
+  UMRAH
+  HAJJ
+}
+
+enum PilgrimCategory {
+  BABY
+  CHILD
+  ADULT
+  COUPLE
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}

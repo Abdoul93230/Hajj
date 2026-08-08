@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.facebook.com)",
+      "WebFetch(domain:www.google.com)",
+      "WebFetch(domain:m.facebook.com)",
+      "WebFetch(domain:mbasic.facebook.com)",
+      "WebFetch(domain:www.bing.com)",
+      "WebFetch(domain:lookaside.fbsbx.com)",
+      "WebFetch(domain:duckduckgo.com)",
+      "WebFetch(domain:html.duckduckgo.com)",
+      "WebFetch(domain:www.goafricaonline.com)",
+      "WebFetch(domain:www.instagram.com)",
+      "WebFetch(domain:www.hadj.africa)",
+      "WebFetch(domain:hajinformation.com)",
+      "WebFetch(domain:www.tiktok.com)",
+      "WebFetch(domain:mapcarta.com)",
+      "Bash(npx next *)",
+      "WebFetch(domain:images.unsplash.com)",
+      "Bash(cp \"C:/Users/admin/.claude/projects/c--Users-admin-Desktop-PERSO-Sawki-Voyage/58a5b939-1d73-4b64-b147-cb7362029ec4/tool-results/webfetch-1784397752912-9js98x.jpg\" \"c:/Users/admin/Desktop/PERSO/Sawki_Voyage/public/images/hero-bg.jpg\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\admin\\.claude\\projects\\c--Users-admin-Desktop-PERSO-Sawki-Voyage\\58a5b939-1d73-4b64-b147-cb7362029ec4\\tool-results"
+    ]
+  }
+}
