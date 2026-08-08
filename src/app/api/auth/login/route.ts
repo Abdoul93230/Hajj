@@ -13,27 +13,53 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email et mot de passe requis" }, { status: 400 });
     }
 
-    const slug = tenantSlug ?? PLATFORM_SLUG;
-    const tenant = await prisma.tenant.findUnique({ where: { slug } });
-    if (!tenant) {
-      return NextResponse.json({ error: "Agence introuvable" }, { status: 404 });
+    let user: Awaited<ReturnType<typeof prisma.user.findUnique>> & { tenant: { slug: string; status: string } } | null = null;
+    let slug = tenantSlug as string | undefined;
+
+    if (slug === PLATFORM_SLUG) {
+      // Connexion superadmin explicite
+      const tenant = await prisma.tenant.findUnique({ where: { slug: PLATFORM_SLUG } });
+      if (!tenant) return NextResponse.json({ error: "Plateforme introuvable" }, { status: 404 });
+      user = await prisma.user.findUnique({
+        where: { tenantId_email: { tenantId: tenant.id, email } },
+        include: { tenant: true },
+      });
+    } else if (slug) {
+      // Slug fourni explicitement → chercher dans ce tenant précis
+      const tenant = await prisma.tenant.findUnique({ where: { slug } });
+      if (tenant) {
+        user = await prisma.user.findUnique({
+          where: { tenantId_email: { tenantId: tenant.id, email } },
+          include: { tenant: true },
+        });
+      }
+      // Si pas trouvé avec ce slug, on tente la recherche par email (cas single-domain)
+      if (!user) {
+        user = await prisma.user.findFirst({
+          where: { email, role: { notIn: ["SUPER_ADMIN"] } },
+          include: { tenant: true },
+        }) as typeof user;
+      }
+    } else {
+      // Pas de slug → single-domain : cherche l'utilisateur par email dans toutes les agences
+      user = await prisma.user.findFirst({
+        where: { email, role: { notIn: ["SUPER_ADMIN"] } },
+        include: { tenant: true },
+      }) as typeof user;
     }
 
+    if (!user) {
+      return NextResponse.json({ error: "Email ou mot de passe incorrect" }, { status: 401 });
+    }
+
+    slug = user.tenant.slug;
+
     // Bloquer la connexion si l'agence est suspendue ou annulée
-    if (slug !== PLATFORM_SLUG && tenant.status !== "ACTIVE" && tenant.status !== "TRIAL") {
+    if (slug !== PLATFORM_SLUG && user.tenant.status !== "ACTIVE" && user.tenant.status !== "TRIAL") {
       return NextResponse.json(
         { error: "Ce compte agence est suspendu. Contactez l'administrateur." },
         { status: 403 }
       );
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { tenantId_email: { tenantId: tenant.id, email } },
-      include: { tenant: true },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "Email ou mot de passe incorrect" }, { status: 401 });
     }
 
     const valid = await bcrypt.compare(password, user.password);
@@ -74,9 +100,9 @@ export async function POST(req: Request) {
       tenantSlug: user.tenant.slug,
     });
 
-    // En dev, cookie lu par le middleware pour injecter le bon x-tenant-slug
-    // (évite d'avoir à changer DEV_DEFAULT_TENANT à la main pour chaque agence)
-    if (process.env.NODE_ENV !== "production" && user.tenant.slug !== PLATFORM_SLUG) {
+    // Cookie tenant : lu par le middleware pour résoudre le bon tenant
+    // sur les déploiements single-domain (Render, Vercel sans subdomain, dev localhost)
+    if (user.tenant.slug !== PLATFORM_SLUG) {
       response.cookies.set("zam_dev_tenant", user.tenant.slug, {
         httpOnly: false,
         sameSite: "lax",

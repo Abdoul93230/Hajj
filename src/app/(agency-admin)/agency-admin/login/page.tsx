@@ -21,7 +21,7 @@ export default async function AgencyLoginPage() {
           </h1>
           <p className="text-gray-500 text-sm mt-1">Espace administration</p>
         </div>
-        <AgencyLoginForm defaultTenantSlug={tenantSlug} isDev={isDev} />
+        <AgencyLoginForm />
       </div>
     </div>
   );

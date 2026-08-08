@@ -45,17 +45,18 @@ export default async function middleware(request: NextRequest) {
 
   let { space, tenantSlug } = resolveSpaceFromHost(host);
 
-  // En dev (localhost), détecter l'espace depuis le pathname
+  // Sur single-domain (localhost, Render, Vercel sans subdomain) :
+  // détecter l'espace depuis le pathname et résoudre le tenant depuis le cookie
   if (space === "public") {
     if (pathname.startsWith("/superadmin")) {
       space = "superadmin";
       tenantSlug = null;
     } else if (pathname.startsWith("/agency-admin")) {
       space = "agency-admin";
-      // Priorité au cookie zam_dev_tenant (posé au login) sur DEV_DEFAULT_TENANT
-      const devTenantCookie = request.cookies.get("zam_dev_tenant")?.value;
-      if (devTenantCookie) {
-        tenantSlug = devTenantCookie;
+      // Cookie posé au login — fonctionne en dev ET en prod single-domain
+      const tenantCookie = request.cookies.get("zam_dev_tenant")?.value;
+      if (tenantCookie) {
+        tenantSlug = tenantCookie;
       }
     }
   }

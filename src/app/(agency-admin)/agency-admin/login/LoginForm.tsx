@@ -3,19 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AgencyLoginForm({
-  defaultTenantSlug,
-  isDev,
-}: {
-  defaultTenantSlug: string;
-  isDev: boolean;
-}) {
+export default function AgencyLoginForm() {
   const router = useRouter();
-  const [slug, setSlug] = useState(defaultTenantSlug);
-  const [email, setEmail] = useState("");
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,7 +18,8 @@ export default function AgencyLoginForm({
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, tenantSlug: slug }),
+        // Pas de tenantSlug → le serveur identifie l'agence depuis l'email
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Erreur de connexion"); return; }
@@ -33,8 +27,7 @@ export default function AgencyLoginForm({
         setError("Accès non autorisé pour cet espace");
         return;
       }
-      router.push("/agency-admin");
-      router.refresh();
+      window.location.href = "/agency-admin";
     } catch {
       setError("Erreur réseau");
     } finally {
@@ -44,35 +37,15 @@ export default function AgencyLoginForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-
-      {/* Champ agence — visible uniquement en dev (en prod le slug vient du subdomain) */}
-      {isDev && (
-        <div>
-          <label className="block text-gray-700 text-sm font-medium mb-1.5">
-            Identifiant agence
-            <span className="ml-2 text-[10px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded uppercase tracking-wide">
-              dev
-            </span>
-          </label>
-          <input
-            type="text"
-            value={slug}
-            onChange={e => setSlug(e.target.value.toLowerCase().trim())}
-            required
-            className="w-full border border-amber-200 bg-amber-50 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-400 font-mono"
-            placeholder="zam, barakah…"
-          />
-        </div>
-      )}
-
       <div>
         <label className="block text-gray-700 text-sm font-medium mb-1.5">Email</label>
         <input
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-500"
+          autoFocus
+          className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
           placeholder="vous@agence.com"
         />
       </div>
@@ -81,18 +54,22 @@ export default function AgencyLoginForm({
         <input
           type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-500"
+          className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
         />
       </div>
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && (
+        <p className="text-red-500 text-sm bg-red-50 border border-red-100 px-3 py-2 rounded-lg">
+          {error}
+        </p>
+      )}
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-green-700 hover:bg-green-600 text-white font-semibold rounded-lg py-2.5 text-sm transition-colors disabled:opacity-50"
+        className="w-full bg-[#0f5132] hover:bg-[#0d4429] text-white font-semibold rounded-lg py-2.5 text-sm transition disabled:opacity-50"
       >
-        {loading ? "Connexion..." : "Se connecter"}
+        {loading ? "Connexion…" : "Se connecter"}
       </button>
     </form>
   );

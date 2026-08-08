@@ -18,13 +18,12 @@ export default function SuperAdminLoginForm() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, tenantSlug: "__platform__" }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Erreur de connexion"); return; }
       if (data.role !== "SUPER_ADMIN") { setError("Accès non autorisé"); return; }
-      router.push("/superadmin");
-      router.refresh();
+      window.location.href = "/superadmin";
     } catch {
       setError("Erreur réseau");
     } finally {
