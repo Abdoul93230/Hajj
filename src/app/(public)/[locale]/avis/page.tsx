@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const mockReviews = [
   { id: 1, name: "Aminata D.", rating: 5, comment: "Service exceptionnel, équipe très professionnelle. Je recommande vivement !", date: "Mars 2025" },
@@ -13,6 +14,7 @@ const mockReviews = [
 ];
 
 export default function AvisPage() {
+  const t = useTranslations("reviews");
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", rating: 5, comment: "" });
   const [submitted, setSubmitted] = useState(false);
@@ -34,14 +36,14 @@ export default function AvisPage() {
     <div className="py-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Avis de nos pèlerins</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t("title")}</h1>
           <div className="flex items-center justify-center gap-2 mb-2">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star key={i} size={24} className="text-amber-400 fill-amber-400" />
             ))}
           </div>
           <p className="text-3xl font-bold text-gray-900">{avg}/5</p>
-          <p className="text-gray-500">{mockReviews.length} avis vérifiés</p>
+          <p className="text-gray-500">{mockReviews.length} {t("verifiedSuffix")}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -65,19 +67,18 @@ export default function AvisPage() {
           ))}
         </div>
 
-        {/* Add review */}
         <div className="text-center">
           {submitted ? (
-            <p className="text-[#0f5132] font-semibold">Merci pour votre avis ! Il sera publié après validation.</p>
+            <p className="text-[#0f5132] font-semibold">{t("thankYouDetail")}</p>
           ) : showForm ? (
             <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm max-w-lg mx-auto text-left space-y-4">
-              <h3 className="font-bold text-gray-900">Laisser un avis</h3>
+              <h3 className="font-bold text-gray-900">{t("leaveBtn")}</h3>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Votre nom</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("yourName")}</label>
                 <input required type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("ratingLabel")}</label>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((r) => (
                     <button key={r} type="button" onClick={() => setForm({ ...form, rating: r })}>
@@ -87,16 +88,16 @@ export default function AvisPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Commentaire</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("commentLabel")}</label>
                 <textarea required rows={4} value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none" />
               </div>
               <button type="submit" className="w-full bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0f5132] transition-colors">
-                Soumettre mon avis
+                {t("submitBtn")}
               </button>
             </form>
           ) : (
             <button onClick={() => setShowForm(true)} className="bg-[#0f5132] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#0f5132] transition-colors">
-              Laisser un avis
+              {t("leaveBtn")}
             </button>
           )}
         </div>

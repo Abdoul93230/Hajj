@@ -28,7 +28,7 @@ export default function ComptePage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Erreur de connexion");
+        setError(data.error ?? t("loginError"));
       } else {
         router.push("/");
         router.refresh();
@@ -50,7 +50,7 @@ export default function ComptePage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Erreur d'inscription");
+        setError(data.error ?? t("registerError"));
       } else {
         setError("");
         setTab("login");
@@ -134,7 +134,7 @@ export default function ComptePage() {
                   type="submit" disabled={loading}
                   className="w-full bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0f5132] transition-colors disabled:opacity-50"
                 >
-                  {loading ? "Connexion..." : t("login")}
+                  {loading ? t("loggingIn") : t("login")}
                 </button>
               </form>
             ) : (
@@ -179,7 +179,7 @@ export default function ComptePage() {
                   type="submit" disabled={loading}
                   className="w-full bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0f5132] transition-colors disabled:opacity-50"
                 >
-                  {loading ? "Inscription..." : t("register")}
+                  {loading ? t("registering") : t("register")}
                 </button>
               </form>
             )}

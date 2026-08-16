@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 import Image from "next/image";
@@ -23,65 +23,6 @@ type NavItem = {
   };
 };
 
-const NAV: NavItem[] = [
-  { label: "Accueil", href: "/" },
-  {
-    label: "Qui sommes-nous",
-    href: "/a-propos",
-    mega: {
-      categoryLabel: "DÉCOUVRIR",
-      leftImage: "/images/men-ihram.jpg",
-      leftTitle: "Qui sommes-nous",
-      leftSubtitle: "Une agence dédiée à votre pèlerinage, du début à la fin.",
-      rightImage: "/images/560922223_122098605927071313_4417420479539281621_n.jpg",
-      links: [
-        { label: "Notre histoire", href: "/notre-histoire" },
-        { label: "Notre équipe", href: "/a-propos" },
-        { label: "Galerie", href: "/notre-histoire#galerie" },
-        { label: "Témoignages", href: "/avis" },
-        { label: "FAQ", href: "/#faq" },
-        { label: "Contactez-nous", href: "/contact" },
-      ],
-    },
-  },
-  {
-    label: "Hadj et Oumra",
-    href: "/offres",
-    mega: {
-      categoryLabel: "LE PÈLERINAGE",
-      leftImage: "/images/kaaba.jpg",
-      leftTitle: "Hadj et Oumra",
-      leftSubtitle: "Accomplissez votre pèlerinage en toute sérénité.",
-      rightImage: "/images/tawaf.jpg",
-      links: [
-        { label: "Oumra Août 2026", href: "/offres#umrah-2026" },
-        { label: "Oumra Ramadan 2027", href: "/offres#umrah-ramadan" },
-        { label: "Hadj 2027", href: "/offres#hajj-2027" },
-        { label: "Toutes les offres", href: "/offres" },
-      ],
-    },
-  },
-  {
-    label: "Outils du pèlerin",
-    href: "/guide-pelerin",
-    mega: {
-      categoryLabel: "OUTILS",
-      leftImage: "/images/quran.jpg",
-      leftTitle: "Outils du pèlerin",
-      leftSubtitle: "Tout pour vous préparer, à portée de main.",
-      rightImage: "/images/mosque-dome.jpg",
-      links: [
-        { label: "Guide du pèlerin", href: "/guide-pelerin" },
-        { label: "Le Coran", href: "/coran" },
-        { label: "Direction Qibla", href: "/qibla" },
-        { label: "Invocations / Du'as", href: "/guide-pelerin#duas" },
-      ],
-    },
-  },
-  { label: "Boutique", href: "/boutique" },
-  { label: "Billetterie", href: "/billetterie" },
-];
-
 function MegaDropdown({ item }: { item: NavItem }) {
   const { mega } = item;
   if (!mega) return null;
@@ -89,7 +30,6 @@ function MegaDropdown({ item }: { item: NavItem }) {
     <div className="absolute top-full left-1/2 -translate-x-1/2 bg-white border border-gray-100 shadow-xl rounded-xl mt-1 z-50 overflow-hidden"
       style={{ width: 640 }}>
       <div className="grid grid-cols-[200px_1fr_200px] gap-0">
-        {/* Left image card */}
         <div className="relative h-full min-h-[180px] overflow-hidden rounded-tl-xl rounded-bl-xl">
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -102,7 +42,6 @@ function MegaDropdown({ item }: { item: NavItem }) {
           </div>
         </div>
 
-        {/* Center links */}
         <div className="px-6 py-5">
           <p className="text-xs font-bold tracking-widest text-amber-600 mb-3 uppercase">
             {mega.categoryLabel}
@@ -121,7 +60,6 @@ function MegaDropdown({ item }: { item: NavItem }) {
           </ul>
         </div>
 
-        {/* Right image */}
         <div className="relative min-h-[180px] overflow-hidden rounded-tr-xl rounded-br-xl">
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -143,15 +81,77 @@ export default function Header({ user }: { user: { name: string; role: string } 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
 
+  const tn = useTranslations("nav");
+  const th = useTranslations("header");
+
+  const NAV: NavItem[] = [
+    { label: tn("home"), href: "/" },
+    {
+      label: tn("about"),
+      href: "/a-propos",
+      mega: {
+        categoryLabel: th("aboutCategory"),
+        leftImage: "/images/men-ihram.jpg",
+        leftTitle: th("aboutLeftTitle"),
+        leftSubtitle: th("aboutLeftSubtitle"),
+        rightImage: "/images/560922223_122098605927071313_4417420479539281621_n.jpg",
+        links: [
+          { label: th("aboutLink1"), href: "/notre-histoire" },
+          { label: th("aboutLink2"), href: "/a-propos" },
+          { label: th("aboutLink3"), href: "/notre-histoire#galerie" },
+          { label: th("aboutLink4"), href: "/avis" },
+          { label: th("aboutLink5"), href: "/#faq" },
+          { label: th("aboutLink6"), href: "/contact" },
+        ],
+      },
+    },
+    {
+      label: tn("hajjUmrah"),
+      href: "/offres",
+      mega: {
+        categoryLabel: th("hajjCategory"),
+        leftImage: "/images/kaaba.jpg",
+        leftTitle: th("hajjLeftTitle"),
+        leftSubtitle: th("hajjLeftSubtitle"),
+        rightImage: "/images/tawaf.jpg",
+        links: [
+          { label: th("hajjLink1"), href: "/offres#umrah-2026" },
+          { label: th("hajjLink2"), href: "/offres#umrah-ramadan" },
+          { label: th("hajjLink3"), href: "/offres#hajj-2027" },
+          { label: th("hajjLink4"), href: "/offres" },
+        ],
+      },
+    },
+    {
+      label: tn("tools"),
+      href: "/guide-pelerin",
+      mega: {
+        categoryLabel: th("toolsCategory"),
+        leftImage: "/images/quran.jpg",
+        leftTitle: th("toolsLeftTitle"),
+        leftSubtitle: th("toolsLeftSubtitle"),
+        rightImage: "/images/mosque-dome.jpg",
+        links: [
+          { label: th("toolsLink1"), href: "/guide-pelerin" },
+          { label: th("toolsLink2"), href: "/coran" },
+          { label: th("toolsLink3"), href: "/qibla" },
+          { label: th("toolsLink4"), href: "/guide-pelerin#duas" },
+        ],
+      },
+    },
+    { label: tn("shop"), href: "/boutique" },
+    { label: tn("ticketing"), href: "/billetterie" },
+  ];
+
   return (
     <div className="sticky top-0 z-50">
       {/* Announcement bar */}
       <div className="bg-[#0f5132] text-white text-xs py-2 px-4 flex items-center justify-between">
         <span className="flex items-center gap-2 font-semibold">
           <span className="w-2 h-2 rounded-full bg-emerald-300 inline-block animate-pulse" />
-          Hajj et Oumra ZAM — Fidèle à ses engagements
+          {th("announcement1")}
         </span>
-        <span className="hidden sm:block">Les inscriptions ont commencé pour le Hadj et Oumra 2027 !</span>
+        <span className="hidden sm:block">{th("announcement2")}</span>
       </div>
 
       {/* Main header */}
@@ -175,7 +175,7 @@ export default function Header({ user }: { user: { name: string; role: string } 
                   Hajj et Oumra ZAM
                 </span>
                 <span className="text-xs tracking-widest text-amber-700 font-semibold">
-                  HADJ & OUMRA
+                  {th("logoSubtitle")}
                 </span>
               </div>
             </Link>
@@ -306,7 +306,7 @@ export default function Header({ user }: { user: { name: string; role: string } 
                 onClick={() => setMobileOpen(false)}
                 className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0f5132] hover:bg-emerald-50 rounded"
               >
-                Espace pèlerin
+                {th("pilgrimSpace")}
               </Link>
             </div>
           )}

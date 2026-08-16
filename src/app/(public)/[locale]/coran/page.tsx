@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import {
   ChevronLeft, ChevronRight, Search, BookOpen,
   Play, Pause, SkipBack, SkipForward, Volume2, Eye, EyeOff,
@@ -126,7 +127,6 @@ const SURAHS: { n: number; ar: string; fr: string; ayahs: number; type: "M" | "M
 
 const FEATURED = [1, 2, 18, 36, 55, 67, 97, 112, 114];
 
-/* cdn.islamic.network – Mishary Alafasy 128kbps */
 function audioUrl(absoluteN: number) {
   return `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${absoluteN}.mp3`;
 }
@@ -139,6 +139,7 @@ interface Ayah {
 }
 
 export default function CoranPage() {
+  const t = useTranslations("coran");
   const [view, setView]             = useState<"home" | "reader">("home");
   const [selected, setSelected]     = useState(1);
   const [ayahs, setAyahs]           = useState<Ayah[]>([]);
@@ -148,7 +149,6 @@ export default function CoranPage() {
   const [fontSize, setFontSize]     = useState<"sm" | "md" | "lg">("md");
   const [filterType, setFilterType] = useState<"all" | "M" | "Me">("all");
 
-  /* ── Audio ── */
   const audioRef                    = useRef<HTMLAudioElement>(null);
   const [playingIdx, setPlayingIdx] = useState<number | null>(null);
   const [isPlaying, setIsPlaying]   = useState(false);
@@ -157,7 +157,6 @@ export default function CoranPage() {
 
   const currentSurah = SURAHS.find(s => s.n === selected)!;
 
-  /* ── Load surah ── */
   async function loadSurah(n: number) {
     if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ""; }
     setIsPlaying(false); setPlayingIdx(null);
@@ -178,7 +177,6 @@ export default function CoranPage() {
 
   useEffect(() => { loadSurah(1); }, []);
 
-  /* ── Play a specific ayah by index ── */
   const playAyah = useCallback((idx: number) => {
     const ayah = ayahs[idx];
     if (!ayah || !audioRef.current) return;
@@ -233,9 +231,6 @@ export default function CoranPage() {
   const transFontSize  = fontSize === "sm" ? "text-xs"  : fontSize === "lg" ? "text-base" : "text-sm";
   const playingAyah    = playingIdx !== null ? ayahs[playingIdx] : null;
 
-  /* ════════════════════════════════════════════════════
-     HOME
-  ════════════════════════════════════════════════════ */
   if (view === "home") return (
     <>
       {/* Hero */}
@@ -244,17 +239,15 @@ export default function CoranPage() {
           style={{ backgroundImage: "url('/images/quran.jpg')" }} />
         <div className="absolute inset-0 bg-gradient-to-b from-[#06251a]/70 to-[#06251a]" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <p className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-4">OUTILS DU PÈLERIN</p>
+          <p className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-4">{t("toolsLabel")}</p>
           <h1 className="text-5xl md:text-7xl font-black text-white mb-3"
             style={{ fontFamily: "var(--font-playfair, serif)" }}>القرآن الكريم</h1>
-          <h2 className="text-2xl font-bold text-white/80 mb-4">Le Saint Coran</h2>
-          <p className="text-white/50 text-base mb-8 max-w-lg mx-auto">
-            Lecture bilingue et récitation audio sourate par sourate — récitateur Mishary Alafasy.
-          </p>
+          <h2 className="text-2xl font-bold text-white/80 mb-4">{t("heroSubtitleFr")}</h2>
+          <p className="text-white/50 text-base mb-8 max-w-lg mx-auto">{t("heroDesc")}</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <button onClick={() => loadSurah(1)}
               className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-bold px-8 py-3.5 rounded-full transition-all hover:scale-105">
-              <BookOpen size={18} /> Parcourir les sourates
+              <BookOpen size={18} /> {t("browseSurahs")}
             </button>
             <button
               onClick={() => {
@@ -262,7 +255,7 @@ export default function CoranPage() {
                 setTimeout(() => playAyah(0), 2200);
               }}
               className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-8 py-3.5 rounded-full border border-white/20 transition-all hover:scale-105">
-              <Play size={18} fill="white" /> Écouter Al-Fatiha
+              <Play size={18} fill="white" /> {t("listenFatiha")}
             </button>
           </div>
         </div>
@@ -271,8 +264,8 @@ export default function CoranPage() {
       {/* Featured */}
       <section className="bg-white py-14 px-4">
         <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-bold tracking-widest text-amber-600 uppercase mb-2">SOURATES POPULAIRES</p>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Souvent récitées</h2>
+          <p className="text-xs font-bold tracking-widest text-amber-600 uppercase mb-2">{t("popularLabel")}</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{t("popularTitle")}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {SURAHS.filter(s => FEATURED.includes(s.n)).map(s => (
               <button key={s.n} onClick={() => loadSurah(s.n)}
@@ -280,7 +273,7 @@ export default function CoranPage() {
                 <p className="text-2xl font-black text-[#0f5132] group-hover:text-white mb-1">{s.n}</p>
                 <p className="text-sm font-bold text-gray-900 group-hover:text-white">{s.fr}</p>
                 <p className="text-xs text-gray-400 group-hover:text-white/70 mt-0.5" dir="rtl">{s.ar}</p>
-                <p className="text-xs text-gray-400 group-hover:text-emerald-200 mt-1">{s.ayahs} v.</p>
+                <p className="text-xs text-gray-400 group-hover:text-emerald-200 mt-1">{s.ayahs} {t("verses")}</p>
               </button>
             ))}
           </div>
@@ -293,15 +286,15 @@ export default function CoranPage() {
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <div className="relative flex-1">
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input type="text" placeholder="Rechercher une sourate…" value={search}
+              <input type="text" placeholder={t("searchPlaceholder")} value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
             </div>
             <div className="flex gap-2">
-              {(["all", "M", "Me"] as const).map(t => (
-                <button key={t} onClick={() => setFilterType(t)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterType === t ? "bg-[#0f5132] text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-300"}`}>
-                  {t === "all" ? "Toutes" : t === "M" ? "Mecquoises" : "Médinoises"}
+              {(["all", "M", "Me"] as const).map(f => (
+                <button key={f} onClick={() => setFilterType(f)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterType === f ? "bg-[#0f5132] text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-300"}`}>
+                  {f === "all" ? t("filterAll") : f === "M" ? t("filterMakki") : t("filterMadani")}
                 </button>
               ))}
             </div>
@@ -316,39 +309,35 @@ export default function CoranPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-gray-900 text-sm">{s.fr}</p>
-                  <p className="text-xs text-gray-400">{s.ayahs} v. · {s.type === "M" ? "Mecquoise" : "Médinoise"}</p>
+                  <p className="text-xs text-gray-400">{s.ayahs} {t("verses")} · {s.type === "M" ? t("makki") : t("madani")}</p>
                 </div>
                 <p className="text-base text-[#0a3d26] flex-shrink-0" dir="rtl">{s.ar}</p>
               </button>
             ))}
           </div>
           {filtered.length === 0 && (
-            <p className="text-center text-gray-400 py-12">Aucune sourate pour &laquo;{search}&raquo;</p>
+            <p className="text-center text-gray-400 py-12">{t("noResult")} &laquo;{search}&raquo;</p>
           )}
         </div>
       </section>
     </>
   );
 
-  /* ════════════════════════════════════════════════════
-     READER
-  ════════════════════════════════════════════════════ */
   return (
     <div className="min-h-screen bg-gray-50 pb-28">
 
-      {/* Hidden audio element */}
       <audio ref={audioRef} preload="auto" />
 
-      {/* ── Reader header ── */}
+      {/* Reader header */}
       <div className="sticky top-[72px] z-40 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
           <button onClick={() => setView("home")}
             className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#0f5132] transition-colors flex-shrink-0">
-            <ChevronLeft size={16} /> Sourates
+            <ChevronLeft size={16} /> {t("back")}
           </button>
           <div className="flex-1 text-center">
             <p className="font-bold text-gray-900 text-sm">{currentSurah.fr}</p>
-            <p className="text-xs text-gray-400">{currentSurah.ayahs} v. · {currentSurah.type === "M" ? "Mecquoise" : "Médinoise"}</p>
+            <p className="text-xs text-gray-400">{currentSurah.ayahs} {t("verses")} · {currentSurah.type === "M" ? t("makki") : t("madani")}</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             <div className="hidden sm:flex items-center gap-1 bg-gray-100 rounded-lg p-1">
@@ -362,7 +351,7 @@ export default function CoranPage() {
             <button onClick={() => setShowTranslation(v => !v)}
               className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-[#0f5132] bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">
               {showTranslation ? <Eye size={13} /> : <EyeOff size={13} />}
-              <span className="hidden sm:inline">Trad.</span>
+              <span className="hidden sm:inline">{t("translationToggle")}</span>
             </button>
             <button onClick={() => selected > 1 && loadSurah(selected - 1)} disabled={selected <= 1}
               className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-[#0f5132] disabled:opacity-30 transition-colors">
@@ -376,32 +365,31 @@ export default function CoranPage() {
         </div>
       </div>
 
-      {/* ── Content ── */}
+      {/* Content */}
       <div className="max-w-3xl mx-auto px-4 py-10">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
             <div className="w-10 h-10 border-2 border-[#0f5132] border-t-transparent rounded-full animate-spin" />
-            <p className="text-gray-400 text-sm">Chargement…</p>
+            <p className="text-gray-400 text-sm">{t("loading")}</p>
           </div>
         ) : (
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
 
             {/* Surah header */}
             <div className="bg-gradient-to-br from-[#062b1a] to-[#0a3d26] px-8 py-8 text-center">
-              <p className="text-white/60 text-xs tracking-widest uppercase mb-2">Sourate {selected}</p>
+              <p className="text-white/60 text-xs tracking-widest uppercase mb-2">{t("surahNumber")} {selected}</p>
               <p className="text-white text-4xl mb-2" dir="rtl">{currentSurah.ar}</p>
               <p className="text-emerald-200 font-bold text-lg">{currentSurah.fr}</p>
               <p className="text-white/50 text-xs mt-1">
-                {currentSurah.ayahs} versets · {currentSurah.type === "M" ? "Mecquoise" : "Médinoise"}
+                {currentSurah.ayahs} {t("verses")} · {currentSurah.type === "M" ? t("makki") : t("madani")}
               </p>
               <button onClick={() => ayahs.length > 0 && playAyah(0)}
                 className="mt-5 inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white text-sm font-semibold px-6 py-2.5 rounded-full border border-white/20 transition-all">
-                <Play size={14} fill="white" /> Écouter la sourate
+                <Play size={14} fill="white" /> {t("listenSurah")}
               </button>
             </div>
 
             <div className="p-6 md:p-8 space-y-5">
-              {/* Bismillah */}
               {selected !== 1 && selected !== 9 && (
                 <div className="text-center text-2xl text-[#0a3d26] py-4 border-b border-gray-100" dir="rtl">
                   بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
@@ -416,7 +404,6 @@ export default function CoranPage() {
                     ref={el => { ayahRefs.current[idx] = el; }}
                     className={`group rounded-xl transition-colors ${isActive ? "bg-emerald-50 -mx-3 px-3 py-3" : "border-b border-gray-50 last:border-0 pb-5 last:pb-0"}`}
                   >
-                    {/* Controls row */}
                     <div className="flex items-center justify-between mb-2">
                       <button
                         onClick={() =>
@@ -429,7 +416,7 @@ export default function CoranPage() {
                             ? "bg-[#0f5132] text-white"
                             : "bg-gray-100 text-gray-400 opacity-0 group-hover:opacity-100 hover:bg-emerald-100 hover:text-[#0f5132]"
                         }`}
-                        title="Écouter ce verset"
+                        title={t("listenVerse")}
                       >
                         {isActive && audioLoading
                           ? <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -443,12 +430,10 @@ export default function CoranPage() {
                       </span>
                     </div>
 
-                    {/* Arabic */}
                     <p className={`text-right leading-loose mb-3 ${arabicFontSize} ${isActive ? "text-[#062b1a]" : "text-gray-900"}`} dir="rtl">
                       {ayah.text}
                     </p>
 
-                    {/* Translation */}
                     {showTranslation && ayah.translation && (
                       <p className={`leading-relaxed border-l-2 border-emerald-200 pl-3 ${transFontSize} ${isActive ? "text-[#0a3d26]" : "text-gray-500"}`}>
                         {ayah.translation}
@@ -478,17 +463,14 @@ export default function CoranPage() {
 
         <div className="text-center mt-6">
           <button onClick={() => setView("home")} className="text-sm text-[#0f5132] hover:underline flex items-center gap-1 mx-auto">
-            <ChevronLeft size={14} /> Retour à la liste
+            <ChevronLeft size={14} /> {t("backToList")}
           </button>
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════════
-          MINI-PLAYER (persistent bottom bar)
-      ══════════════════════════════════════════════ */}
+      {/* Mini-player */}
       {(isPlaying || playingIdx !== null) && (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#06251a]/97 backdrop-blur-md border-t border-[#0a3d26]/40 shadow-2xl">
-          {/* Progress bar */}
           {playingIdx !== null && ayahs.length > 0 && (
             <div className="h-0.5 bg-[#062b1a]/60">
               <div
@@ -499,23 +481,20 @@ export default function CoranPage() {
           )}
 
           <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-4">
-            {/* Icon */}
             <div className="w-11 h-11 rounded-xl bg-[#0f5132]/60 border border-[#0f5132]/40 flex items-center justify-center flex-shrink-0">
               <Volume2 size={18} className="text-emerald-300" />
             </div>
 
-            {/* Info */}
             <div className="flex-1 min-w-0">
               <p className="text-white font-semibold text-sm truncate">{currentSurah.fr}</p>
               <p className="text-emerald-400 text-xs">
                 {playingAyah
-                  ? `Verset ${playingAyah.numberInSurah} / ${currentSurah.ayahs}`
-                  : "Récitation"}
+                  ? `${t("verseLabel")} ${playingAyah.numberInSurah} / ${currentSurah.ayahs}`
+                  : t("recitation")}
                 &nbsp;·&nbsp;Mishary Alafasy
               </p>
             </div>
 
-            {/* Controls */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
               <button onClick={playPrev} disabled={playingIdx === 0 || playingIdx === null}
                 className="w-9 h-9 rounded-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 disabled:opacity-25 transition-all">

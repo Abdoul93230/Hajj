@@ -23,7 +23,7 @@ export default function BilletterePage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-4">{t("title")}</h1>
         <p className="text-gray-600 mb-8 leading-relaxed">{t("message")}</p>
         {subscribed ? (
-          <p className="text-[#0f5132] font-semibold">Merci ! Vous serez notifié à l&apos;ouverture.</p>
+          <p className="text-[#0f5132] font-semibold">{t("notifiedSuccess")}</p>
         ) : (
           <form onSubmit={handleSubscribe} className="flex gap-2 max-w-sm mx-auto">
             <input

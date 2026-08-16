@@ -36,7 +36,7 @@ export default function ContactPage() {
 
   function openWhatsApp() {
     const text = encodeURIComponent(
-      `Bonjour, je suis ${form.name}. Sujet: ${form.subject}\n\n${form.message}`
+      t("whatsappTemplate", { name: form.name, subject: form.subject, message: form.message })
     );
     window.open(`https://wa.me/22796969070?text=${text}`, "_blank");
   }
@@ -58,7 +58,7 @@ export default function ContactPage() {
                   <Send size={28} className="text-[#0f5132]" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{t("success")}</h3>
-                <p className="text-gray-600">Nous vous répondrons dans les plus brefs délais.</p>
+                <p className="text-gray-600">{t("successSub")}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-5">
@@ -120,7 +120,7 @@ export default function ContactPage() {
                     disabled={loading}
                     className="flex-1 bg-[#0f5132] text-white font-semibold py-3 rounded-lg hover:bg-[#0f5132] transition-colors disabled:opacity-50"
                   >
-                    {loading ? "Envoi..." : t("sendEmail")}
+                    {loading ? t("sending") : t("sendEmail")}
                   </button>
                   <button
                     type="button"
@@ -138,7 +138,7 @@ export default function ContactPage() {
           {/* Contact info */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-              <h3 className="font-bold text-gray-900 mb-4">Informations de contact</h3>
+              <h3 className="font-bold text-gray-900 mb-4">{t("infoTitle")}</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <MapPin size={18} className="text-[#0f5132] mt-0.5 flex-shrink-0" />

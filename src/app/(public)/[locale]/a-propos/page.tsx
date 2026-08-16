@@ -16,21 +16,13 @@ export default function AboutPage() {
           {/* Left: Content */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Notre mission</h2>
-              <p className="text-gray-600 leading-relaxed">
-                Hajj et Oumra ZAM est une agence de voyages spécialisée dans l&apos;organisation du Hadj et
-                de la Oumra. Notre mission est d&apos;accompagner chaque pèlerin dans son voyage
-                spirituel avec professionnalisme, transparence et sérénité.
-              </p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t("missionTitle")}</h2>
+              <p className="text-gray-600 leading-relaxed">{t("missionText")}</p>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Notre histoire</h2>
-              <p className="text-gray-600 leading-relaxed">
-                Fondée en 2018, notre agence bénéficie de l&apos;expertise du{" "}
-                <strong>Groupe Bab Makka</strong> qui compte plus de 25 ans d&apos;expérience dans
-                l&apos;accompagnement des pèlerins vers les Lieux Saints.
-              </p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t("historyTitle")}</h2>
+              <p className="text-gray-600 leading-relaxed">{t("historyText")}</p>
             </div>
 
             <div className="space-y-4">
@@ -60,10 +52,10 @@ export default function AboutPage() {
           {/* Right: Stats */}
           <div className="grid grid-cols-2 gap-4">
             {[
-              { value: "2018", label: "Année de fondation" },
-              { value: "+1 000", label: "Pèlerins accompagnés" },
-              { value: "4.9/5", label: "Satisfaction client" },
-              { value: "100%", label: "Taux de complétion" },
+              { value: "1998", label: t("statsYear") },
+              { value: "+1 000", label: t("statsPilgrims") },
+              { value: "4.9/5", label: t("statsSatisfaction") },
+              { value: "100%", label: t("statsCompletion") },
             ].map((stat) => (
               <div
                 key={stat.label}

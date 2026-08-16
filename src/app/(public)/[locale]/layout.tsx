@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import DirectionSetter from "@/components/ui/DirectionSetter";
 import { getSession } from "@/lib/session";
 import "../../globals.css";
 
@@ -52,6 +53,7 @@ export default async function LocaleLayout({
       style={{ fontFamily: "var(--font-inter), Arial, sans-serif", backgroundColor: "#f8fafc", color: "#111827" }}
     >
       <NextIntlClientProvider messages={messages}>
+        <DirectionSetter />
         <Header user={session ? { name: session.name, role: session.role } : null} />
         <main className="flex-1">{children}</main>
         <Footer />
