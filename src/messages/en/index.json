@@ -54,9 +54,24 @@
     "oumraDetails": "See details",
     "oumraSoon": "Coming soon",
     "oumraSlots": [
-      { "title": "UMRAH AUGUST 2026", "dates": "Aug 04 to Aug 23, 2026", "price": "1,250,000 FCFA/pers", "badge": "Available" },
-      { "title": "UMRAH DECEMBER 2026", "dates": null, "price": null, "badge": "Coming soon" },
-      { "title": "UMRAH JANUARY 2027", "dates": null, "price": null, "badge": "Coming soon" }
+      {
+        "title": "UMRAH AUGUST 2026",
+        "dates": "Aug 04 to Aug 23, 2026",
+        "price": "1,250,000 FCFA/pers",
+        "badge": "Available"
+      },
+      {
+        "title": "UMRAH DECEMBER 2026",
+        "dates": null,
+        "price": null,
+        "badge": "Coming soon"
+      },
+      {
+        "title": "UMRAH JANUARY 2027",
+        "dates": null,
+        "price": null,
+        "badge": "Coming soon"
+      }
     ],
     "oumraRamadanLabel": "THE BLESSED MONTH",
     "oumraRamadanTitle": "Umrah Ramadan 2027",
@@ -91,34 +106,95 @@
     "madineText": "The Prophet's Mosque ﷺ, the Rawdha, Al-Baqi', the Quba Mosque, the Uhud mountains — places that will bring you closer to the beloved Prophet and the history of Islam.",
     "whyLabel": "OUR COMMITMENTS",
     "whyTitle": "Why choose Hajj et Oumra ZAM?",
-    "whySubtitle": "More than 25 years of experience in the field",
+    "whySubtitle": "Serving pilgrims since 2020 of experience in the field",
     "whyItems": [
-      { "title": "True to its commitments", "content": "Hajj et Oumra ZAM commits to each pilgrim with seriousness and professionalism. The price of your Hajj = divine reward." },
-      { "title": "More than 1,000 satisfied pilgrims", "content": "Since 1998, thousands of Nigerien families have entrusted us with their pilgrimage. Their satisfaction is our greatest reward." },
-      { "title": "Presence in Niamey and Tahoua", "content": "With our offices in Yantalla (Niamey) and Tahoua, we are close to you to assist you in all your steps." },
-      { "title": "Experienced and qualified guides", "content": "Our guides master the rituals, speak several languages and provide quality religious and logistical supervision throughout the journey." },
-      { "title": "First-class accommodation", "content": "We select hotels in immediate proximity to the holy sites to guarantee you comfort and easy access to places of devotion." },
-      { "title": "All-inclusive packages", "content": "Flight, visa, accommodation, transport, meals: everything is included in our packages. You leave with peace of mind, no financial surprises." },
-      { "title": "On-site assistance in Saudi Arabia", "content": "Our team is also reachable in Saudi Arabia at (+966) 05 44 61 74 67 to assist you during your stay." }
+      {
+        "title": "True to its commitments",
+        "content": "Hajj et Oumra ZAM commits to each pilgrim with seriousness and professionalism. The price of your Hajj = divine reward."
+      },
+      {
+        "title": "More than 1,000 satisfied pilgrims",
+        "content": "Since 2020, families of Nigerien families have entrusted us with their pilgrimage. Their satisfaction is our greatest reward."
+      },
+      {
+        "title": "Presence in Niamey and Tahoua",
+        "content": "With our offices in Yantalla (Niamey) and Tahoua, we are close to you to assist you in all your steps."
+      },
+      {
+        "title": "Experienced and qualified guides",
+        "content": "Our guides master the rituals, speak several languages and provide quality religious and logistical supervision throughout the journey."
+      },
+      {
+        "title": "First-class accommodation",
+        "content": "We select hotels in immediate proximity to the holy sites to guarantee you comfort and easy access to places of devotion."
+      },
+      {
+        "title": "All-inclusive packages",
+        "content": "Flight, visa, accommodation, transport, meals: everything is included in our packages. You leave with peace of mind, no financial surprises."
+      },
+      {
+        "title": "On-site assistance in Saudi Arabia",
+        "content": "Our team is also reachable in Saudi Arabia at (+966) 05 44 61 74 67 to assist you during your stay."
+      }
     ],
     "testimonialsLabel": "THEY TRUSTED US",
     "testimonialsTitle": "What our pilgrims say",
     "testimonialsRating": "+1000 reviews",
     "testimonials": [
-      { "initial": "A", "name": "Aminata D.", "location": "Niamey", "text": "Exceptional service, very professional team. I was able to accomplish my Umrah with complete peace of mind. I highly recommend this agency!" },
-      { "initial": "I", "name": "Ibrahim K.", "location": "Maradi", "text": "My Hajj was a perfect spiritual experience. The accompaniment from start to finish was impeccable. May Allah reward you." },
-      { "initial": "F", "name": "Fatoumata S.", "location": "Tahoua", "text": "Very well organized. The hotels were close to the Haram, the guides very competent. I'm going back next year with them." },
-      { "initial": "O", "name": "Oumarou H.", "location": "Zinder", "text": "Transparent prices, no hidden fees. The team is available at all times. Unforgettable first Umrah!" },
-      { "initial": "M", "name": "Mariama B.", "location": "Niamey", "text": "Alhamdulillah, a blessed journey. Hajj et Oumra ZAM accompanied us with great heart and professionalism." }
+      {
+        "initial": "A",
+        "name": "Aminata D.",
+        "location": "Niamey",
+        "text": "Exceptional service, very professional team. I was able to accomplish my Umrah with complete peace of mind. I highly recommend this agency!"
+      },
+      {
+        "initial": "I",
+        "name": "Ibrahim K.",
+        "location": "Maradi",
+        "text": "My Hajj was a perfect spiritual experience. The accompaniment from start to finish was impeccable. May Allah reward you."
+      },
+      {
+        "initial": "F",
+        "name": "Fatoumata S.",
+        "location": "Tahoua",
+        "text": "Very well organized. The hotels were close to the Haram, the guides very competent. I'm going back next year with them."
+      },
+      {
+        "initial": "O",
+        "name": "Oumarou H.",
+        "location": "Zinder",
+        "text": "Transparent prices, no hidden fees. The team is available at all times. Unforgettable first Umrah!"
+      },
+      {
+        "initial": "M",
+        "name": "Mariama B.",
+        "location": "Niamey",
+        "text": "Alhamdulillah, a blessed journey. Hajj et Oumra ZAM accompanied us with great heart and professionalism."
+      }
     ],
     "faqLabel": "FREQUENTLY ASKED QUESTIONS",
     "faqTitle": "Your questions, our answers",
     "faq": [
-      { "q": "Why perform Umrah?", "a": "Umrah is an act of worship and devotion that allows believers to get closer to Allah, seek forgiveness and renew their faith. Unlike Hajj, it can be performed at any time of the year." },
-      { "q": "Are there age restrictions for pilgrimage?", "a": "There is no formal age restriction. Children must be accompanied by a guardian. We adapt our accompaniment to each pilgrim's profile." },
-      { "q": "Are vaccinations mandatory?", "a": "Yes, the meningitis vaccine is mandatory. The yellow fever vaccine may be required depending on the country. Our team guides you through all health procedures." },
-      { "q": "Can one perform Hajj or Umrah alone?", "a": "It is strongly recommended to travel with an accredited agency to benefit from full supervision. For Hajj, agency supervision is mandatory in Niger." },
-      { "q": "What are your departure dates and prices?", "a": "Umrah August 2026 (Aug 04-23) from 1,250,000 FCFA/pers. Hajj 2027 from 3,184,500 FCFA. Check our offers page for full details." }
+      {
+        "q": "Why perform Umrah?",
+        "a": "Umrah is an act of worship and devotion that allows believers to get closer to Allah, seek forgiveness and renew their faith. Unlike Hajj, it can be performed at any time of the year."
+      },
+      {
+        "q": "Are there age restrictions for pilgrimage?",
+        "a": "There is no formal age restriction. Children must be accompanied by a guardian. We adapt our accompaniment to each pilgrim's profile."
+      },
+      {
+        "q": "Are vaccinations mandatory?",
+        "a": "Yes, the meningitis vaccine is mandatory. The yellow fever vaccine may be required depending on the country. Our team guides you through all health procedures."
+      },
+      {
+        "q": "Can one perform Hajj or Umrah alone?",
+        "a": "It is strongly recommended to travel with an accredited agency to benefit from full supervision. For Hajj, agency supervision is mandatory in Niger."
+      },
+      {
+        "q": "What are your departure dates and prices?",
+        "a": "Umrah August 2026 (Aug 04-23) from 1,250,000 FCFA/pers. Hajj 2027 from 3,184,500 FCFA. Check our offers page for full details."
+      }
     ],
     "ctaLabel": "Your spiritual journey begins here",
     "ctaTitle1": "Ready to accomplish",
@@ -135,7 +211,7 @@
     "reserve": "Book",
     "learnMore": "Learn More",
     "aboutTitle": "Who are we?",
-    "aboutText": "Hajj et Oumra ZAM is an agency specializing in organizing Hajj and Umrah since 1998, at the service of Nigerien pilgrims.",
+    "aboutText": "Hajj et Oumra ZAM is an agency specializing in organizing Hajj and Umrah since 2020, at the service of Nigerien pilgrims.",
     "toolsTitle": "Pilgrim Tools",
     "toolsSubtitle": "Resources to prepare and live your pilgrimage",
     "quranTool": "Read the Quran",
@@ -146,44 +222,30 @@
   "history": {
     "heroBadge": "HAJJ ET OUMRA ZAM — OUR STORY",
     "heroTitle": "The people behind Hajj et Oumra ZAM",
-    "heroSubtitle": "The people who carry Hajj et Oumra ZAM, serving pilgrims since 1998 — from Niamey to the Holy Land.",
-    "heroAddress": "Niamey, Niger — Yantalla District, BP 919",
+    "heroSubtitle": "A Nigerien agency founded in 2020, dedicated to accompanying pilgrims from Niger to the Holy Land.",
+    "heroAddress": "Yantala Tchini Habou, Niamey, Niger",
     "breadcrumb": "Our Story",
-    "statsExperience": "Years of experience",
+    "statsExperience": "Years of activity",
     "statsPilgrims": "Pilgrims accompanied",
     "statsSatisfaction": "Satisfaction rate",
-    "statsCountries": "Countries served",
+    "statsCountries": "Offices in Niger",
     "teamLabel": "OUR TEAM",
-    "teamTitle": "Faces behind every departure",
-    "teamSubtitle": "A team united by the same calling: to accompany you to the Holy Land with faith, rigor and humanity.",
+    "teamTitle": "A team at your service",
+    "teamSubtitle": "A team driven by the same vocation: guiding you to the Holy Land with seriousness and care.",
     "team": [
       {
         "name": "El Hadj Moussa Abdou",
-        "role": "Founder & President",
-        "tag": "The visionary",
-        "bio": "Born in Niamey in a family deeply attached to Islamic values, El Hadj Moussa Abdou accompanied his first pilgrims in 1998. That journey was a revelation: he saw it as a life mission. For twenty years, he patiently built a reputation for seriousness, integrity and sincere love for pilgrims.",
-        "bio2": "Under his leadership, Hajj et Oumra ZAM obtained its official COHO accreditation in 2018 and established itself as an essential reference for pilgrims from Niger and West Africa."
+        "role": "Founder & Director",
+        "tag": "The founder",
+        "bio": "Driven by deep faith and the desire to help Nigerien families fulfill their religious duty, El Hadj Moussa Abdou founded Hajj et Oumra ZAM in 2020 in Niamey.",
+        "bio2": "Since the first departure, he personally commits to every pilgrim — overseeing files, accommodations and spiritual guidance — to ensure every journey meets its importance."
       },
       {
         "name": "Ibrahima Moussa",
-        "role": "General Manager",
-        "tag": "The heir",
-        "bio": "Son of the founder, Ibrahima grew up in contact with pilgrims. He accompanied his father from adolescence, learning the operational rigor and human kindness that mark Hajj et Oumra ZAM.",
-        "bio2": "With a degree in hotel management and a passion for continuous improvement, he took over as general manager of the agency in 2020 with the mission of modernizing services while preserving the founding spirit."
-      },
-      {
-        "name": "Fatouma Adamou",
-        "role": "Umrah & Hajj Manager",
-        "tag": "The field expert",
-        "bio": "Fatouma has made more than fifteen trips to Saudi Arabia as a supervisor. She knows the hotels, the circuits, the unexpected situations and the solutions. Her presence reassures pilgrims, especially the elderly and first-time pilgrims.",
-        "bio2": "She supervises the design of programs, hotel selection and training of local guides — ensuring that every stay delivers on its promises."
-      },
-      {
-        "name": "Youssouf Hamidou",
-        "role": "Logistics & Ticketing Manager",
-        "tag": "The coordinator",
-        "bio": "IATA affiliated since 2019, Youssouf masters the workings of airline ticketing and group logistics. He negotiates the best Niamey – Jeddah connections and coordinates on-site transfers.",
-        "bio2": "Methodical and principled, he ensures that no file is incomplete on the day of departure — a requirement he set for himself personally since his first Hajj."
+        "role": "Operations Manager",
+        "tag": "The organizer",
+        "bio": "Ibrahima coordinates groups, flights and accommodations. Rigorous and attentive, he ensures every pilgrim departs and returns in the best conditions.",
+        "bio2": "His field experience and knowledge of COHO procedures guarantee serious follow-up on every file, from first contact to return to Niamey."
       }
     ],
     "quoteText": "Accompanying a pilgrim to the House of God is a sacred responsibility. We carry it with faith and humility.",
@@ -191,29 +253,60 @@
     "valuesLabel": "WHAT GUIDES US",
     "valuesTitle": "Our core values",
     "values": [
-      { "title": "Trust", "desc": "Full transparency on prices, services and the journey schedule. No unpleasant surprises." },
-      { "title": "Kindness", "desc": "Human accompaniment, attentive to the elderly and first departures. No one is left alone." },
-      { "title": "Excellence", "desc": "Carefully selected services, worthy of the sacredness of the pilgrimage to the Holy Land." },
-      { "title": "Proximity", "desc": "A local team, reachable and present before, during and after the journey. Always listening to you." }
+      {
+        "title": "Trust",
+        "desc": "Full transparency on prices, services and the journey schedule. No unpleasant surprises."
+      },
+      {
+        "title": "Kindness",
+        "desc": "Human accompaniment, attentive to the elderly and first departures. No one is left alone."
+      },
+      {
+        "title": "Excellence",
+        "desc": "Carefully selected services, worthy of the sacredness of the pilgrimage to the Holy Land."
+      },
+      {
+        "title": "Proximity",
+        "desc": "A local team, reachable and present before, during and after the journey. Always listening to you."
+      }
     ],
     "timelineLabel": "TIMELINE",
     "timelineTitle": "Key milestones",
     "timeline": [
-      { "year": "1998", "title": "The calling", "desc": "El Hadj Moussa Abdou accompanies his first pilgrims to Mecca. A life mission begins." },
-      { "year": "2005", "title": "First caravans", "desc": "Structuring of the first Hajj and Umrah groups. The agency establishes its first hotel partnerships in Makkah and Medina." },
-      { "year": "2010", "title": "Regional expansion", "desc": "Hajj et Oumra ZAM becomes a reference for pilgrims from Niger, Burkina Faso and Mali." },
-      { "year": "2018", "title": "Official COHO accreditation", "desc": "Obtaining accreditation No. NE-2018-0421. A decisive milestone that confirms the seriousness and legitimacy of the agency." },
-      { "year": "2022", "title": "1,000 pilgrims accompanied", "desc": "Crossing the symbolic milestone of 1,000 pilgrims. Each return is a source of pride and a renewed commitment." },
-      { "year": "2024", "title": "Digital platform", "desc": "Launch of the Hajj et Oumra ZAM digital portal to book, track files and prepare your pilgrimage from Niamey." }
+      {
+        "year": "2020",
+        "title": "Agency founded",
+        "desc": "Creation of Hajj et Oumra ZAM in Niamey, Yantala Tchini Habou district. First office, first registrations."
+      },
+      {
+        "year": "2022",
+        "title": "First Hajj & Umrah groups",
+        "desc": "Organization of first official groups. Pilgrims place their trust in ZAM for their journey to the Holy Land."
+      },
+      {
+        "year": "2023",
+        "title": "Official COHO accreditation",
+        "desc": "Obtaining COHO accreditation (Niger Hajj and Umrah Organization) — official recognition of the agency's credibility."
+      },
+      {
+        "year": "2024",
+        "title": "Opening in Tahoua",
+        "desc": "Agency expansion with a new office in Tahoua to be closer to pilgrims from inland Niger."
+      },
+      {
+        "year": "2025",
+        "title": "Digital platform",
+        "desc": "Launch of the Hajj et Oumra ZAM portal to book, track your file and prepare your pilgrimage online."
+      }
     ],
     "galleryLabel": "IN PICTURES",
     "galleryTitle": "Pilgrimage moments",
     "galleryAlt": "Pilgrimage",
     "accreditationsLabel": "OUR ACCREDITATIONS",
-    "accreditationsText": "COHO accredited No. NE-2018-0421 · IATA affiliated · Recognized by the Saudi Ministry of Hajj",
+    "accreditationsText": "COHO accredited · IATA affiliated · Recognized by the Saudi Ministry of Hajj",
     "ctaLabel": "JOIN OUR FAMILY",
-    "ctaTitle": "Experience this exceptional journey",
-    "ctaText": "Join the many families who have trusted us for their Hajj and Umrah.",
+    "ctaTitle": "Ready to accomplish your pilgrimage?",
+    "ctaText": "Contact us to learn more about our Hajj and Umrah packages — we are here to guide you.",
     "ctaOffers": "See offers",
     "ctaContact": "Contact us",
     "breadHome": "Home"
@@ -325,13 +418,13 @@
     "subtitle": "Your trusted partner for pilgrimage",
     "accreditation": "COHO Accreditation No. NE-2018-0421",
     "group": "Hajj et Oumra ZAM — COHO accredited since 2018",
-    "address": "Yantalla District, BP 919, Niamey, Niger",
-    "phone1": "+227 96 96 39 61",
-    "phone2": "+227 96 87 27 87",
+    "address": "Yantala Tchini Habou, Niamey, Niger",
+    "phone1": "+227 91 88 21 21",
+    "phone2": "+227 96 46 91 77",
     "missionTitle": "Our mission",
     "missionText": "Hajj et Oumra ZAM is a travel agency specializing in organizing Hajj and Umrah. Our mission is to accompany each pilgrim on their spiritual journey with professionalism, transparency and serenity.",
     "historyTitle": "Our history",
-    "historyText": "Active since 1998, Hajj et Oumra ZAM has been accompanying Nigerien pilgrims to the Holy Land for over 25 years. COHO accredited (accreditation No. NE-2018-0421), our agency has established itself as a reference in Hajj and Umrah organization in Niger.",
+    "historyText": "Founded in 2020, Hajj et Oumra ZAM accompanies Nigerien pilgrims to the Holy Land. COHO accredited, our agency is a reference in Hajj and Umrah organization in Niger.",
     "contactTitle": "Contact information",
     "statsYear": "First year of activity",
     "statsPilgrims": "+1,000 Pilgrims accompanied",
@@ -362,18 +455,54 @@
     "translationLabel": "Translation",
     "filterAll": "All",
     "toc": [
-      { "id": "intro",       "label": "Introduction to types of pilgrimage" },
-      { "id": "oumra",       "label": "What is Umrah?" },
-      { "id": "rites-oumra", "label": "Umrah rituals" },
-      { "id": "hadj",        "label": "What is Hajj?" },
-      { "id": "rites-hadj",  "label": "Hajj rites" },
-      { "id": "duas",        "label": "Du'as & Supplications" },
-      { "id": "conclusion",  "label": "Conclusion" }
+      {
+        "id": "intro",
+        "label": "Introduction to types of pilgrimage"
+      },
+      {
+        "id": "oumra",
+        "label": "What is Umrah?"
+      },
+      {
+        "id": "rites-oumra",
+        "label": "Umrah rituals"
+      },
+      {
+        "id": "hadj",
+        "label": "What is Hajj?"
+      },
+      {
+        "id": "rites-hadj",
+        "label": "Hajj rites"
+      },
+      {
+        "id": "duas",
+        "label": "Du'as & Supplications"
+      },
+      {
+        "id": "conclusion",
+        "label": "Conclusion"
+      }
     ],
     "pilgrimages": [
-      { "title": "Hajj Tamattu'", "arabic": "حج التمتع", "desc": "Perform Umrah then Hajj separately during the same trip. This is the most common form for foreign pilgrims.",                                                                                                                                     "badge": "Most common" },
-      { "title": "Hajj Ifrad",    "arabic": "حج الإفراد", "desc": "Perform only Hajj, without Umrah in the same trip. The state of Ihram is maintained from the Miqat until the Hajj rites.",                                                                                                                                "badge": "" },
-      { "title": "Hajj Qiran",    "arabic": "حج القران",  "desc": "Combine Umrah and Hajj in a single continuous Ihram. The pilgrim performs the rites of both pilgrimages without exiting the sacred state between them.",                                                                                                    "badge": "" }
+      {
+        "title": "Hajj Tamattu'",
+        "arabic": "حج التمتع",
+        "desc": "Perform Umrah then Hajj separately during the same trip. This is the most common form for foreign pilgrims.",
+        "badge": "Most common"
+      },
+      {
+        "title": "Hajj Ifrad",
+        "arabic": "حج الإفراد",
+        "desc": "Perform only Hajj, without Umrah in the same trip. The state of Ihram is maintained from the Miqat until the Hajj rites.",
+        "badge": ""
+      },
+      {
+        "title": "Hajj Qiran",
+        "arabic": "حج القران",
+        "desc": "Combine Umrah and Hajj in a single continuous Ihram. The pilgrim performs the rites of both pilgrimages without exiting the sacred state between them.",
+        "badge": ""
+      }
     ],
     "introTitle": "Introduction to types of pilgrimage",
     "introDesc": "Islamic pilgrimage mainly takes two forms: Umrah (the lesser pilgrimage, performable at any time of year) and Hajj (the major pilgrimage, fifth pillar of Islam). Hajj itself can be performed in three ways:",
@@ -382,18 +511,59 @@
     "oumraSectionDesc2": "The Prophet ﷺ said: 'From one Umrah to the next is expiation for what comes between them, and an accepted Hajj has no reward except Paradise.'",
     "oumraSectionHadithSource": "(Al-Bukhari and Muslim)",
     "oumraActsTitle": "The 4 acts of Umrah:",
-    "oumraActs": ["Ihram", "Tawaf (7 rounds)", "Sa'i (7 back and forth)", "Tahallul (shaving)"],
+    "oumraActs": [
+      "Ihram",
+      "Tawaf (7 rounds)",
+      "Sa'i (7 back and forth)",
+      "Tahallul (shaving)"
+    ],
     "oumraRitualsTitle": "Umrah rituals",
     "oumraRituals": [
-      { "step": 1, "title": "Preparation for consecration (Ihram)",           "content": "Before entering Ihram, it is recommended to purify oneself: purification bath (Ghusl), trimming nails, removing excess hair. For men, it is advised to apply perfume before donning the Ihram garments." },
-      { "step": 2, "title": "Consecration garments",                           "content": "For men: two pieces of unsewn white cloth — the Izar (lower piece wrapped around the waist) and the Rida (upper piece draped over the shoulders). Sandals are permitted. For women: usual covering garments, without covering the face or hands." },
-      { "step": 3, "title": "Departure to Mecca — the Miqat",                 "content": "The Miqat is the mandatory crossing point to enter Ihram. For pilgrims from Medina, the Miqat is Dhu al-Hulayfah. There one formulates the intention for Umrah and pronounces the Talbiyah." },
-      { "step": 4, "title": "The Talbiyah",                                     "content": "After the intention, one pronounces: 'Labbayk Allahumma labbayk, labbayk la sharika laka labbayk, innal hamda wan ni'mata laka wal mulk, la sharika lak.' (Here I am, O Allah, here I am!)" },
-      { "step": 5, "title": "Prohibitions during Ihram",                       "content": "For all: cutting hair or nails, using perfume, getting married, conjugal relations, hunting. Additionally for men: covering the head, wearing sewn clothes. For women: covering the face." },
-      { "step": 6, "title": "Arrival in Mecca — First sight of the Ka'bah",   "content": "Upon seeing the Ka'bah for the first time, it is recommended to raise one's hands and make supplications. Some scholars advise saying: 'Allahumma zid hadhâl bayta tashrifan wa ta'dhiman wa takriman wa mahâbatan.'" },
-      { "step": 7, "title": "The Tawaf",                                        "content": "Circumambulation around the Ka'bah 7 times counterclockwise, starting and ending at the Black Stone (Hajar al-Aswad). Begin with Istilam (touching or greeting the Black Stone), then complete 7 circuits reciting supplications." },
-      { "step": 8, "title": "The Sa'i between Safa and Marwa",                 "content": "Seven back-and-forth walks between the hills of Safa and Marwa, commemorating the run of Hajar (Hagar), wife of Ibrahim (Abraham), in search of water for her son Ismail. Begin at Safa and end at Marwa." },
-      { "step": 9, "title": "End of Umrah — Tahallul",                         "content": "After Sa'i, one exits Ihram by completely shaving the head (Halq) or shortening the hair (Taqsir). Shaving is preferable for men. After this, all Ihram prohibitions are lifted." }
+      {
+        "step": 1,
+        "title": "Preparation for consecration (Ihram)",
+        "content": "Before entering Ihram, it is recommended to purify oneself: purification bath (Ghusl), trimming nails, removing excess hair. For men, it is advised to apply perfume before donning the Ihram garments."
+      },
+      {
+        "step": 2,
+        "title": "Consecration garments",
+        "content": "For men: two pieces of unsewn white cloth — the Izar (lower piece wrapped around the waist) and the Rida (upper piece draped over the shoulders). Sandals are permitted. For women: usual covering garments, without covering the face or hands."
+      },
+      {
+        "step": 3,
+        "title": "Departure to Mecca — the Miqat",
+        "content": "The Miqat is the mandatory crossing point to enter Ihram. For pilgrims from Medina, the Miqat is Dhu al-Hulayfah. There one formulates the intention for Umrah and pronounces the Talbiyah."
+      },
+      {
+        "step": 4,
+        "title": "The Talbiyah",
+        "content": "After the intention, one pronounces: 'Labbayk Allahumma labbayk, labbayk la sharika laka labbayk, innal hamda wan ni'mata laka wal mulk, la sharika lak.' (Here I am, O Allah, here I am!)"
+      },
+      {
+        "step": 5,
+        "title": "Prohibitions during Ihram",
+        "content": "For all: cutting hair or nails, using perfume, getting married, conjugal relations, hunting. Additionally for men: covering the head, wearing sewn clothes. For women: covering the face."
+      },
+      {
+        "step": 6,
+        "title": "Arrival in Mecca — First sight of the Ka'bah",
+        "content": "Upon seeing the Ka'bah for the first time, it is recommended to raise one's hands and make supplications. Some scholars advise saying: 'Allahumma zid hadhâl bayta tashrifan wa ta'dhiman wa takriman wa mahâbatan.'"
+      },
+      {
+        "step": 7,
+        "title": "The Tawaf",
+        "content": "Circumambulation around the Ka'bah 7 times counterclockwise, starting and ending at the Black Stone (Hajar al-Aswad). Begin with Istilam (touching or greeting the Black Stone), then complete 7 circuits reciting supplications."
+      },
+      {
+        "step": 8,
+        "title": "The Sa'i between Safa and Marwa",
+        "content": "Seven back-and-forth walks between the hills of Safa and Marwa, commemorating the run of Hajar (Hagar), wife of Ibrahim (Abraham), in search of water for her son Ismail. Begin at Safa and end at Marwa."
+      },
+      {
+        "step": 9,
+        "title": "End of Umrah — Tahallul",
+        "content": "After Sa'i, one exits Ihram by completely shaving the head (Halq) or shortening the hair (Taqsir). Shaving is preferable for men. After this, all Ihram prohibitions are lifted."
+      }
     ],
     "hajjSectionTitle": "What is Hajj?",
     "hajjSectionDesc1": "Hajj is the fifth pillar of Islam. It is obligatory once in a lifetime for every adult Muslim who is of sound mind and has the physical and financial means. It takes place from the 8th to 13th of Dhu al-Hijjah.",
@@ -402,32 +572,169 @@
     "hajjVerseTr": "'And [due] to Allah from the people is a pilgrimage to the House — for whoever is able to find thereto a way.' (Surah Al-Imran, 3:97)",
     "hajjRitualsTitle": "Hajj rites",
     "hajjDays": [
-      { "day": "8 Dhu al-Hijjah",    "title": "Yawm al-Tarwiyah — Departure to Mina",  "content": "On the morning of the 8th, the pilgrim enters Ihram from their place of residence in Mecca. They then depart to Mina to spend the day and night, performing Dhuhr, Asr, Maghrib, Isha and Fajr prayers (each at their proper time, shortened but not combined)." },
-      { "day": "9 Dhu al-Hijjah",    "title": "Yawm Arafah — The pillar of Hajj",      "content": "This is the most important day of Hajj. After Fajr prayer, pilgrims head to Arafat. They combine and shorten Dhuhr and Asr prayers, then stand at Arafat until sunset, supplicating Allah. 'Hajj is Arafat.'" },
-      { "day": "Night in Muzdalifah","title": "Collecting pebbles",                      "content": "After sunset, pilgrims head to Muzdalifah where they combine Maghrib and Isha prayers. They spend the night and collect pebbles for the stoning the next day (minimum 49 pebbles the size of a chickpea)." },
-      { "day": "10 Dhu al-Hijjah",   "title": "Yawm al-Nahr — Day of sacrifice",       "content": "This day involves 4 acts in order: 1) Stoning the large Jamarat with 7 pebbles. 2) Sacrificing an animal. 3) Shaving or shortening hair (first partial desacralization). 4) Tawaf al-Ifadah and Sa'i (complete desacralization)." },
-      { "day": "11-13 Dhu al-Hijjah","title": "Days of Tashriq — Mina",                "content": "Pilgrims return to Mina to spend the nights. Each day after Dhuhr, they stone the three Jamarats (small, medium, large) with 7 pebbles each. It is permitted to leave Mina after the 12th stoning before sunset (early departure)." },
-      { "day": "Before departure",   "title": "Tawaf al-Wada' — The farewell",         "content": "Before leaving Mecca, each pilgrim must perform the farewell Tawaf (7 circumambulations around the Ka'bah). This is the last act of Hajj. Women in their menstrual period are exempt." }
+      {
+        "day": "8 Dhu al-Hijjah",
+        "title": "Yawm al-Tarwiyah — Departure to Mina",
+        "content": "On the morning of the 8th, the pilgrim enters Ihram from their place of residence in Mecca. They then depart to Mina to spend the day and night, performing Dhuhr, Asr, Maghrib, Isha and Fajr prayers (each at their proper time, shortened but not combined)."
+      },
+      {
+        "day": "9 Dhu al-Hijjah",
+        "title": "Yawm Arafah — The pillar of Hajj",
+        "content": "This is the most important day of Hajj. After Fajr prayer, pilgrims head to Arafat. They combine and shorten Dhuhr and Asr prayers, then stand at Arafat until sunset, supplicating Allah. 'Hajj is Arafat.'"
+      },
+      {
+        "day": "Night in Muzdalifah",
+        "title": "Collecting pebbles",
+        "content": "After sunset, pilgrims head to Muzdalifah where they combine Maghrib and Isha prayers. They spend the night and collect pebbles for the stoning the next day (minimum 49 pebbles the size of a chickpea)."
+      },
+      {
+        "day": "10 Dhu al-Hijjah",
+        "title": "Yawm al-Nahr — Day of sacrifice",
+        "content": "This day involves 4 acts in order: 1) Stoning the large Jamarat with 7 pebbles. 2) Sacrificing an animal. 3) Shaving or shortening hair (first partial desacralization). 4) Tawaf al-Ifadah and Sa'i (complete desacralization)."
+      },
+      {
+        "day": "11-13 Dhu al-Hijjah",
+        "title": "Days of Tashriq — Mina",
+        "content": "Pilgrims return to Mina to spend the nights. Each day after Dhuhr, they stone the three Jamarats (small, medium, large) with 7 pebbles each. It is permitted to leave Mina after the 12th stoning before sunset (early departure)."
+      },
+      {
+        "day": "Before departure",
+        "title": "Tawaf al-Wada' — The farewell",
+        "content": "Before leaving Mecca, each pilgrim must perform the farewell Tawaf (7 circumambulations around the Ka'bah). This is the last act of Hajj. Women in their menstrual period are exempt."
+      }
     ],
     "duasTitle": "Du'as & Supplications",
     "duasDesc": "Essential supplications for the pilgrim, step by step — in Arabic, phonetics and translation.",
-    "duaCategories": ["All", "Travel", "Mosque", "Medina", "Umrah & Hajj", "Hajj"],
+    "duaCategories": [
+      "All",
+      "Travel",
+      "Mosque",
+      "Medina",
+      "Umrah & Hajj",
+      "Hajj"
+    ],
     "duas": [
-      { "id": "dua-voyageur",      "category": "Travel",       "title": "Supplication for the traveller (for the one staying behind)", "arabic": "استودعكم الله الذي لا تضيع ودائعه",                                                                                                    "phonetic": "Astawdi'ukoumoul-Lâhoul Lazî Lâ toudîou Wadâ'i'ahou",                                                                                                       "translation": "I entrust you to Allah, the One Whose deposits are never lost." },
-      { "id": "dua-sortie-maison", "category": "Travel",       "title": "Supplication upon leaving the house",                        "arabic": "بسم الله، توكلت على الله، لا حول ولا قوة إلا بالله",                                                                                         "phonetic": "Bismillâhi, Tawakaltou Alalâhi, Lâ hawla walâ qouwwata Illâ billâhi.",                                                                                       "translation": "In the name of Allah. I put my trust in Allah. There is no might and no power except with Allah." },
-      { "id": "dua-voyage",        "category": "Travel",       "title": "Supplication for travel (upon the mount)",                   "arabic": "سبحان الذي سخر لنا هذا وما كنا له مقرنين",                                                                                                   "phonetic": "Soubhânallazî sakhara lanâ hâzâ wa mâ kounnâ lahoû mouqrinîna.",                                                                                             "translation": "Glory to Him Who has subjected this to us, and we could never have it by our efforts, and to our Lord we surely must return." },
-      { "id": "dua-entree-mosquee","category": "Mosque",       "title": "Supplication upon entering the mosque",                      "arabic": "اللهم افتح لي أبواب رحمتك",                                                                                                                  "phonetic": "Bismillâhi was'salâtou wassalâmou alâ rasoûlilâhi, allâhoumma iftah lî abwâba rahmatika.",                                                                   "translation": "In the name of Allah, peace and blessings be upon the Messenger of Allah. O Allah, open for me the doors of Your mercy." },
-      { "id": "dua-sortie-mosquee","category": "Mosque",       "title": "Supplication upon leaving the mosque",                       "arabic": "اللهم أسألك من فضلك",                                                                                                                       "phonetic": "Bismillâhi, was'salâtou wassalâmou alâ rasoûlilâhi. Allâhoumma asalouka min fadlika.",                                                                       "translation": "In the name of Allah, peace and blessings be upon the Messenger of Allah. O Allah, I ask of You from Your bounty." },
-      { "id": "dua-tombe-prophete","category": "Medina",       "title": "What to say at the tomb of the Prophet ﷺ",                   "arabic": "السلام عليك أيها النبي ورحمة الله وبركاته",                                                                                                  "phonetic": "Assalâmou alyka ayyouhan'nabiyyou warahamatoullâhi wa barakâtouhou.",                                                                                         "translation": "Peace, mercy and blessings of Allah be upon you, O Prophet!" },
-      { "id": "dua-cimetiere",     "category": "Medina",       "title": "Supplication when visiting the cemetery (Al-Baqi')",         "arabic": "السلام عليكم أهل الديار، من المؤمنين والمسلمين",                                                                                             "phonetic": "Assalâmou alaykoum Ahlad-diyâri, minal-Mou'minîna walmouslimâ.",                                                                                             "translation": "Peace be upon you, O inhabitants of these dwellings, believers and Muslims." },
-      { "id": "dua-ihram",         "category": "Umrah & Hajj", "title": "The Talbiyah — What to say when entering Ihram",            "arabic": "لبيك اللهم لبيك، لبيك لا شريك لك لبيك، إن الحمد والنعمة لك والملك لا شريك لك",                                                               "phonetic": "Labbaykal-lâhoumma labbayka, Labbayka lâ charîka laka labbayka.",                                                                                            "translation": "Here I am, O Allah, here I am! Here I am, You have no partner, here I am! Praise, grace and sovereignty belong to You. You have no partner.", "highlight": true },
-      { "id": "dua-tawaf",         "category": "Umrah & Hajj", "title": "What to say at the beginning of Tawaf",                     "arabic": "بسم الله، والله أكبر، اللهم إيمانا بك",                                                                                                    "phonetic": "Bismillâhi, wal-lâhou akbar, Allâhoumma îmânan bika.",                                                                                                       "translation": "In the name of Allah, Allah is the Greatest. O Allah, with faith in You and trust in Your Book." },
-      { "id": "dua-yamani",        "category": "Umrah & Hajj", "title": "Supplication between the Yemeni corner and the Black Stone", "arabic": "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار",                                                                                   "phonetic": "Rabbanâ âtinâ fiddouniyâ hassanatan wa fil âkhirati hassanatan waqinâ azâbannâri.",                                                                           "translation": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire." },
-      { "id": "dua-maqam-ibrahim", "category": "Umrah & Hajj", "title": "Supplication at the Station of Ibrahim",                    "arabic": "واتخذوا من مقام إبراهيم مصلى",                                                                                                              "phonetic": "Wattakhazoû min maqâmi Ibrâhîma mousallâ.",                                                                                                                   "translation": "And take the Station of Ibrahim as a place of prayer. (Surah Al-Baqarah, 2:125)" },
-      { "id": "dua-zamzam",        "category": "Umrah & Hajj", "title": "Supplication for drinking Zamzam water",                    "arabic": "بسم الله",                                                                                                                                   "phonetic": "Bismillâhi (then make your own supplications).",                                                                                                             "translation": "In the name of Allah. Then make your own supplications while drinking." },
-      { "id": "dua-safa",          "category": "Umrah & Hajj", "title": "Supplication on Mount Safa (and Marwa)",                    "arabic": "الله أكبر، الله أكبر، الله أكبر — لا إله إلا الله وحده لا شريك له",                                                                          "phonetic": "Allâhou Akbar (3×), lâ ilâha illal'lâhou wahadahou lâ charîka lahou.",                                                                                       "translation": "Allah is the Greatest (3×). There is no deity but Allah, Alone, without partner. To Him belongs sovereignty and all praise, and He is over all things capable." },
-      { "id": "dua-arafat",        "category": "Hajj",         "title": "Supplication on the Day of Arafah",                         "arabic": "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد",                                                                                        "phonetic": "lâ ilâha illal'lâhou wahadahou lâ charîka lahou, lahoul'moulkou wa lahoul'hamdou.",                                                                          "translation": "There is no deity but Allah, Alone, without partner. To Him belongs sovereignty and praise, and He is over all things capable." },
-      { "id": "dua-jamarat",       "category": "Hajj",         "title": "What to say during the stoning of the Jamarats",            "arabic": "بسم الله، الله أكبر",                                                                                                                        "phonetic": "Bismillâhi, Allâhou Akbar.",                                                                                                                                  "translation": "In the name of Allah, Allah is the Greatest. (To be said with each pebble thrown.)" }
+      {
+        "id": "dua-voyageur",
+        "category": "Travel",
+        "title": "Supplication for the traveller (for the one staying behind)",
+        "arabic": "استودعكم الله الذي لا تضيع ودائعه",
+        "phonetic": "Astawdi'ukoumoul-Lâhoul Lazî Lâ toudîou Wadâ'i'ahou",
+        "translation": "I entrust you to Allah, the One Whose deposits are never lost."
+      },
+      {
+        "id": "dua-sortie-maison",
+        "category": "Travel",
+        "title": "Supplication upon leaving the house",
+        "arabic": "بسم الله، توكلت على الله، لا حول ولا قوة إلا بالله",
+        "phonetic": "Bismillâhi, Tawakaltou Alalâhi, Lâ hawla walâ qouwwata Illâ billâhi.",
+        "translation": "In the name of Allah. I put my trust in Allah. There is no might and no power except with Allah."
+      },
+      {
+        "id": "dua-voyage",
+        "category": "Travel",
+        "title": "Supplication for travel (upon the mount)",
+        "arabic": "سبحان الذي سخر لنا هذا وما كنا له مقرنين",
+        "phonetic": "Soubhânallazî sakhara lanâ hâzâ wa mâ kounnâ lahoû mouqrinîna.",
+        "translation": "Glory to Him Who has subjected this to us, and we could never have it by our efforts, and to our Lord we surely must return."
+      },
+      {
+        "id": "dua-entree-mosquee",
+        "category": "Mosque",
+        "title": "Supplication upon entering the mosque",
+        "arabic": "اللهم افتح لي أبواب رحمتك",
+        "phonetic": "Bismillâhi was'salâtou wassalâmou alâ rasoûlilâhi, allâhoumma iftah lî abwâba rahmatika.",
+        "translation": "In the name of Allah, peace and blessings be upon the Messenger of Allah. O Allah, open for me the doors of Your mercy."
+      },
+      {
+        "id": "dua-sortie-mosquee",
+        "category": "Mosque",
+        "title": "Supplication upon leaving the mosque",
+        "arabic": "اللهم أسألك من فضلك",
+        "phonetic": "Bismillâhi, was'salâtou wassalâmou alâ rasoûlilâhi. Allâhoumma asalouka min fadlika.",
+        "translation": "In the name of Allah, peace and blessings be upon the Messenger of Allah. O Allah, I ask of You from Your bounty."
+      },
+      {
+        "id": "dua-tombe-prophete",
+        "category": "Medina",
+        "title": "What to say at the tomb of the Prophet ﷺ",
+        "arabic": "السلام عليك أيها النبي ورحمة الله وبركاته",
+        "phonetic": "Assalâmou alyka ayyouhan'nabiyyou warahamatoullâhi wa barakâtouhou.",
+        "translation": "Peace, mercy and blessings of Allah be upon you, O Prophet!"
+      },
+      {
+        "id": "dua-cimetiere",
+        "category": "Medina",
+        "title": "Supplication when visiting the cemetery (Al-Baqi')",
+        "arabic": "السلام عليكم أهل الديار، من المؤمنين والمسلمين",
+        "phonetic": "Assalâmou alaykoum Ahlad-diyâri, minal-Mou'minîna walmouslimâ.",
+        "translation": "Peace be upon you, O inhabitants of these dwellings, believers and Muslims."
+      },
+      {
+        "id": "dua-ihram",
+        "category": "Umrah & Hajj",
+        "title": "The Talbiyah — What to say when entering Ihram",
+        "arabic": "لبيك اللهم لبيك، لبيك لا شريك لك لبيك، إن الحمد والنعمة لك والملك لا شريك لك",
+        "phonetic": "Labbaykal-lâhoumma labbayka, Labbayka lâ charîka laka labbayka.",
+        "translation": "Here I am, O Allah, here I am! Here I am, You have no partner, here I am! Praise, grace and sovereignty belong to You. You have no partner.",
+        "highlight": true
+      },
+      {
+        "id": "dua-tawaf",
+        "category": "Umrah & Hajj",
+        "title": "What to say at the beginning of Tawaf",
+        "arabic": "بسم الله، والله أكبر، اللهم إيمانا بك",
+        "phonetic": "Bismillâhi, wal-lâhou akbar, Allâhoumma îmânan bika.",
+        "translation": "In the name of Allah, Allah is the Greatest. O Allah, with faith in You and trust in Your Book."
+      },
+      {
+        "id": "dua-yamani",
+        "category": "Umrah & Hajj",
+        "title": "Supplication between the Yemeni corner and the Black Stone",
+        "arabic": "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار",
+        "phonetic": "Rabbanâ âtinâ fiddouniyâ hassanatan wa fil âkhirati hassanatan waqinâ azâbannâri.",
+        "translation": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire."
+      },
+      {
+        "id": "dua-maqam-ibrahim",
+        "category": "Umrah & Hajj",
+        "title": "Supplication at the Station of Ibrahim",
+        "arabic": "واتخذوا من مقام إبراهيم مصلى",
+        "phonetic": "Wattakhazoû min maqâmi Ibrâhîma mousallâ.",
+        "translation": "And take the Station of Ibrahim as a place of prayer. (Surah Al-Baqarah, 2:125)"
+      },
+      {
+        "id": "dua-zamzam",
+        "category": "Umrah & Hajj",
+        "title": "Supplication for drinking Zamzam water",
+        "arabic": "بسم الله",
+        "phonetic": "Bismillâhi (then make your own supplications).",
+        "translation": "In the name of Allah. Then make your own supplications while drinking."
+      },
+      {
+        "id": "dua-safa",
+        "category": "Umrah & Hajj",
+        "title": "Supplication on Mount Safa (and Marwa)",
+        "arabic": "الله أكبر، الله أكبر، الله أكبر — لا إله إلا الله وحده لا شريك له",
+        "phonetic": "Allâhou Akbar (3×), lâ ilâha illal'lâhou wahadahou lâ charîka lahou.",
+        "translation": "Allah is the Greatest (3×). There is no deity but Allah, Alone, without partner. To Him belongs sovereignty and all praise, and He is over all things capable."
+      },
+      {
+        "id": "dua-arafat",
+        "category": "Hajj",
+        "title": "Supplication on the Day of Arafah",
+        "arabic": "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد",
+        "phonetic": "lâ ilâha illal'lâhou wahadahou lâ charîka lahou, lahoul'moulkou wa lahoul'hamdou.",
+        "translation": "There is no deity but Allah, Alone, without partner. To Him belongs sovereignty and praise, and He is over all things capable."
+      },
+      {
+        "id": "dua-jamarat",
+        "category": "Hajj",
+        "title": "What to say during the stoning of the Jamarats",
+        "arabic": "بسم الله، الله أكبر",
+        "phonetic": "Bismillâhi, Allâhou Akbar.",
+        "translation": "In the name of Allah, Allah is the Greatest. (To be said with each pebble thrown.)"
+      }
     ],
     "conclusionTitle": "Conclusion",
     "conclusionText1": "Thus end the rites of Hajj. May Allah accept the pilgrimage of all the faithful and grant them His mercy. All praise belongs to Allah, Lord of the Worlds.",
@@ -440,10 +747,22 @@
     "toolDuasTitle": "Du'as & Supplications",
     "toolDuasDesc": "Essential supplications",
     "hajjSchedule": [
-      { "label": "8 Dhul Hijja", "value": "Mina" },
-      { "label": "9 Dhul Hijja", "value": "Arafat" },
-      { "label": "Night", "value": "Muzdalifa" },
-      { "label": "10-13 Dhul Hijja", "value": "Mina + Mecca" }
+      {
+        "label": "8 Dhul Hijja",
+        "value": "Mina"
+      },
+      {
+        "label": "9 Dhul Hijja",
+        "value": "Arafat"
+      },
+      {
+        "label": "Night",
+        "value": "Muzdalifa"
+      },
+      {
+        "label": "10-13 Dhul Hijja",
+        "value": "Mina + Mecca"
+      }
     ]
   },
   "contact": {
@@ -493,7 +812,7 @@
     "toolsLink4": "Supplications / Du'as"
   },
   "footer": {
-    "tagline": "Your trusted agency for Hajj and Umrah since 1998",
+    "tagline": "Your trusted agency for Hajj and Umrah since 2020",
     "brandDesc": "Agency specializing in organizing Hajj and Umrah packages tailored to pilgrims' needs. Hajj et Oumra ZAM means trust.",
     "newsletter": "Newsletter",
     "newsletterPitch": "Be the first to know about our upcoming departures",
@@ -578,7 +897,10 @@
     "distanceUnit": "km",
     "recalculate": "Recalculate",
     "retry": "Try again",
-    "compassN": "N", "compassS": "S", "compassO": "W", "compassE": "E"
+    "compassN": "N",
+    "compassS": "S",
+    "compassO": "W",
+    "compassE": "E"
   },
   "coran": {
     "toolsLabel": "PILGRIM TOOLS",
@@ -605,5 +927,464 @@
     "recitation": "Recitation",
     "listenVerse": "Listen to this verse",
     "verseLabel": "Verse"
+  },
+  "offersData": {
+    "oumra-aout-2026": {
+      "title": "Umrah August 2026",
+      "subtitle": "All-inclusive Umrah",
+      "badge": "Available",
+      "duration": "19 days",
+      "departure": "August 4, 2026",
+      "returnDate": "August 23, 2026",
+      "highlights": [
+        {
+          "icon": "🕌",
+          "label": "Duration",
+          "value": "19 days"
+        },
+        {
+          "icon": "🏨",
+          "label": "Accommodation",
+          "value": "4 nights Madinah · 15 nights Makkah"
+        },
+        {
+          "icon": "✈️",
+          "label": "Flight",
+          "value": "Turkish Airlines"
+        },
+        {
+          "icon": "👤",
+          "label": "Guide",
+          "value": "Experienced guide included"
+        }
+      ],
+      "hotels": [
+        {
+          "city": "Madinah",
+          "distance": "~170 m from the mosque",
+          "pension": "Not included"
+        },
+        {
+          "city": "Makkah",
+          "distance": "~600 m from the Haram",
+          "pension": "Not included"
+        }
+      ],
+      "flights": [
+        {
+          "direction": "Outbound",
+          "from": "Niamey (NIM)",
+          "to": "Madinah (MED)",
+          "stopover": "Istanbul stopover"
+        },
+        {
+          "direction": "Return",
+          "from": "Madinah (MED)",
+          "to": "Niamey (NIM)",
+          "stopover": "Istanbul stopover"
+        }
+      ],
+      "pricing": [
+        {
+          "label": "Quad room",
+          "sublabel": "per adult"
+        },
+        {
+          "label": "Double room",
+          "sublabel": "per person (couple)"
+        },
+        {
+          "label": "Child",
+          "sublabel": "2 to 12 years"
+        },
+        {
+          "label": "Baby",
+          "sublabel": "0 to 2 years"
+        }
+      ],
+      "program": [
+        {
+          "step": 1,
+          "title": "Departure from Niamey",
+          "content": "Group departure from Niamey with your documents, accompanied by our team. Boarding formalities handled."
+        },
+        {
+          "step": 2,
+          "title": "Stay in Madinah",
+          "content": "Upon arrival, an information meeting will explain the virtues of Madinah and the Prophet's Mosque ﷺ, with many practical tips."
+        },
+        {
+          "step": 3,
+          "title": "Visit to Rawda Sharifa",
+          "content": "Experience a unique spiritual moment visiting the Rawda Sharifa in the Prophet's Mosque ﷺ, considered one of the gardens of Paradise."
+        },
+        {
+          "step": 4,
+          "title": "Visit to Quba Mosque",
+          "content": "The Prophet ﷺ said: 'Whoever purifies himself at home, then goes to Quba and prays there will earn a reward equal to that of an Umrah.'"
+        },
+        {
+          "step": 5,
+          "title": "Visit to Mount Uhud",
+          "content": "Visit to Mount Uhud, an iconic site in Islamic history. It is recommended to visit the graves of the Martyrs of Uhud."
+        },
+        {
+          "step": 6,
+          "title": "Umrah Rituals",
+          "content": "You will perform the Umrah rituals (Tawaf, Sa'i), accompanied by your guide who will explain each step and support you throughout."
+        },
+        {
+          "step": 7,
+          "title": "Virtues of Makkah",
+          "content": "A lesson on the virtues of Makkah and practical information to make the most of your stay in the Holy City."
+        },
+        {
+          "step": 8,
+          "title": "Visit to Hajj sites",
+          "content": "Visit to Mina, Arafat, Muzdalifah and the Jamarat — places full of history and spirituality."
+        },
+        {
+          "step": 9,
+          "title": "Return to Niamey",
+          "content": "Your stay will end in sha Allah. Our organizers will provide all information for a smooth departure."
+        }
+      ],
+      "documents": [
+        {
+          "icon": "📘",
+          "title": "Passport",
+          "content": "Nigerien passport valid for at least 6 months after the return date."
+        },
+        {
+          "icon": "📷",
+          "title": "Identity photos",
+          "content": "Four (04) recent identity photos (with hijab for women)."
+        },
+        {
+          "icon": "💉",
+          "title": "Vaccinations",
+          "content": "Yellow fever and meningitis vaccination booklet required. Other vaccines may be added per Saudi regulations."
+        },
+        {
+          "icon": "💳",
+          "title": "Deposit",
+          "content": "Deposit of 500,000 FCFA upon booking (bank transfer, check or credit card)."
+        }
+      ],
+      "included": [
+        "Round-trip Turkish Airlines flight",
+        "Umrah visa",
+        "4 nights accommodation in Madinah",
+        "15 nights accommodation in Makkah",
+        "Airport ↔ hotel transfers",
+        "Religious guidance & guides",
+        "Preparatory rites courses",
+        "Guided visits (Rawda, Quba, Uhud…)"
+      ],
+      "notIncluded": [
+        "Meals (not included)",
+        "Personal expenses",
+        "Tips"
+      ]
+    },
+    "oumra-ramadan-2027": {
+      "title": "Umrah Ramadan 2027",
+      "subtitle": "All-inclusive Umrah",
+      "badge": "Coming soon",
+      "duration": "To be confirmed",
+      "departure": null,
+      "returnDate": null,
+      "highlights": [
+        {
+          "icon": "🌙",
+          "label": "Period",
+          "value": "Ramadan 2027"
+        },
+        {
+          "icon": "🏨",
+          "label": "Accommodation",
+          "value": "Madinah + Makkah"
+        },
+        {
+          "icon": "✈️",
+          "label": "Flight",
+          "value": "Niamey → Madinah"
+        },
+        {
+          "icon": "👤",
+          "label": "Guide",
+          "value": "Experienced guide included"
+        }
+      ],
+      "hotels": [
+        {
+          "city": "Madinah",
+          "distance": "~170 m from the mosque",
+          "pension": "Not included"
+        },
+        {
+          "city": "Makkah",
+          "distance": "~600 m from the Haram",
+          "pension": "Not included"
+        }
+      ],
+      "flights": [
+        {
+          "direction": "Outbound",
+          "from": "Niamey (NIM)",
+          "to": "Madinah (MED)",
+          "stopover": "Direct flight"
+        },
+        {
+          "direction": "Return",
+          "from": "Madinah (MED)",
+          "to": "Niamey (NIM)",
+          "stopover": "Direct flight"
+        }
+      ],
+      "pricing": [
+        {
+          "label": "Quad room",
+          "sublabel": "per adult"
+        },
+        {
+          "label": "Double room",
+          "sublabel": "per person (couple)"
+        },
+        {
+          "label": "Child",
+          "sublabel": "2 to 12 years"
+        },
+        {
+          "label": "Baby",
+          "sublabel": "0 to 2 years"
+        }
+      ],
+      "program": [
+        {
+          "step": 1,
+          "title": "Departure from Niamey",
+          "content": "Group departure from Niamey with your documents, accompanied by our team."
+        },
+        {
+          "step": 2,
+          "title": "Stay in Madinah",
+          "content": "Upon arrival, an information meeting will explain the virtues of Madinah and the Prophet's Mosque ﷺ."
+        },
+        {
+          "step": 3,
+          "title": "Visit to Rawda Sharifa",
+          "content": "Experience a unique spiritual moment visiting the Rawda Sharifa in the Prophet's Mosque ﷺ."
+        },
+        {
+          "step": 4,
+          "title": "Visit to Quba Mosque",
+          "content": "The Prophet ﷺ said: 'Whoever purifies himself at home, then goes to Quba and prays there will earn a reward equal to that of an Umrah.'"
+        },
+        {
+          "step": 5,
+          "title": "Visit to Mount Uhud",
+          "content": "Visit to Mount Uhud, an iconic site in Islamic history."
+        },
+        {
+          "step": 6,
+          "title": "Umrah Rituals",
+          "content": "You will perform the Umrah rituals (Tawaf, Sa'i), accompanied by your guide."
+        },
+        {
+          "step": 7,
+          "title": "Virtues of Makkah",
+          "content": "A lesson on the virtues of Makkah and practical information for your stay in the Holy City."
+        },
+        {
+          "step": 8,
+          "title": "Return to Niamey",
+          "content": "Your stay will end in sha Allah. Our organizers will provide all information for a smooth departure."
+        }
+      ],
+      "documents": [
+        {
+          "icon": "📘",
+          "title": "Passport",
+          "content": "Nigerien passport valid for at least 6 months after the return date."
+        },
+        {
+          "icon": "📷",
+          "title": "Identity photos",
+          "content": "Four (04) recent identity photos (with hijab for women)."
+        },
+        {
+          "icon": "💉",
+          "title": "Vaccinations",
+          "content": "Yellow fever and meningitis vaccination booklet required."
+        },
+        {
+          "icon": "💳",
+          "title": "Deposit",
+          "content": "Deposit of 500,000 FCFA upon booking (bank transfer, check or credit card)."
+        }
+      ],
+      "included": [
+        "Charter & regular flights",
+        "Umrah visa included",
+        "Complete medical coverage",
+        "Accommodation in Madinah (~170 m mosque)",
+        "Accommodation in Makkah (~600 m Haram)",
+        "Accompaniment and courses included",
+        "Experienced guides",
+        "Airport ↔ hotel transfers"
+      ],
+      "notIncluded": [
+        "Meals (not included)",
+        "Personal expenses",
+        "Tips"
+      ]
+    },
+    "hadj-2027": {
+      "title": "Hajj 2027",
+      "subtitle": "All-inclusive Hajj",
+      "badge": "Registrations open",
+      "duration": "To be confirmed",
+      "departure": null,
+      "returnDate": null,
+      "highlights": [
+        {
+          "icon": "🕋",
+          "label": "Type",
+          "value": "Official Hajj"
+        },
+        {
+          "icon": "🏨",
+          "label": "Accommodation",
+          "value": "Near the Haram"
+        },
+        {
+          "icon": "✈️",
+          "label": "Flight",
+          "value": "Niamey → Jeddah"
+        },
+        {
+          "icon": "👤",
+          "label": "Guide",
+          "value": "Full accompaniment"
+        }
+      ],
+      "hotels": [
+        {
+          "city": "Makkah",
+          "distance": "Near the Haram",
+          "pension": "Not included"
+        },
+        {
+          "city": "Madinah",
+          "distance": "Near the mosque",
+          "pension": "Not included"
+        }
+      ],
+      "flights": [
+        {
+          "direction": "Outbound",
+          "from": "Niamey (NIM)",
+          "to": "Jeddah (JED)",
+          "stopover": null
+        },
+        {
+          "direction": "Return",
+          "from": "Jeddah (JED)",
+          "to": "Niamey (NIM)",
+          "stopover": null
+        }
+      ],
+      "pricing": [
+        {
+          "label": "Adult",
+          "sublabel": "per person"
+        }
+      ],
+      "program": [
+        {
+          "step": 1,
+          "title": "Departure from Niamey",
+          "content": "Group departure from Niamey with your documents, accompanied by our team."
+        },
+        {
+          "step": 2,
+          "title": "Arrival in Makkah",
+          "content": "Hotel check-in. Information meeting on Hajj rituals, the virtues of Makkah and practical guidelines."
+        },
+        {
+          "step": 3,
+          "title": "Stay in Makkah — preliminary rites",
+          "content": "Prayers at the Grand Mosque, welcome Tawaf (Tawaf al-Qudum) and optional prayers."
+        },
+        {
+          "step": 4,
+          "title": "8 Dhul Hijja — Yawm at-Tarwiyah",
+          "content": "Departure to Mina for the overnight stay. Prayers and meditation in the tents of Mina."
+        },
+        {
+          "step": 5,
+          "title": "9 Dhul Hijja — Yawm Arafah",
+          "content": "The central pillar of Hajj. Stay at Arafah from noon until sunset for supplications and invocations."
+        },
+        {
+          "step": 6,
+          "title": "Muzdalifah & Jamarat",
+          "content": "Night at Muzdalifah, collecting pebbles, then stoning the Jamarat (symbolizing the rejection of Satan)."
+        },
+        {
+          "step": 7,
+          "title": "Stay in Madinah",
+          "content": "Visit to the Prophet's Mosque ﷺ, the Rawda Sharifa, Quba and Uhud."
+        },
+        {
+          "step": 8,
+          "title": "Return to Niamey",
+          "content": "End of stay in sha Allah. Organized departure in the best conditions."
+        }
+      ],
+      "documents": [
+        {
+          "icon": "📘",
+          "title": "Passport",
+          "content": "Nigerien passport valid for at least 6 months after the return date."
+        },
+        {
+          "icon": "📷",
+          "title": "Identity photos",
+          "content": "Four (04) recent identity photos (with hijab for women)."
+        },
+        {
+          "icon": "💉",
+          "title": "Vaccinations",
+          "content": "Yellow fever and meningitis vaccination booklet required."
+        },
+        {
+          "icon": "💳",
+          "title": "Deposit",
+          "content": "Deposit of 500,000 FCFA upon booking (bank transfer, check or credit card)."
+        },
+        {
+          "icon": "📋",
+          "title": "Hajj form",
+          "content": "Official Hajj registration form issued by COHO (Commissariat for Hajj and Umrah Organization of Niger)."
+        }
+      ],
+      "included": [
+        "Hajj visa",
+        "Round-trip flight",
+        "Accommodation near the Haram (Makkah)",
+        "Accommodation in Madinah",
+        "Mina tents",
+        "Religious guidance & guides",
+        "Local transfers and transport",
+        "COHO file preparation"
+      ],
+      "notIncluded": [
+        "Meals (not included)",
+        "Personal expenses",
+        "Tips"
+      ]
+    }
   }
 }

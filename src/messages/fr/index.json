@@ -54,9 +54,24 @@
     "oumraDetails": "Voir les détails",
     "oumraSoon": "Bientôt disponible",
     "oumraSlots": [
-      { "title": "OUMRA AOÛT 2026", "dates": "04 Aou. au 23 Aou. 2026", "price": "1 250 000 FCFA/pers", "badge": "Disponible" },
-      { "title": "OUMRA DÉCEMBRE 2026", "dates": null, "price": null, "badge": "Bientôt" },
-      { "title": "OUMRA JANVIER 2027", "dates": null, "price": null, "badge": "Bientôt" }
+      {
+        "title": "OUMRA AOÛT 2026",
+        "dates": "04 Aou. au 23 Aou. 2026",
+        "price": "1 250 000 FCFA/pers",
+        "badge": "Disponible"
+      },
+      {
+        "title": "OUMRA DÉCEMBRE 2026",
+        "dates": null,
+        "price": null,
+        "badge": "Bientôt"
+      },
+      {
+        "title": "OUMRA JANVIER 2027",
+        "dates": null,
+        "price": null,
+        "badge": "Bientôt"
+      }
     ],
     "oumraRamadanLabel": "LE MOIS BÉNI",
     "oumraRamadanTitle": "Oumra Ramadan 2027",
@@ -91,34 +106,95 @@
     "madineText": "La mosquée du Prophète ﷺ, la Rawdha, le Baqi', la mosquée de Quba, les montagnes d'Ouhoud — autant de lieux qui vous rapprocheront du Prophète bien-aimé et de l'histoire de l'Islam.",
     "whyLabel": "NOS ENGAGEMENTS",
     "whyTitle": "Pourquoi choisir Hajj et Oumra ZAM ?",
-    "whySubtitle": "Plus de 25 ans d'expérience dans le domaine",
+    "whySubtitle": "depuis 2020 d'expérience dans le domaine",
     "whyItems": [
-      { "title": "Fidèle à ses engagements", "content": "Hajj et Oumra ZAM s'engage auprès de chaque pèlerin avec sérieux et professionnalisme. Le prix de votre Hadj = la récompense divine." },
-      { "title": "Plus de 1 000 pèlerins satisfaits", "content": "Depuis 1998, des milliers de familles nigériennes nous confient leur pèlerinage. Leur satisfaction est notre plus grande récompense." },
-      { "title": "Présence à Niamey et Tahoua", "content": "Avec nos bureaux à Yantalla (Niamey) et à Tahoua, nous sommes proches de vous pour vous accompagner dans toutes vos démarches." },
-      { "title": "Guides expérimentés et qualifiés", "content": "Nos guides maîtrisent les rituels, parlent plusieurs langues et assurent un encadrement religieux et logistique de qualité tout au long du voyage." },
-      { "title": "Hébergement de premier choix", "content": "Nous sélectionnons des hôtels à proximité immédiate des lieux saints pour vous garantir confort et facilité d'accès aux sites de dévotion." },
-      { "title": "Formules tout compris", "content": "Vol, visa, hébergement, transport, repas : tout est inclus dans nos forfaits. Vous partez l'esprit libre, sans surprise financière." },
-      { "title": "Assistance sur place en Arabie Saoudite", "content": "Notre équipe est également joignable en Arabie Saoudite au (+966) 05 44 61 74 67 pour vous assister durant votre séjour." }
+      {
+        "title": "Fidèle à ses engagements",
+        "content": "Hajj et Oumra ZAM s'engage auprès de chaque pèlerin avec sérieux et professionnalisme. Le prix de votre Hadj = la récompense divine."
+      },
+      {
+        "title": "Plus de 1 000 pèlerins satisfaits",
+        "content": "Depuis 2020, des familles de familles nigériennes nous confient leur pèlerinage. Leur satisfaction est notre plus grande récompense."
+      },
+      {
+        "title": "Présence à Niamey et Tahoua",
+        "content": "Avec nos bureaux à Yantalla (Niamey) et à Tahoua, nous sommes proches de vous pour vous accompagner dans toutes vos démarches."
+      },
+      {
+        "title": "Guides expérimentés et qualifiés",
+        "content": "Nos guides maîtrisent les rituels, parlent plusieurs langues et assurent un encadrement religieux et logistique de qualité tout au long du voyage."
+      },
+      {
+        "title": "Hébergement de premier choix",
+        "content": "Nous sélectionnons des hôtels à proximité immédiate des lieux saints pour vous garantir confort et facilité d'accès aux sites de dévotion."
+      },
+      {
+        "title": "Formules tout compris",
+        "content": "Vol, visa, hébergement, transport, repas : tout est inclus dans nos forfaits. Vous partez l'esprit libre, sans surprise financière."
+      },
+      {
+        "title": "Assistance sur place en Arabie Saoudite",
+        "content": "Notre équipe est également joignable en Arabie Saoudite au (+966) 05 44 61 74 67 pour vous assister durant votre séjour."
+      }
     ],
     "testimonialsLabel": "ILS NOUS ONT FAIT CONFIANCE",
     "testimonialsTitle": "Ce que disent nos pèlerins",
     "testimonialsRating": "+1000 avis",
     "testimonials": [
-      { "initial": "A", "name": "Aminata D.", "location": "Niamey", "text": "Service exceptionnel, équipe très professionnelle. J'ai pu accomplir mon Oumra en toute sérénité. Je recommande vivement cette agence !" },
-      { "initial": "I", "name": "Ibrahim K.", "location": "Maradi", "text": "Mon Hadj a été une expérience spirituelle parfaite. L'accompagnement du début à la fin était irréprochable. Qu'Allah vous récompense." },
-      { "initial": "F", "name": "Fatoumata S.", "location": "Tahoua", "text": "Très bien organisé. Les hôtels étaient proches du Haram, les guides très compétents. Je repars l'année prochaine avec eux." },
-      { "initial": "O", "name": "Oumarou H.", "location": "Zinder", "text": "Prix transparents, aucun frais caché. L'équipe est disponible à tout moment. Première Oumra inoubliable !" },
-      { "initial": "M", "name": "Mariama B.", "location": "Niamey", "text": "Alhamdulillah, un voyage béni. L'agence Hajj et Oumra ZAM nous a accompagnés avec beaucoup de cœur et de professionnalisme." }
+      {
+        "initial": "A",
+        "name": "Aminata D.",
+        "location": "Niamey",
+        "text": "Service exceptionnel, équipe très professionnelle. J'ai pu accomplir mon Oumra en toute sérénité. Je recommande vivement cette agence !"
+      },
+      {
+        "initial": "I",
+        "name": "Ibrahim K.",
+        "location": "Maradi",
+        "text": "Mon Hadj a été une expérience spirituelle parfaite. L'accompagnement du début à la fin était irréprochable. Qu'Allah vous récompense."
+      },
+      {
+        "initial": "F",
+        "name": "Fatoumata S.",
+        "location": "Tahoua",
+        "text": "Très bien organisé. Les hôtels étaient proches du Haram, les guides très compétents. Je repars l'année prochaine avec eux."
+      },
+      {
+        "initial": "O",
+        "name": "Oumarou H.",
+        "location": "Zinder",
+        "text": "Prix transparents, aucun frais caché. L'équipe est disponible à tout moment. Première Oumra inoubliable !"
+      },
+      {
+        "initial": "M",
+        "name": "Mariama B.",
+        "location": "Niamey",
+        "text": "Alhamdulillah, un voyage béni. L'agence Hajj et Oumra ZAM nous a accompagnés avec beaucoup de cœur et de professionnalisme."
+      }
     ],
     "faqLabel": "QUESTIONS FRÉQUENTES",
     "faqTitle": "Vos questions, nos réponses",
     "faq": [
-      { "q": "Pourquoi faire la Oumra ?", "a": "La Oumra est un acte d'adoration et de dévotion qui permet au croyant de se rapprocher d'Allah, d'obtenir le pardon et de renouveler sa foi. Contrairement au Hadj, elle peut s'effectuer à tout moment de l'année." },
-      { "q": "Y a-t-il des restrictions d'âge pour le pèlerinage ?", "a": "Il n'y a pas de restriction d'âge formelle. Les enfants doivent être accompagnés d'un tuteur. Nous adaptons notre accompagnement à chaque profil de pèlerin." },
-      { "q": "Les vaccinations sont-elles obligatoires ?", "a": "Oui, le vaccin contre la méningite est obligatoire. Le vaccin contre la fièvre jaune peut être requis selon les pays. Notre équipe vous guide dans toutes les démarches sanitaires." },
-      { "q": "Peut-on effectuer le Hadj ou la Oumra seul ?", "a": "Il est fortement recommandé de voyager avec une agence agréée pour bénéficier d'un encadrement complet. Pour le Hadj, l'encadrement par une agence est obligatoire au Niger." },
-      { "q": "Quelles sont vos dates de départ et vos tarifs ?", "a": "Oumra Août 2026 (04-23 Août) à partir de 1 250 000 FCFA/pers. Hadj 2027 à partir de 3 184 500 FCFA. Consultez notre page offres pour tous les détails." }
+      {
+        "q": "Pourquoi faire la Oumra ?",
+        "a": "La Oumra est un acte d'adoration et de dévotion qui permet au croyant de se rapprocher d'Allah, d'obtenir le pardon et de renouveler sa foi. Contrairement au Hadj, elle peut s'effectuer à tout moment de l'année."
+      },
+      {
+        "q": "Y a-t-il des restrictions d'âge pour le pèlerinage ?",
+        "a": "Il n'y a pas de restriction d'âge formelle. Les enfants doivent être accompagnés d'un tuteur. Nous adaptons notre accompagnement à chaque profil de pèlerin."
+      },
+      {
+        "q": "Les vaccinations sont-elles obligatoires ?",
+        "a": "Oui, le vaccin contre la méningite est obligatoire. Le vaccin contre la fièvre jaune peut être requis selon les pays. Notre équipe vous guide dans toutes les démarches sanitaires."
+      },
+      {
+        "q": "Peut-on effectuer le Hadj ou la Oumra seul ?",
+        "a": "Il est fortement recommandé de voyager avec une agence agréée pour bénéficier d'un encadrement complet. Pour le Hadj, l'encadrement par une agence est obligatoire au Niger."
+      },
+      {
+        "q": "Quelles sont vos dates de départ et vos tarifs ?",
+        "a": "Oumra Août 2026 (04-23 Août) à partir de 1 250 000 FCFA/pers. Hadj 2027 à partir de 3 184 500 FCFA. Consultez notre page offres pour tous les détails."
+      }
     ],
     "ctaLabel": "Votre voyage spirituel commence ici",
     "ctaTitle1": "Prêt à accomplir",
@@ -135,7 +211,7 @@
     "reserve": "Réserver",
     "learnMore": "En savoir plus",
     "aboutTitle": "Qui sommes-nous ?",
-    "aboutText": "Hajj et Oumra ZAM est une agence spécialisée dans l'organisation du Hadj et de l'Oumra depuis 1998, au service des pèlerins nigériens.",
+    "aboutText": "Hajj et Oumra ZAM est une agence spécialisée dans l'organisation du Hadj et de l'Oumra depuis 2020, au service des pèlerins nigériens.",
     "toolsTitle": "Outils du pèlerin",
     "toolsSubtitle": "Des ressources pour préparer et vivre votre pèlerinage",
     "quranTool": "Lire le Coran",
@@ -146,44 +222,30 @@
   "history": {
     "heroBadge": "HAJJ ET OUMRA ZAM — NOTRE HISTOIRE",
     "heroTitle": "Les hommes derrière Hajj et Oumra ZAM",
-    "heroSubtitle": "Les personnes qui portent Hajj et Oumra ZAM, au service des pèlerins depuis 1998 — de Niamey jusqu'aux Lieux Saints.",
-    "heroAddress": "Niamey, Niger — Quartier Yantalla, BP 919",
+    "heroSubtitle": "Une agence nigérienne fondée en 2020, dédiée à l'accompagnement des pèlerins du Niger vers les Lieux Saints.",
+    "heroAddress": "Yantala Tchini Habou, Niamey, Niger",
     "breadcrumb": "Notre Histoire",
-    "statsExperience": "Années d'expérience",
+    "statsExperience": "Années d'activité",
     "statsPilgrims": "Pèlerins accompagnés",
     "statsSatisfaction": "Taux de satisfaction",
-    "statsCountries": "Pays desservis",
+    "statsCountries": "Bureaux au Niger",
     "teamLabel": "NOTRE ÉQUIPE",
-    "teamTitle": "Des visages derrière chaque départ",
-    "teamSubtitle": "Une équipe unie par la même vocation : vous accompagner vers les Lieux Saints avec foi, rigueur et humanité.",
+    "teamTitle": "Une équipe à votre service",
+    "teamSubtitle": "Une équipe motivée par la même vocation : vous accompagner vers les Lieux Saints avec sérieux et bienveillance.",
     "team": [
       {
         "name": "El Hadj Moussa Abdou",
-        "role": "Fondateur & Président",
-        "tag": "Le visionnaire",
-        "bio": "Né à Niamey dans une famille profondément attachée aux valeurs islamiques, El Hadj Moussa Abdou accompagne ses premiers pèlerins en 1998. Ce voyage est une révélation : il y voit une mission de vie. Pendant vingt ans, il bâtit patiemment une réputation de sérieux, de probité et d'amour sincère pour les pèlerins.",
-        "bio2": "Sous sa direction, Hajj et Oumra ZAM obtient en 2018 son agrément officiel du COHO et s'impose comme une référence incontournable pour les pèlerins du Niger et d'Afrique de l'Ouest."
+        "role": "Fondateur & Directeur",
+        "tag": "Le fondateur",
+        "bio": "Animé par une foi profonde et le désir d'aider les familles nigériennes à accomplir leur devoir religieux, El Hadj Moussa Abdou crée Hajj et Oumra ZAM en 2020 à Niamey.",
+        "bio2": "Depuis le premier départ, il s'engage personnellement auprès de chaque pèlerin — supervisant les dossiers, les hébergements et l'accompagnement spirituel — pour que chaque voyage soit à la hauteur de son importance."
       },
       {
         "name": "Ibrahima Moussa",
-        "role": "Directeur Général",
-        "tag": "L'héritier",
-        "bio": "Fils du fondateur, Ibrahima a grandi au contact des pèlerins. Il accompagne son père dès l'adolescence, apprend la rigueur opérationnelle et la bienveillance humaine qui font la marque de Hajj et Oumra ZAM.",
-        "bio2": "Diplômé en gestion hôtelière et passionné par l'amélioration continue, il prend la direction générale de l'agence en 2020 avec pour mission de moderniser les services tout en préservant l'âme fondatrice."
-      },
-      {
-        "name": "Fatouma Adamou",
-        "role": "Responsable Oumra & Hadj",
-        "tag": "L'experte terrain",
-        "bio": "Fatouma a effectué plus de quinze voyages en Arabie Saoudite en tant qu'encadreur. Elle connaît les hôtels, les circuits, les imprévus et les solutions. Sa présence rassure les pèlerins, en particulier les personnes âgées et les primo-pèlerins.",
-        "bio2": "Elle supervise la conception des programmes, la sélection des hôtels et la formation des guides locaux — garantissant que chaque séjour tient ses promesses."
-      },
-      {
-        "name": "Youssouf Hamidou",
-        "role": "Responsable Logistique & Billets",
-        "tag": "Le gestionnaire",
-        "bio": "Affilié IATA depuis 2019, Youssouf maîtrise les rouages de la billetterie aérienne et de la logistique de groupe. Il négocie les meilleures liaisons Niamey – Djeddah et coordonne les transferts sur place.",
-        "bio2": "Méthodique et intègre, il veille à ce qu'aucun dossier ne soit incomplet le jour du départ — une exigence qu'il s'est fixée personnellement depuis son premier Hadj."
+        "role": "Responsable Opérationnel",
+        "tag": "L'organisateur",
+        "bio": "Ibrahima coordonne les groupes, les vols et les hébergements. Rigoureux et attentionné, il veille à ce que chaque pèlerin parte et revienne dans les meilleures conditions.",
+        "bio2": "Son expérience sur le terrain et sa connaissance des procédures COHO garantissent un suivi sérieux de chaque dossier, du premier contact jusqu'au retour à Niamey."
       }
     ],
     "quoteText": "Accompagner un pèlerin vers la Maison de Dieu est une responsabilité sacrée. Nous la portons avec foi et humilité.",
@@ -191,29 +253,60 @@
     "valuesLabel": "CE QUI NOUS GUIDE",
     "valuesTitle": "Nos valeurs fondamentales",
     "values": [
-      { "title": "Confiance", "desc": "Transparence totale sur les prix, les prestations et le déroulé du voyage. Aucune mauvaise surprise." },
-      { "title": "Bienveillance", "desc": "Un accompagnement humain, attentif aux personnes âgées et aux premiers départs. Personne n'est laissé seul." },
-      { "title": "Excellence", "desc": "Des prestations soigneusement sélectionnées, dignes de la sacralité du pèlerinage vers les Lieux Saints." },
-      { "title": "Proximité", "desc": "Une équipe locale, joignable et présente avant, pendant et après le voyage. Toujours à votre écoute." }
+      {
+        "title": "Confiance",
+        "desc": "Transparence totale sur les prix, les prestations et le déroulé du voyage. Aucune mauvaise surprise."
+      },
+      {
+        "title": "Bienveillance",
+        "desc": "Un accompagnement humain, attentif aux personnes âgées et aux premiers départs. Personne n'est laissé seul."
+      },
+      {
+        "title": "Excellence",
+        "desc": "Des prestations soigneusement sélectionnées, dignes de la sacralité du pèlerinage vers les Lieux Saints."
+      },
+      {
+        "title": "Proximité",
+        "desc": "Une équipe locale, joignable et présente avant, pendant et après le voyage. Toujours à votre écoute."
+      }
     ],
     "timelineLabel": "CHRONOLOGIE",
     "timelineTitle": "Les grandes étapes",
     "timeline": [
-      { "year": "1998", "title": "La vocation", "desc": "El Hadj Moussa Abdou accompagne ses premiers pèlerins vers La Mecque. Une mission de vie commence." },
-      { "year": "2005", "title": "Les premières caravanes", "desc": "Structuration des premiers groupes Hadj et Oumra. L'agence noue ses premiers partenariats hôteliers à Makkah et Médine." },
-      { "year": "2010", "title": "Expansion régionale", "desc": "Hajj et Oumra ZAM devient une référence pour les pèlerins du Niger, du Burkina Faso et du Mali." },
-      { "year": "2018", "title": "Agrément officiel COHO", "desc": "Obtention de l'agrément n° NE-2018-0421. Un cap décisif qui confirme le sérieux et la légitimité de l'agence." },
-      { "year": "2022", "title": "1 000 pèlerins accompagnés", "desc": "Franchissement du cap symbolique des 1 000 pèlerins. Chaque retour est une fierté et un engagement renouvelé." },
-      { "year": "2024", "title": "Plateforme numérique", "desc": "Lancement du portail digital Hajj et Oumra ZAM pour réserver, suivre son dossier et préparer son pèlerinage depuis Niamey." }
+      {
+        "year": "2020",
+        "title": "Fondation de l'agence",
+        "desc": "Création de Hajj et Oumra ZAM à Niamey, quartier Yantala Tchini Habou. Premier bureau, premières inscriptions."
+      },
+      {
+        "year": "2022",
+        "title": "Premiers groupes Hadj & Oumra",
+        "desc": "Organisation des premiers groupes officiels. Les pèlerins font confiance à ZAM pour leur accompagnement vers les Lieux Saints."
+      },
+      {
+        "year": "2023",
+        "title": "Agrément officiel COHO",
+        "desc": "Obtention de l'agrément COHO (Commissariat à l'Organisation du Hadj et de la Oumra du Niger) — reconnaissance officielle du sérieux de l'agence."
+      },
+      {
+        "year": "2024",
+        "title": "Ouverture à Tahoua",
+        "desc": "Extension de l'agence avec un bureau à Tahoua pour être encore plus proche des pèlerins de l'intérieur du pays."
+      },
+      {
+        "year": "2025",
+        "title": "Plateforme numérique",
+        "desc": "Lancement du portail Hajj et Oumra ZAM pour réserver, suivre son dossier et préparer son pèlerinage en ligne."
+      }
     ],
     "galleryLabel": "EN IMAGES",
     "galleryTitle": "Moments de pèlerinage",
     "galleryAlt": "Pèlerinage",
     "accreditationsLabel": "NOS ACCRÉDITATIONS",
-    "accreditationsText": "Agréée COHO n° NE-2018-0421 · Affiliée IATA · Reconnue par le Ministère saoudien du Hadj",
+    "accreditationsText": "Agréée COHO · Affiliée IATA · Reconnue par le Ministère saoudien du Hadj",
     "ctaLabel": "REJOIGNEZ NOTRE FAMILLE",
-    "ctaTitle": "Vivez à votre tour ce voyage d'exception",
-    "ctaText": "Rejoignez les nombreuses familles qui nous ont fait confiance pour leur Hadj et leur Oumra.",
+    "ctaTitle": "Prêt à accomplir votre pèlerinage ?",
+    "ctaText": "Contactez-nous pour en savoir plus sur nos offres Hadj et Oumra — nous sommes là pour vous accompagner.",
     "ctaOffers": "Voir les offres",
     "ctaContact": "Nous contacter",
     "breadHome": "Accueil"
@@ -325,13 +418,13 @@
     "subtitle": "Votre partenaire de confiance pour le pèlerinage",
     "accreditation": "Agrément COHO n° NE-2018-0421",
     "group": "Hajj et Oumra ZAM — Agréé COHO depuis 2018",
-    "address": "Quartier Yantalla, BP 919, Niamey, Niger",
-    "phone1": "+227 96 96 39 61",
-    "phone2": "+227 96 87 27 87",
+    "address": "Yantala Tchini Habou, Niamey, Niger",
+    "phone1": "+227 91 88 21 21",
+    "phone2": "+227 96 46 91 77",
     "missionTitle": "Notre mission",
     "missionText": "Hajj et Oumra ZAM est une agence de voyages spécialisée dans l'organisation du Hadj et de la Oumra. Notre mission est d'accompagner chaque pèlerin dans son voyage spirituel avec professionnalisme, transparence et sérénité.",
     "historyTitle": "Notre histoire",
-    "historyText": "Active depuis 1998, Hajj et Oumra ZAM accompagne les pèlerins nigériens vers les Lieux Saints depuis plus de 25 ans. Agréée COHO (agrément n° NE-2018-0421), notre agence s'est imposée comme une référence dans l'organisation du Hadj et de l'Oumra au Niger.",
+    "historyText": "Fondée en 2020, Hajj et Oumra ZAM accompagne les pèlerins nigériens vers les Lieux Saints. Agréée COHO, notre agence est une référence dans l'organisation du Hadj et de l'Oumra au Niger.",
     "contactTitle": "Informations de contact",
     "statsYear": "Première année d'activité",
     "statsPilgrims": "+1 000 Pèlerins accompagnés",
@@ -362,18 +455,54 @@
     "translationLabel": "Traduction",
     "filterAll": "Tous",
     "toc": [
-      { "id": "intro",       "label": "Introduction aux types de pèlerinage" },
-      { "id": "oumra",       "label": "Qu'est-ce que la Oumra ?" },
-      { "id": "rites-oumra", "label": "Les rituels de la Oumra" },
-      { "id": "hadj",        "label": "Qu'est-ce que le Hadj ?" },
-      { "id": "rites-hadj",  "label": "Les rites du Hadj" },
-      { "id": "duas",        "label": "Du'as & Invocations" },
-      { "id": "conclusion",  "label": "Conclusion" }
+      {
+        "id": "intro",
+        "label": "Introduction aux types de pèlerinage"
+      },
+      {
+        "id": "oumra",
+        "label": "Qu'est-ce que la Oumra ?"
+      },
+      {
+        "id": "rites-oumra",
+        "label": "Les rituels de la Oumra"
+      },
+      {
+        "id": "hadj",
+        "label": "Qu'est-ce que le Hadj ?"
+      },
+      {
+        "id": "rites-hadj",
+        "label": "Les rites du Hadj"
+      },
+      {
+        "id": "duas",
+        "label": "Du'as & Invocations"
+      },
+      {
+        "id": "conclusion",
+        "label": "Conclusion"
+      }
     ],
     "pilgrimages": [
-      { "title": "Hadj Tamattu'",  "arabic": "حج التمتع",  "desc": "Effectuer la Oumra puis le Hadj séparément, lors du même voyage. C'est la formule la plus courante pour les pèlerins étrangers.",                                                                                    "badge": "Le plus courant" },
-      { "title": "Hadj Ifrad",     "arabic": "حج الإفراد", "desc": "N'effectuer que le Hadj, sans Oumra dans le même voyage. L'état d'Ihram est maintenu depuis la Miqat jusqu'aux rites du Hadj.",                                                                                              "badge": "" },
-      { "title": "Hadj Qiran",     "arabic": "حج القران",  "desc": "Combiner la Oumra et le Hadj en un seul Ihram continu. Le pèlerin effectue les rites des deux pèlerinages sans se désacraliser entre les deux.",                                                                              "badge": "" }
+      {
+        "title": "Hadj Tamattu'",
+        "arabic": "حج التمتع",
+        "desc": "Effectuer la Oumra puis le Hadj séparément, lors du même voyage. C'est la formule la plus courante pour les pèlerins étrangers.",
+        "badge": "Le plus courant"
+      },
+      {
+        "title": "Hadj Ifrad",
+        "arabic": "حج الإفراد",
+        "desc": "N'effectuer que le Hadj, sans Oumra dans le même voyage. L'état d'Ihram est maintenu depuis la Miqat jusqu'aux rites du Hadj.",
+        "badge": ""
+      },
+      {
+        "title": "Hadj Qiran",
+        "arabic": "حج القران",
+        "desc": "Combiner la Oumra et le Hadj en un seul Ihram continu. Le pèlerin effectue les rites des deux pèlerinages sans se désacraliser entre les deux.",
+        "badge": ""
+      }
     ],
     "introTitle": "Introduction aux types de pèlerinage",
     "introDesc": "Le pèlerinage islamique se décline principalement en deux formes : la Oumra (le petit pèlerinage, réalisable toute l'année) et le Hadj (le grand pèlerinage, cinquième pilier de l'Islam). Le Hadj lui-même peut être accompli selon trois méthodes :",
@@ -382,18 +511,59 @@
     "oumraSectionDesc2": "Le Prophète ﷺ a dit : « La Oumra à la Oumra est une expiation pour ce qui se passe entre elles, et le Hadj mabrour n'a pour récompense que le Paradis. »",
     "oumraSectionHadithSource": "(Al-Boukhârî et Muslim)",
     "oumraActsTitle": "Les 4 actes de la Oumra :",
-    "oumraActs": ["Ihram", "Tawaf (7 tours)", "Sa'i (7 allers-retours)", "Tahallul (rasage)"],
+    "oumraActs": [
+      "Ihram",
+      "Tawaf (7 tours)",
+      "Sa'i (7 allers-retours)",
+      "Tahallul (rasage)"
+    ],
     "oumraRitualsTitle": "Les rituels de la Oumra",
     "oumraRituals": [
-      { "step": 1, "title": "Préparation à la sacralisation (Ihram)",         "content": "Avant d'entrer en état d'Ihram, il est recommandé de se purifier : bain de purification (Ghousl), couper les ongles, enlever les poils superflus. Pour les hommes, il est conseillé de se parfumer avant de revêtir les habits d'Ihram." },
-      { "step": 2, "title": "Vêtements de sacralisation",                      "content": "Pour les hommes : deux pièces de tissu blanc non cousu — l'Izar (pièce du bas enroulée autour de la taille) et le Rida (pièce du haut drapée sur les épaules). Des sandales sont permises. Pour les femmes : des vêtements couvrants habituels, sans couvrir le visage ni les mains." },
-      { "step": 3, "title": "Départ vers La Mecque — la Miqat",               "content": "La Miqat est le point de passage obligatoire pour entrer en état d'Ihram. Pour les pèlerins de Médine, la Miqat est Dhou-El Houlayfa. On y formule l'intention de la Oumra et on prononce la Talbiya." },
-      { "step": 4, "title": "La Talbiya",                                       "content": "Après l'intention, on prononce : « Labbaïka Allahoumma labbaïk, Labbaïka lâ charîka laka labbaïk, Innal hamda wan ni'mata laka wal moulk, lâ charîka lak. » (Me voici à Ta disposition, ô Allah, me voici !)" },
-      { "step": 5, "title": "Interdictions durant l'Ihram",                    "content": "Pour tous : se couper les cheveux ou les ongles, utiliser du parfum, se marier ou contracter un mariage, avoir des rapports conjugaux, chasser. Pour les hommes en plus : se couvrir la tête, porter des vêtements cousus. Pour les femmes : se couvrir le visage." },
-      { "step": 6, "title": "Arrivée à La Mecque — Première vue de la Ka'ba", "content": "En apercevant la Ka'ba pour la première fois, il est recommandé de lever les mains et de faire des invocations. Certains savants conseillent de dire : « Allahoumma zid hadhâl bayta tachrifan wa ta'dhîman wa takrîman wa mahâbatan. »" },
-      { "step": 7, "title": "Le Tawaf",                                         "content": "Circumambulation autour de la Ka'ba 7 fois dans le sens antihoraire, en commençant et terminant par la Pierre Noire (Hajarul Aswad). On commence par l'Istilam (toucher ou saluer la Pierre Noire), puis on effectue les 7 tours en récitant des invocations." },
-      { "step": 8, "title": "Le Sa'i entre Safa et Marwa",                     "content": "Aller-retour 7 fois entre les collines de Safa et de Marwa, en commémorant la course de Hajar (Agar), épouse d'Ibrahim (Abraham), à la recherche d'eau pour son fils Ismaïl. On commence par Safa et on termine par Marwa." },
-      { "step": 9, "title": "Fin de la Oumra — Tahallul",                      "content": "Après le Sa'i, on sort de l'état d'Ihram en se rasant la tête entièrement (Halq) ou en se raccourcissant les cheveux (Taqsîr). Le rasage est préférable pour les hommes. Après cela, toutes les interdictions de l'Ihram sont levées." }
+      {
+        "step": 1,
+        "title": "Préparation à la sacralisation (Ihram)",
+        "content": "Avant d'entrer en état d'Ihram, il est recommandé de se purifier : bain de purification (Ghousl), couper les ongles, enlever les poils superflus. Pour les hommes, il est conseillé de se parfumer avant de revêtir les habits d'Ihram."
+      },
+      {
+        "step": 2,
+        "title": "Vêtements de sacralisation",
+        "content": "Pour les hommes : deux pièces de tissu blanc non cousu — l'Izar (pièce du bas enroulée autour de la taille) et le Rida (pièce du haut drapée sur les épaules). Des sandales sont permises. Pour les femmes : des vêtements couvrants habituels, sans couvrir le visage ni les mains."
+      },
+      {
+        "step": 3,
+        "title": "Départ vers La Mecque — la Miqat",
+        "content": "La Miqat est le point de passage obligatoire pour entrer en état d'Ihram. Pour les pèlerins de Médine, la Miqat est Dhou-El Houlayfa. On y formule l'intention de la Oumra et on prononce la Talbiya."
+      },
+      {
+        "step": 4,
+        "title": "La Talbiya",
+        "content": "Après l'intention, on prononce : « Labbaïka Allahoumma labbaïk, Labbaïka lâ charîka laka labbaïk, Innal hamda wan ni'mata laka wal moulk, lâ charîka lak. » (Me voici à Ta disposition, ô Allah, me voici !)"
+      },
+      {
+        "step": 5,
+        "title": "Interdictions durant l'Ihram",
+        "content": "Pour tous : se couper les cheveux ou les ongles, utiliser du parfum, se marier ou contracter un mariage, avoir des rapports conjugaux, chasser. Pour les hommes en plus : se couvrir la tête, porter des vêtements cousus. Pour les femmes : se couvrir le visage."
+      },
+      {
+        "step": 6,
+        "title": "Arrivée à La Mecque — Première vue de la Ka'ba",
+        "content": "En apercevant la Ka'ba pour la première fois, il est recommandé de lever les mains et de faire des invocations. Certains savants conseillent de dire : « Allahoumma zid hadhâl bayta tachrifan wa ta'dhîman wa takrîman wa mahâbatan. »"
+      },
+      {
+        "step": 7,
+        "title": "Le Tawaf",
+        "content": "Circumambulation autour de la Ka'ba 7 fois dans le sens antihoraire, en commençant et terminant par la Pierre Noire (Hajarul Aswad). On commence par l'Istilam (toucher ou saluer la Pierre Noire), puis on effectue les 7 tours en récitant des invocations."
+      },
+      {
+        "step": 8,
+        "title": "Le Sa'i entre Safa et Marwa",
+        "content": "Aller-retour 7 fois entre les collines de Safa et de Marwa, en commémorant la course de Hajar (Agar), épouse d'Ibrahim (Abraham), à la recherche d'eau pour son fils Ismaïl. On commence par Safa et on termine par Marwa."
+      },
+      {
+        "step": 9,
+        "title": "Fin de la Oumra — Tahallul",
+        "content": "Après le Sa'i, on sort de l'état d'Ihram en se rasant la tête entièrement (Halq) ou en se raccourcissant les cheveux (Taqsîr). Le rasage est préférable pour les hommes. Après cela, toutes les interdictions de l'Ihram sont levées."
+      }
     ],
     "hajjSectionTitle": "Qu'est-ce que le Hadj ?",
     "hajjSectionDesc1": "Le Hadj est le cinquième pilier de l'Islam. Il est obligatoire une fois dans la vie pour tout musulman adulte, sain d'esprit et en ayant les moyens physiques et financiers. Il se déroule du 8 au 13 Dhou al-Hijja.",
@@ -402,32 +572,169 @@
     "hajjVerseTr": "« Et c'est un devoir envers Allah pour les gens qui en ont la capacité, d'accomplir le Hadj vers la Maison. » (Sourate Âl-Imran, 3:97)",
     "hajjRitualsTitle": "Les rites du Hadj",
     "hajjDays": [
-      { "day": "8 Dhou-Al-Hijja",   "title": "Yawm at-Tarwiyah — Départ vers Mina",     "content": "Le matin du 8, le pèlerin entre en état d'Ihram depuis son lieu de résidence à La Mecque. Il part ensuite vers Mina pour y passer la journée et la nuit, en effectuant les prières du Dhouhr, Asr, Maghreb, Ichaa et Fadjr (chacune dans ses temps, en les raccourcissant sans les regrouper)." },
-      { "day": "9 Dhou-Al-Hijja",   "title": "Yawm Arafah — Le pilier du Hadj",          "content": "C'est le jour le plus important du Hadj. Après la prière du Fadjr, les pèlerins se rendent à Arafat. Ils y effectuent les prières du Dhouhr et de l'Asr regroupées et raccourcies, puis se tiennent à Arafat jusqu'au coucher du soleil en invoquant Allah. « Le Hadj, c'est Arafat. »" },
-      { "day": "Nuit à Muzdalifa",   "title": "Collecte des cailloux",                     "content": "Après le coucher du soleil, les pèlerins partent vers Muzdalifa où ils effectuent les prières du Maghreb et de l'Ichaa regroupées. Ils y passent la nuit et ramassent les cailloux pour la lapidation du lendemain (minimum 49 cailloux de la taille d'un pois chiche)." },
-      { "day": "10 Dhou-Al-Hijja",  "title": "Yawm an-Nahr — Jour du sacrifice",          "content": "Ce jour comporte 4 actes : 1) Lapidation du grand Jamarat avec 7 cailloux. 2) Sacrifice d'un animal. 3) Rasage ou raccourcissement des cheveux (première désacralisation partielle). 4) Tawaf al-Ifada et Sa'i (désacralisation complète)." },
-      { "day": "11-13 Dhou-Al-Hijja","title": "Jours de Tachrik — Mina",                  "content": "Les pèlerins retournent à Mina pour y passer les nuits. Chaque jour, après le Dhouhr, ils lapident les trois Jamarats (petit, moyen, grand) avec 7 cailloux chacun. Il est permis de quitter Mina après la lapidation du 12 avant le coucher du soleil." },
-      { "day": "Avant le départ",   "title": "Tawaf al-Wada' — L'adieu",                 "content": "Avant de quitter La Mecque, chaque pèlerin doit effectuer le Tawaf de l'adieu (7 circumambulations autour de la Ka'ba). C'est le dernier acte du Hadj. Les femmes en période de menstruation en sont dispensées." }
+      {
+        "day": "8 Dhou-Al-Hijja",
+        "title": "Yawm at-Tarwiyah — Départ vers Mina",
+        "content": "Le matin du 8, le pèlerin entre en état d'Ihram depuis son lieu de résidence à La Mecque. Il part ensuite vers Mina pour y passer la journée et la nuit, en effectuant les prières du Dhouhr, Asr, Maghreb, Ichaa et Fadjr (chacune dans ses temps, en les raccourcissant sans les regrouper)."
+      },
+      {
+        "day": "9 Dhou-Al-Hijja",
+        "title": "Yawm Arafah — Le pilier du Hadj",
+        "content": "C'est le jour le plus important du Hadj. Après la prière du Fadjr, les pèlerins se rendent à Arafat. Ils y effectuent les prières du Dhouhr et de l'Asr regroupées et raccourcies, puis se tiennent à Arafat jusqu'au coucher du soleil en invoquant Allah. « Le Hadj, c'est Arafat. »"
+      },
+      {
+        "day": "Nuit à Muzdalifa",
+        "title": "Collecte des cailloux",
+        "content": "Après le coucher du soleil, les pèlerins partent vers Muzdalifa où ils effectuent les prières du Maghreb et de l'Ichaa regroupées. Ils y passent la nuit et ramassent les cailloux pour la lapidation du lendemain (minimum 49 cailloux de la taille d'un pois chiche)."
+      },
+      {
+        "day": "10 Dhou-Al-Hijja",
+        "title": "Yawm an-Nahr — Jour du sacrifice",
+        "content": "Ce jour comporte 4 actes : 1) Lapidation du grand Jamarat avec 7 cailloux. 2) Sacrifice d'un animal. 3) Rasage ou raccourcissement des cheveux (première désacralisation partielle). 4) Tawaf al-Ifada et Sa'i (désacralisation complète)."
+      },
+      {
+        "day": "11-13 Dhou-Al-Hijja",
+        "title": "Jours de Tachrik — Mina",
+        "content": "Les pèlerins retournent à Mina pour y passer les nuits. Chaque jour, après le Dhouhr, ils lapident les trois Jamarats (petit, moyen, grand) avec 7 cailloux chacun. Il est permis de quitter Mina après la lapidation du 12 avant le coucher du soleil."
+      },
+      {
+        "day": "Avant le départ",
+        "title": "Tawaf al-Wada' — L'adieu",
+        "content": "Avant de quitter La Mecque, chaque pèlerin doit effectuer le Tawaf de l'adieu (7 circumambulations autour de la Ka'ba). C'est le dernier acte du Hadj. Les femmes en période de menstruation en sont dispensées."
+      }
     ],
     "duasTitle": "Du'as & Invocations",
     "duasDesc": "Les invocations essentielles du pèlerin, étape par étape — en arabe, phonétique et traduction.",
-    "duaCategories": ["Tous", "Voyage", "Mosquée", "Médine", "Oumra & Hadj", "Hadj"],
+    "duaCategories": [
+      "Tous",
+      "Voyage",
+      "Mosquée",
+      "Médine",
+      "Oumra & Hadj",
+      "Hadj"
+    ],
     "duas": [
-      { "id": "dua-voyageur",      "category": "Voyage",       "title": "Invocation du voyageur (pour le résident qui reste)",         "arabic": "استودعكم الله الذي لا تضيع ودائعه",                                                                                                                                                                                                                                                                                                                                    "phonetic": "Astawdi'ukoumoul-Lâhoul Lazî Lâ toudîou Wadâ'i'ahou",                                                                                                                                                                                                                                                                                                                                                                                                   "translation": "Je vous confie à Allah, Celui dont les dépôts ne se perdent jamais." },
-      { "id": "dua-sortie-maison", "category": "Voyage",       "title": "Invocation de sortie de la maison",                          "arabic": "بسم الله، توكلت على الله، لا حول ولا قوة إلا بالله",                                                                                                                                                                                                                                                                                                                                "phonetic": "Bismillâhi, Tawakaltou Alalâhi, Lâ hawla walâ qouwwata Illâ billâhi.",                                                                                                                                                                                                                                                                                                                                                                                   "translation": "Au nom d'Allah. Je me confie à Allah. Il n'y a de force et de puissance qu'en Allah." },
-      { "id": "dua-voyage",        "category": "Voyage",       "title": "Invocation du voyage (sur la monture)",                      "arabic": "سبحان الذي سخر لنا هذا وما كنا له مقرنين، وإنا إلى ربنا لمنقلبون",                                                                                                                                                                                                                                                                                                                 "phonetic": "Soubhânallazî sakhara lanâ hâzâ wa mâ kounnâ lahoû mouqrinîna, wa innâ ilâ rabbinâ lamounqaliboûna.",                                                                                                                                                                                                                                                                                                                                                    "translation": "Gloire à Celui qui nous a assujetti ceci alors que nous n'en étions pas capables, et c'est vers notre Seigneur que nous retournerons." },
-      { "id": "dua-entree-mosquee","category": "Mosquée",      "title": "Invocation d'entrée dans la mosquée",                       "arabic": "اللهم افتح لي أبواب رحمتك",                                                                                                                                                                                                                                                                                                                                                         "phonetic": "Bismillâhi was'salâtou wassalâmou alâ rasoûlilâhi, allâhoumma iftah lî abwâba rahmatika.",                                                                                                                                                                                                                                                                                                                                                               "translation": "Au nom d'Allah, que la paix et la bénédiction soient sur le Messager d'Allah. Ô Allah ! Ouvre-moi les portes de Ta miséricorde." },
-      { "id": "dua-sortie-mosquee","category": "Mosquée",      "title": "Invocation de sortie de la mosquée",                        "arabic": "اللهم أسألك من فضلك",                                                                                                                                                                                                                                                                                                                                                               "phonetic": "Bismillâhi, was'salâtou wassalâmou alâ rasoûlilâhi. Allâhoumma asalouka min fadlika.",                                                                                                                                                                                                                                                                                                                                                                   "translation": "Au nom d'Allah, que la paix et la bénédiction soient sur le Messager d'Allah. Ô Allah ! Je Te demande de Ta grâce." },
-      { "id": "dua-tombe-prophete","category": "Médine",       "title": "Ce qu'on dit auprès de la tombe du Prophète ﷺ",             "arabic": "السلام عليك أيها النبي ورحمة الله وبركاته",                                                                                                                                                                                                                                                                                                                                         "phonetic": "Assalâmou alyka ayyouhan'nabiyyou warahamatoullâhi wa barakâtouhou.",                                                                                                                                                                                                                                                                                                                                                                                     "translation": "Que la paix, la miséricorde et les bénédictions d'Allah soient sur toi, Ô Prophète !" },
-      { "id": "dua-cimetiere",     "category": "Médine",       "title": "Invocation de visite au cimetière (Al-Baqi')",              "arabic": "السلام عليكم أهل الديار، من المؤمنين والمسلمين",                                                                                                                                                                                                                                                                                                                                    "phonetic": "Assalâmou alaykoum Ahlad-diyâri, minal-Mou'minîna walmouslimâ.",                                                                                                                                                                                                                                                                                                                                                                                         "translation": "Que la paix soit sur vous, ô habitants de ces demeures, croyants et musulmans." },
-      { "id": "dua-ihram",         "category": "Oumra & Hadj", "title": "La Talbiya — Ce qu'on dit lors de l'Ihrâm",                "arabic": "لبيك اللهم لبيك، لبيك لا شريك لك لبيك، إن الحمد والنعمة لك والملك لا شريك لك",                                                                                                                                                                                                                                                                                                        "phonetic": "Labbaykal-lâhoumma labbayka, Labbayka lâ charîka laka labbayka, innal-hamda wanni'imata laka wal moulk lâ chrîka laka.",                                                                                                                                                                                                                                                                                                                                  "translation": "Me voici à Ta disposition, ô Allah, me voici ! Me voici, Tu n'as pas d'associé, me voici ! La louange, la grâce et la royauté T'appartiennent. Tu n'as pas d'associé.", "highlight": true },
-      { "id": "dua-tawaf",         "category": "Oumra & Hadj", "title": "Ce qu'on dit au début du Tawaf",                           "arabic": "بسم الله، والله أكبر، اللهم إيمانا بك",                                                                                                                                                                                                                                                                                                                                           "phonetic": "Bismillâhi, wal-lâhou akbar, Allâhoumma îmânan bika, wa tasdîqan bikitâbika.",                                                                                                                                                                                                                                                                                                                                                                           "translation": "Au nom d'Allah, Allah est le Plus Grand. Ô Allah, avec foi en Toi, confiance en Ton Livre." },
-      { "id": "dua-yamani",        "category": "Oumra & Hadj", "title": "Invocation entre le pilier Yémani et la Pierre Noire",     "arabic": "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار",                                                                                                                                                                                                                                                                                                                         "phonetic": "Rabbanâ âtinâ fiddouniyâ hassanatan wa fil âkhirati hassanatan waqinâ azâbannâri.",                                                                                                                                                                                                                                                                                                                                                                       "translation": "Notre Seigneur, accorde-nous ce qui est bien en ce monde et ce qui est bien dans l'au-delà, et préserve-nous du châtiment du Feu." },
-      { "id": "dua-maqam-ibrahim", "category": "Oumra & Hadj", "title": "Invocation au niveau du Maqâm Ibrahim",                   "arabic": "واتخذوا من مقام إبراهيم مصلى",                                                                                                                                                                                                                                                                                                                                                       "phonetic": "Wattakhazoû min maqâmi Ibrâhîma mousallâ.",                                                                                                                                                                                                                                                                                                                                                                                                               "translation": "Et prenez la station d'Ibrahim comme lieu de prière. (Sourate Al-Baqara, 2:125)" },
-      { "id": "dua-zamzam",        "category": "Oumra & Hadj", "title": "Invocation pour boire l'eau de Zam-Zam",                  "arabic": "بسم الله",                                                                                                                                                                                                                                                                                                                                                                           "phonetic": "Bismillâhi (puis faire ses propres invocations).",                                                                                                                                                                                                                                                                                                                                                                                                         "translation": "Au nom d'Allah. Puis formuler ses propres invocations en buvant." },
-      { "id": "dua-safa",          "category": "Oumra & Hadj", "title": "Invocation sur le mont Safâ (et Marwa)",                  "arabic": "الله أكبر، الله أكبر، الله أكبر — لا إله إلا الله وحده لا شريك له",                                                                                                                                                                                                                                                                                                                  "phonetic": "Allâhou Akbar (3×), lâ ilâha illal'lâhou wahadahou lâ charîka lahou.",                                                                                                                                                                                                                                                                                                                                                                                   "translation": "Allah est le Plus Grand (3×). Il n'y a de divinité qu'Allah, Seul, sans associé. À Lui la royauté et la louange." },
-      { "id": "dua-arafat",        "category": "Hadj",         "title": "Invocation du jour d'Arafat",                              "arabic": "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير",                                                                                                                                                                                                                                                                                                            "phonetic": "lâ ilâha illal'lâhou wahadahou lâ charîka lahou, lahoul'moulkou wa lahoul'hamdou wa houwa alâ koulli chai'in qadîroun.",                                                                                                                                                                                                                                                                                                                                    "translation": "Il n'y a de divinité qu'Allah, Seul, sans associé. À Lui la royauté et la louange, et Il est Puissant sur toute chose." },
-      { "id": "dua-jamarat",       "category": "Hadj",         "title": "Ce qu'on dit lors de la lapidation des Jamarats",          "arabic": "بسم الله، الله أكبر",                                                                                                                                                                                                                                                                                                                                                                 "phonetic": "Bismillâhi, Allâhou Akbar.",                                                                                                                                                                                                                                                                                                                                                                                                                               "translation": "Au nom d'Allah, Allah est le Plus Grand. (À prononcer à chaque jet de caillou.)" }
+      {
+        "id": "dua-voyageur",
+        "category": "Voyage",
+        "title": "Invocation du voyageur (pour le résident qui reste)",
+        "arabic": "استودعكم الله الذي لا تضيع ودائعه",
+        "phonetic": "Astawdi'ukoumoul-Lâhoul Lazî Lâ toudîou Wadâ'i'ahou",
+        "translation": "Je vous confie à Allah, Celui dont les dépôts ne se perdent jamais."
+      },
+      {
+        "id": "dua-sortie-maison",
+        "category": "Voyage",
+        "title": "Invocation de sortie de la maison",
+        "arabic": "بسم الله، توكلت على الله، لا حول ولا قوة إلا بالله",
+        "phonetic": "Bismillâhi, Tawakaltou Alalâhi, Lâ hawla walâ qouwwata Illâ billâhi.",
+        "translation": "Au nom d'Allah. Je me confie à Allah. Il n'y a de force et de puissance qu'en Allah."
+      },
+      {
+        "id": "dua-voyage",
+        "category": "Voyage",
+        "title": "Invocation du voyage (sur la monture)",
+        "arabic": "سبحان الذي سخر لنا هذا وما كنا له مقرنين، وإنا إلى ربنا لمنقلبون",
+        "phonetic": "Soubhânallazî sakhara lanâ hâzâ wa mâ kounnâ lahoû mouqrinîna, wa innâ ilâ rabbinâ lamounqaliboûna.",
+        "translation": "Gloire à Celui qui nous a assujetti ceci alors que nous n'en étions pas capables, et c'est vers notre Seigneur que nous retournerons."
+      },
+      {
+        "id": "dua-entree-mosquee",
+        "category": "Mosquée",
+        "title": "Invocation d'entrée dans la mosquée",
+        "arabic": "اللهم افتح لي أبواب رحمتك",
+        "phonetic": "Bismillâhi was'salâtou wassalâmou alâ rasoûlilâhi, allâhoumma iftah lî abwâba rahmatika.",
+        "translation": "Au nom d'Allah, que la paix et la bénédiction soient sur le Messager d'Allah. Ô Allah ! Ouvre-moi les portes de Ta miséricorde."
+      },
+      {
+        "id": "dua-sortie-mosquee",
+        "category": "Mosquée",
+        "title": "Invocation de sortie de la mosquée",
+        "arabic": "اللهم أسألك من فضلك",
+        "phonetic": "Bismillâhi, was'salâtou wassalâmou alâ rasoûlilâhi. Allâhoumma asalouka min fadlika.",
+        "translation": "Au nom d'Allah, que la paix et la bénédiction soient sur le Messager d'Allah. Ô Allah ! Je Te demande de Ta grâce."
+      },
+      {
+        "id": "dua-tombe-prophete",
+        "category": "Médine",
+        "title": "Ce qu'on dit auprès de la tombe du Prophète ﷺ",
+        "arabic": "السلام عليك أيها النبي ورحمة الله وبركاته",
+        "phonetic": "Assalâmou alyka ayyouhan'nabiyyou warahamatoullâhi wa barakâtouhou.",
+        "translation": "Que la paix, la miséricorde et les bénédictions d'Allah soient sur toi, Ô Prophète !"
+      },
+      {
+        "id": "dua-cimetiere",
+        "category": "Médine",
+        "title": "Invocation de visite au cimetière (Al-Baqi')",
+        "arabic": "السلام عليكم أهل الديار، من المؤمنين والمسلمين",
+        "phonetic": "Assalâmou alaykoum Ahlad-diyâri, minal-Mou'minîna walmouslimâ.",
+        "translation": "Que la paix soit sur vous, ô habitants de ces demeures, croyants et musulmans."
+      },
+      {
+        "id": "dua-ihram",
+        "category": "Oumra & Hadj",
+        "title": "La Talbiya — Ce qu'on dit lors de l'Ihrâm",
+        "arabic": "لبيك اللهم لبيك، لبيك لا شريك لك لبيك، إن الحمد والنعمة لك والملك لا شريك لك",
+        "phonetic": "Labbaykal-lâhoumma labbayka, Labbayka lâ charîka laka labbayka, innal-hamda wanni'imata laka wal moulk lâ chrîka laka.",
+        "translation": "Me voici à Ta disposition, ô Allah, me voici ! Me voici, Tu n'as pas d'associé, me voici ! La louange, la grâce et la royauté T'appartiennent. Tu n'as pas d'associé.",
+        "highlight": true
+      },
+      {
+        "id": "dua-tawaf",
+        "category": "Oumra & Hadj",
+        "title": "Ce qu'on dit au début du Tawaf",
+        "arabic": "بسم الله، والله أكبر، اللهم إيمانا بك",
+        "phonetic": "Bismillâhi, wal-lâhou akbar, Allâhoumma îmânan bika, wa tasdîqan bikitâbika.",
+        "translation": "Au nom d'Allah, Allah est le Plus Grand. Ô Allah, avec foi en Toi, confiance en Ton Livre."
+      },
+      {
+        "id": "dua-yamani",
+        "category": "Oumra & Hadj",
+        "title": "Invocation entre le pilier Yémani et la Pierre Noire",
+        "arabic": "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار",
+        "phonetic": "Rabbanâ âtinâ fiddouniyâ hassanatan wa fil âkhirati hassanatan waqinâ azâbannâri.",
+        "translation": "Notre Seigneur, accorde-nous ce qui est bien en ce monde et ce qui est bien dans l'au-delà, et préserve-nous du châtiment du Feu."
+      },
+      {
+        "id": "dua-maqam-ibrahim",
+        "category": "Oumra & Hadj",
+        "title": "Invocation au niveau du Maqâm Ibrahim",
+        "arabic": "واتخذوا من مقام إبراهيم مصلى",
+        "phonetic": "Wattakhazoû min maqâmi Ibrâhîma mousallâ.",
+        "translation": "Et prenez la station d'Ibrahim comme lieu de prière. (Sourate Al-Baqara, 2:125)"
+      },
+      {
+        "id": "dua-zamzam",
+        "category": "Oumra & Hadj",
+        "title": "Invocation pour boire l'eau de Zam-Zam",
+        "arabic": "بسم الله",
+        "phonetic": "Bismillâhi (puis faire ses propres invocations).",
+        "translation": "Au nom d'Allah. Puis formuler ses propres invocations en buvant."
+      },
+      {
+        "id": "dua-safa",
+        "category": "Oumra & Hadj",
+        "title": "Invocation sur le mont Safâ (et Marwa)",
+        "arabic": "الله أكبر، الله أكبر، الله أكبر — لا إله إلا الله وحده لا شريك له",
+        "phonetic": "Allâhou Akbar (3×), lâ ilâha illal'lâhou wahadahou lâ charîka lahou.",
+        "translation": "Allah est le Plus Grand (3×). Il n'y a de divinité qu'Allah, Seul, sans associé. À Lui la royauté et la louange."
+      },
+      {
+        "id": "dua-arafat",
+        "category": "Hadj",
+        "title": "Invocation du jour d'Arafat",
+        "arabic": "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير",
+        "phonetic": "lâ ilâha illal'lâhou wahadahou lâ charîka lahou, lahoul'moulkou wa lahoul'hamdou wa houwa alâ koulli chai'in qadîroun.",
+        "translation": "Il n'y a de divinité qu'Allah, Seul, sans associé. À Lui la royauté et la louange, et Il est Puissant sur toute chose."
+      },
+      {
+        "id": "dua-jamarat",
+        "category": "Hadj",
+        "title": "Ce qu'on dit lors de la lapidation des Jamarats",
+        "arabic": "بسم الله، الله أكبر",
+        "phonetic": "Bismillâhi, Allâhou Akbar.",
+        "translation": "Au nom d'Allah, Allah est le Plus Grand. (À prononcer à chaque jet de caillou.)"
+      }
     ],
     "conclusionTitle": "Conclusion",
     "conclusionText1": "Ainsi s'achèvent les rites du Hadj. Que Allah accepte le pèlerinage de tous les fidèles et leur accorde Sa miséricorde. Toutes les louanges appartiennent à Allah, Seigneur de l'Univers.",
@@ -440,10 +747,22 @@
     "toolDuasTitle": "Du'as & Invocations",
     "toolDuasDesc": "Les invocations essentielles",
     "hajjSchedule": [
-      { "label": "8 Dhoul Hijja", "value": "Mina" },
-      { "label": "9 Dhoul Hijja", "value": "Arafat" },
-      { "label": "Nuit", "value": "Muzdalifa" },
-      { "label": "10-13 Dhoul Hijja", "value": "Mina + La Mecque" }
+      {
+        "label": "8 Dhoul Hijja",
+        "value": "Mina"
+      },
+      {
+        "label": "9 Dhoul Hijja",
+        "value": "Arafat"
+      },
+      {
+        "label": "Nuit",
+        "value": "Muzdalifa"
+      },
+      {
+        "label": "10-13 Dhoul Hijja",
+        "value": "Mina + La Mecque"
+      }
     ]
   },
   "contact": {
@@ -493,7 +812,7 @@
     "toolsLink4": "Invocations / Du'as"
   },
   "footer": {
-    "tagline": "Votre agence de confiance pour le Hadj et l'Oumra depuis 1998",
+    "tagline": "Votre agence de confiance pour le Hadj et l'Oumra depuis 2020",
     "brandDesc": "Agence spécialisée dans l'organisation de forfaits Hadj et Oumra adaptés aux besoins des pèlerins. Hajj et Oumra ZAM, c'est la confiance.",
     "newsletter": "Newsletter",
     "newsletterPitch": "Soyez les premiers informés de nos prochains départs",
@@ -578,7 +897,10 @@
     "distanceUnit": "km",
     "recalculate": "Recalculer",
     "retry": "Réessayer",
-    "compassN": "N", "compassS": "S", "compassO": "O", "compassE": "E"
+    "compassN": "N",
+    "compassS": "S",
+    "compassO": "O",
+    "compassE": "E"
   },
   "coran": {
     "toolsLabel": "OUTILS DU PÈLERIN",
@@ -605,5 +927,464 @@
     "recitation": "Récitation",
     "listenVerse": "Écouter ce verset",
     "verseLabel": "Verset"
+  },
+  "offersData": {
+    "oumra-aout-2026": {
+      "title": "Oumra Août 2026",
+      "subtitle": "Oumra tout compris",
+      "badge": "Disponible",
+      "duration": "19 jours",
+      "departure": "04 Août 2026",
+      "returnDate": "23 Août 2026",
+      "highlights": [
+        {
+          "icon": "🕌",
+          "label": "Durée",
+          "value": "19 jours"
+        },
+        {
+          "icon": "🏨",
+          "label": "Hébergement",
+          "value": "4 nuits Médine · 15 nuits Makkah"
+        },
+        {
+          "icon": "✈️",
+          "label": "Vol",
+          "value": "Turkish Airlines"
+        },
+        {
+          "icon": "👤",
+          "label": "Guide",
+          "value": "Expérimenté inclus"
+        }
+      ],
+      "hotels": [
+        {
+          "city": "Médine",
+          "distance": "~170 m de la mosquée",
+          "pension": "Non incluse"
+        },
+        {
+          "city": "Makkah",
+          "distance": "~600 m du Haram",
+          "pension": "Non incluse"
+        }
+      ],
+      "flights": [
+        {
+          "direction": "Aller",
+          "from": "Niamey (NIM)",
+          "to": "Médine (MED)",
+          "stopover": "Escale Istanbul"
+        },
+        {
+          "direction": "Retour",
+          "from": "Médine (MED)",
+          "to": "Niamey (NIM)",
+          "stopover": "Escale Istanbul"
+        }
+      ],
+      "pricing": [
+        {
+          "label": "Chambre quadruple",
+          "sublabel": "par adulte"
+        },
+        {
+          "label": "Chambre double",
+          "sublabel": "par personne (couple)"
+        },
+        {
+          "label": "Enfant",
+          "sublabel": "2 à 12 ans"
+        },
+        {
+          "label": "Bébé",
+          "sublabel": "0 à 2 ans"
+        }
+      ],
+      "program": [
+        {
+          "step": 1,
+          "title": "Départ de Niamey",
+          "content": "Départ en groupe depuis Niamey avec vos documents, accompagné de notre équipe. Formalités d'embarquement prises en charge."
+        },
+        {
+          "step": 2,
+          "title": "Séjour à Médine",
+          "content": "Après votre arrivée, une réunion d'information sera organisée pour vous expliquer les bienfaits de Médine et de la Mosquée du Prophète ﷺ, avec de nombreux conseils pratiques."
+        },
+        {
+          "step": 3,
+          "title": "Visite de la Rawda Sharifa",
+          "content": "Vivez un moment spirituel unique en visitant la Rawda Sharifa, située dans la Mosquée du Prophète ﷺ. Considérée comme l'un des jardins du Paradis, elle est un lieu de recueillement privilégié."
+        },
+        {
+          "step": 4,
+          "title": "Visite de la mosquée de Quba",
+          "content": "Le Prophète ﷺ a dit : « Quiconque se purifie chez lui, puis se rend à Quba et y effectue une prière remportera une récompense égale à celle d'une Oumra. »"
+        },
+        {
+          "step": 5,
+          "title": "Visite du mont Uhud",
+          "content": "Visite du mont Uhud, lieu emblématique de l'Histoire de l'Islam. Il est conseillé de visiter les tombes des Martyrs d'Uhud afin d'invoquer Allah pour eux."
+        },
+        {
+          "step": 6,
+          "title": "Les rites de la Oumra",
+          "content": "Vous réaliserez les rites de la Oumra (Tawaf, Saî), accompagnés de votre guide qui vous expliquera chaque étape, répondra à vos questions et vous encadrera tout au long."
+        },
+        {
+          "step": 7,
+          "title": "Les bienfaits de Makkah",
+          "content": "Un cours sur les bienfaits de Makkah et des informations pratiques vous seront délivrés pour profiter au mieux de votre séjour à la Cité Sainte."
+        },
+        {
+          "step": 8,
+          "title": "Visite des lieux du Hadj",
+          "content": "Visite de Mina, Arafat, Muzdalifah et le Jamarat — des lieux chargés d'histoire et de spiritualité."
+        },
+        {
+          "step": 9,
+          "title": "Retour vers Niamey",
+          "content": "Votre séjour se terminera in shaa Allah. Nos organisateurs prendront soin de vous communiquer toutes les informations pour un départ en toute sérénité."
+        }
+      ],
+      "documents": [
+        {
+          "icon": "📘",
+          "title": "Passeport",
+          "content": "Passeport de nationalité nigérienne valable au minimum 6 mois après la date de retour."
+        },
+        {
+          "icon": "📷",
+          "title": "Photos d'identité",
+          "content": "Quatre (04) photos d'identité récentes (avec hijab pour les femmes)."
+        },
+        {
+          "icon": "💉",
+          "title": "Vaccinations",
+          "content": "Carnet jaune de vaccination contre la fièvre jaune et la méningite obligatoire. D'autres vaccins peuvent s'ajouter selon les réglementations saoudiennes."
+        },
+        {
+          "icon": "💳",
+          "title": "Acompte",
+          "content": "Acompte de 500 000 FCFA à la réservation (virement bancaire, chèque ou carte bancaire)."
+        }
+      ],
+      "included": [
+        "Vol aller-retour Turkish Airlines",
+        "Visa Oumra",
+        "Hébergement 4 nuits à Médine",
+        "Hébergement 15 nuits à Makkah",
+        "Transferts aéroport ↔ hôtels",
+        "Encadrement religieux & guides",
+        "Cours préparatoires aux rites",
+        "Visites guidées (Rawda, Quba, Uhud…)"
+      ],
+      "notIncluded": [
+        "Repas (pension non incluse)",
+        "Dépenses personnelles",
+        "Pourboires"
+      ]
+    },
+    "oumra-ramadan-2027": {
+      "title": "Oumra Ramadan 2027",
+      "subtitle": "Oumra tout compris",
+      "badge": "Bientôt disponible",
+      "duration": "À confirmer",
+      "departure": null,
+      "returnDate": null,
+      "highlights": [
+        {
+          "icon": "🌙",
+          "label": "Période",
+          "value": "Ramadan 2027"
+        },
+        {
+          "icon": "🏨",
+          "label": "Hébergement",
+          "value": "Médine + Makkah"
+        },
+        {
+          "icon": "✈️",
+          "label": "Vol",
+          "value": "Niamey → Médine"
+        },
+        {
+          "icon": "👤",
+          "label": "Guide",
+          "value": "Expérimenté inclus"
+        }
+      ],
+      "hotels": [
+        {
+          "city": "Médine",
+          "distance": "~170 m de la mosquée",
+          "pension": "Non incluse"
+        },
+        {
+          "city": "Makkah",
+          "distance": "~600 m du Haram",
+          "pension": "Non incluse"
+        }
+      ],
+      "flights": [
+        {
+          "direction": "Aller",
+          "from": "Niamey (NIM)",
+          "to": "Médine (MED)",
+          "stopover": "Vol direct"
+        },
+        {
+          "direction": "Retour",
+          "from": "Médine (MED)",
+          "to": "Niamey (NIM)",
+          "stopover": "Vol direct"
+        }
+      ],
+      "pricing": [
+        {
+          "label": "Chambre quadruple",
+          "sublabel": "par adulte"
+        },
+        {
+          "label": "Chambre double",
+          "sublabel": "par personne (couple)"
+        },
+        {
+          "label": "Enfant",
+          "sublabel": "2 à 12 ans"
+        },
+        {
+          "label": "Bébé",
+          "sublabel": "0 à 2 ans"
+        }
+      ],
+      "program": [
+        {
+          "step": 1,
+          "title": "Départ de Niamey",
+          "content": "Départ en groupe depuis Niamey avec vos documents, accompagné de notre équipe. Formalités d'embarquement prises en charge."
+        },
+        {
+          "step": 2,
+          "title": "Séjour à Médine",
+          "content": "Après votre arrivée, une réunion d'information sera organisée pour vous expliquer les bienfaits de Médine et de la Mosquée du Prophète ﷺ, avec de nombreux conseils pratiques."
+        },
+        {
+          "step": 3,
+          "title": "Visite de la Rawda Sharifa",
+          "content": "Vivez un moment spirituel unique en visitant la Rawda Sharifa, située dans la Mosquée du Prophète ﷺ. Considérée comme l'un des jardins du Paradis, elle est un lieu de recueillement privilégié."
+        },
+        {
+          "step": 4,
+          "title": "Visite de la mosquée de Quba",
+          "content": "Le Prophète ﷺ a dit : « Quiconque se purifie chez lui, puis se rend à Quba et y effectue une prière remportera une récompense égale à celle d'une Oumra. »"
+        },
+        {
+          "step": 5,
+          "title": "Visite du mont Uhud",
+          "content": "Visite du mont Uhud, lieu emblématique de l'Histoire de l'Islam. Il est conseillé de visiter les tombes des Martyrs d'Uhud afin d'invoquer Allah pour eux."
+        },
+        {
+          "step": 6,
+          "title": "Les rites de la Oumra",
+          "content": "Vous réaliserez les rites de la Oumra (Tawaf, Saî), accompagnés de votre guide qui vous expliquera chaque étape, répondra à vos questions et vous encadrera tout au long."
+        },
+        {
+          "step": 7,
+          "title": "Les bienfaits de Makkah",
+          "content": "Un cours sur les bienfaits de Makkah et des informations pratiques vous seront délivrés pour profiter au mieux de votre séjour à la Cité Sainte."
+        },
+        {
+          "step": 8,
+          "title": "Retour vers Niamey",
+          "content": "Votre séjour se terminera in shaa Allah. Nos organisateurs prendront soin de vous communiquer toutes les informations pour un départ en toute sérénité."
+        }
+      ],
+      "documents": [
+        {
+          "icon": "📘",
+          "title": "Passeport",
+          "content": "Passeport de nationalité nigérienne valable au minimum 6 mois après la date de retour."
+        },
+        {
+          "icon": "📷",
+          "title": "Photos d'identité",
+          "content": "Quatre (04) photos d'identité récentes (avec hijab pour les femmes)."
+        },
+        {
+          "icon": "💉",
+          "title": "Vaccinations",
+          "content": "Carnet jaune de vaccination contre la fièvre jaune et la méningite obligatoire. D'autres vaccins peuvent s'ajouter selon les réglementations saoudiennes."
+        },
+        {
+          "icon": "💳",
+          "title": "Acompte",
+          "content": "Acompte de 500 000 FCFA à la réservation (virement bancaire, chèque ou carte bancaire)."
+        }
+      ],
+      "included": [
+        "Vols charter & réguliers",
+        "Visa Oumra inclus",
+        "Prise en charge médicale complète",
+        "Hébergement à Médine (~170 m mosquée)",
+        "Hébergement à Makkah (~600 m Haram)",
+        "Accompagnement et cours inclus",
+        "Guides expérimentés",
+        "Transferts aéroport ↔ hôtels"
+      ],
+      "notIncluded": [
+        "Repas (pension non incluse)",
+        "Dépenses personnelles",
+        "Pourboires"
+      ]
+    },
+    "hadj-2027": {
+      "title": "Hadj 2027",
+      "subtitle": "Hadj tout compris",
+      "badge": "Inscriptions ouvertes",
+      "duration": "À confirmer",
+      "departure": null,
+      "returnDate": null,
+      "highlights": [
+        {
+          "icon": "🕋",
+          "label": "Type",
+          "value": "Hadj officiel"
+        },
+        {
+          "icon": "🏨",
+          "label": "Hébergement",
+          "value": "Proche du Haram"
+        },
+        {
+          "icon": "✈️",
+          "label": "Vol",
+          "value": "Niamey → Jeddah"
+        },
+        {
+          "icon": "👤",
+          "label": "Guide",
+          "value": "Encadrement complet"
+        }
+      ],
+      "hotels": [
+        {
+          "city": "Makkah",
+          "distance": "Proche du Haram",
+          "pension": "Non incluse"
+        },
+        {
+          "city": "Médine",
+          "distance": "Proche de la mosquée",
+          "pension": "Non incluse"
+        }
+      ],
+      "flights": [
+        {
+          "direction": "Aller",
+          "from": "Niamey (NIM)",
+          "to": "Jeddah (JED)",
+          "stopover": null
+        },
+        {
+          "direction": "Retour",
+          "from": "Jeddah (JED)",
+          "to": "Niamey (NIM)",
+          "stopover": null
+        }
+      ],
+      "pricing": [
+        {
+          "label": "Adulte",
+          "sublabel": "par personne"
+        }
+      ],
+      "program": [
+        {
+          "step": 1,
+          "title": "Départ de Niamey",
+          "content": "Départ en groupe depuis Niamey avec vos documents, accompagné de notre équipe. Formalités d'embarquement prises en charge."
+        },
+        {
+          "step": 2,
+          "title": "Arrivée à Makkah",
+          "content": "Installation à l'hôtel. Réunion d'information sur les rites du Hadj, les bienfaits de Makkah et les consignes pratiques."
+        },
+        {
+          "step": 3,
+          "title": "Séjour à Makkah — rites préliminaires",
+          "content": "Accomplissement des prières à la Mosquée Sacrée, tawaf de bienvenue (Tawaf al-Qudum) et prières optionnelles."
+        },
+        {
+          "step": 4,
+          "title": "8 Dhul Hijja — Yawm at-Tarwiyah",
+          "content": "Départ vers Mina pour le séjour de la nuit. Prières et méditation dans les tentes de Mina."
+        },
+        {
+          "step": 5,
+          "title": "9 Dhul Hijja — Yawm Arafah",
+          "content": "Pilier central du Hadj. Séjour à Arafah de midi jusqu'au coucher du soleil pour les supplication et invocations."
+        },
+        {
+          "step": 6,
+          "title": "Muzdalifah & Jamarat",
+          "content": "Nuit à Muzdalifah, collecte des cailloux, puis lapidation du Jamarat (symbolisant le rejet de Satan)."
+        },
+        {
+          "step": 7,
+          "title": "Séjour à Médine",
+          "content": "Visite de la Mosquée du Prophète ﷺ, de la Rawda Sharifa, de Quba et d'Uhud."
+        },
+        {
+          "step": 8,
+          "title": "Retour vers Niamey",
+          "content": "Fin du séjour in shaa Allah. Départ organisé dans les meilleures conditions."
+        }
+      ],
+      "documents": [
+        {
+          "icon": "📘",
+          "title": "Passeport",
+          "content": "Passeport de nationalité nigérienne valable au minimum 6 mois après la date de retour."
+        },
+        {
+          "icon": "📷",
+          "title": "Photos d'identité",
+          "content": "Quatre (04) photos d'identité récentes (avec hijab pour les femmes)."
+        },
+        {
+          "icon": "💉",
+          "title": "Vaccinations",
+          "content": "Carnet jaune de vaccination contre la fièvre jaune et la méningite obligatoire. D'autres vaccins peuvent s'ajouter selon les réglementations saoudiennes."
+        },
+        {
+          "icon": "💳",
+          "title": "Acompte",
+          "content": "Acompte de 500 000 FCFA à la réservation (virement bancaire, chèque ou carte bancaire)."
+        },
+        {
+          "icon": "📋",
+          "title": "Formulaire Hadj",
+          "content": "Formulaire d'inscription officiel au Hadj délivré par le COHO (Commissariat à l'Organisation du Hadj et de la Oumra du Niger)."
+        }
+      ],
+      "included": [
+        "Visa Hadj",
+        "Vol aller-retour",
+        "Hébergement proche du Haram (Makkah)",
+        "Hébergement à Médine",
+        "Tentes de Mina",
+        "Encadrement religieux & guides",
+        "Transferts et transports sur place",
+        "Constitution du dossier COHO"
+      ],
+      "notIncluded": [
+        "Repas (pension non incluse)",
+        "Dépenses personnelles",
+        "Pourboires"
+      ]
+    }
   }
 }

@@ -6,6 +6,7 @@ import { OFFERS } from "@/lib/offers-data";
 
 export default function OffresPage() {
   const t = useTranslations("offers");
+  const offersData = t.raw("offersData") as Record<string, any>;
 
   return (
     <>
@@ -25,7 +26,11 @@ export default function OffresPage() {
       {/* Offers */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          {OFFERS.map((offer) => (
+          {OFFERS.map((offer) => {
+            const od = offersData[offer.slug] ?? {};
+            const hotels = offer.hotels.map((h, i) => ({ ...h, ...(od.hotels?.[i] ?? {}) }));
+            const included = od.included ?? offer.included;
+            return (
             <div key={offer.slug} id={offer.slug}
               className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden scroll-mt-24 hover:shadow-lg transition-shadow">
 
@@ -37,12 +42,12 @@ export default function OffresPage() {
               } text-white`}>
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full tracking-wider">{offer.type}</span>
-                  <h2 className="font-bold text-lg">{offer.title}</h2>
+                  <h2 className="font-bold text-lg">{od.title ?? offer.title}</h2>
                 </div>
                 <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
                   offer.available ? "bg-white/20 text-white" : "bg-black/20 text-white/70"
                 }`}>
-                  {offer.badge}
+                  {od.badge ?? offer.badge}
                 </span>
               </div>
 
@@ -52,22 +57,22 @@ export default function OffresPage() {
                   <div>
                     {/* Quick stats */}
                     <div className="flex flex-wrap gap-4 mb-6 text-sm text-gray-600">
-                      {offer.departure && (
+                      {(od.departure ?? offer.departure) && (
                         <span className="flex items-center gap-1.5">
                           <Calendar size={14} className="text-[#0f5132]" />
-                          {t("departure")} : <strong className="text-gray-900">{offer.departure}</strong>
+                          {t("departure")} : <strong className="text-gray-900">{od.departure ?? offer.departure}</strong>
                         </span>
                       )}
-                      {offer.returnDate && (
+                      {(od.returnDate ?? offer.returnDate) && (
                         <span className="flex items-center gap-1.5">
                           <Calendar size={14} className="text-[#0f5132]" />
-                          {t("return")} : <strong className="text-gray-900">{offer.returnDate}</strong>
+                          {t("return")} : <strong className="text-gray-900">{od.returnDate ?? offer.returnDate}</strong>
                         </span>
                       )}
-                      {offer.duration && (
+                      {(od.duration ?? offer.duration) && (
                         <span className="flex items-center gap-1.5">
                           <Clock size={14} className="text-[#0f5132]" />
-                          <strong className="text-gray-900">{offer.duration}</strong>
+                          <strong className="text-gray-900">{od.duration ?? offer.duration}</strong>
                         </span>
                       )}
                       {offer.airline && (
@@ -80,7 +85,7 @@ export default function OffresPage() {
 
                     {/* Hotels */}
                     <div className="flex flex-wrap gap-3 mb-6">
-                      {offer.hotels.map((h) => (
+                      {hotels.map((h) => (
                         <div key={h.city} className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
                           <span className="text-base">🏨</span>
                           <div>
@@ -93,7 +98,7 @@ export default function OffresPage() {
 
                     {/* Included */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                      {offer.included.slice(0, 6).map((item) => (
+                      {(included as string[]).slice(0, 6).map((item) => (
                         <div key={item} className="flex items-center gap-2 text-xs text-gray-600">
                           <Check size={12} className="text-[#0f5132] flex-shrink-0" strokeWidth={2.5} />
                           {item}
@@ -121,7 +126,7 @@ export default function OffresPage() {
                         {t("details")} <ArrowRight size={14} />
                       </Link>
                       {offer.available && (
-                        <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+                        <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
                           className="flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl border-2 border-[#0f5132] text-[#0f5132] hover:bg-emerald-50 transition-all">
                           <Users size={14} /> {t("bookBtn")}
                         </a>
@@ -131,7 +136,8 @@ export default function OffresPage() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -141,9 +147,9 @@ export default function OffresPage() {
         <h2 className="text-2xl md:text-3xl font-bold mb-4">{t("contactTeam")}</h2>
         <p className="text-white/60 mb-7 text-sm">{t("contactHours")}</p>
         <div className="flex flex-wrap gap-3 justify-center">
-          <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+          <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
             className="btn-gold flex items-center gap-2"><IconWhatsApp size={16} /> {t("contactWhatsapp")}</a>
-          <a href="tel:+22796969070" className="px-6 py-2.5 rounded-full border border-white/30 text-white text-sm font-semibold hover:bg-white/10 transition">
+          <a href="tel:+22791882121" className="px-6 py-2.5 rounded-full border border-white/30 text-white text-sm font-semibold hover:bg-white/10 transition">
             📞 {t("contactCall")}
           </a>
         </div>

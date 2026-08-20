@@ -38,7 +38,7 @@ export default function ContactPage() {
     const text = encodeURIComponent(
       t("whatsappTemplate", { name: form.name, subject: form.subject, message: form.message })
     );
-    window.open(`https://wa.me/22796969070?text=${text}`, "_blank");
+    window.open(`https://wa.me/22791882121?text=${text}`, "_blank");
   }
 
   return (
@@ -155,7 +155,7 @@ export default function ContactPage() {
             </div>
 
             <a
-              href="https://wa.me/22796969070"
+              href="https://wa.me/22791882121"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 bg-green-500 text-white font-semibold py-4 rounded-xl hover:bg-green-400 transition-colors"

@@ -160,13 +160,14 @@ export default function Header({ user }: { user: { name: string; role: string } 
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 flex items-center gap-2">
-              <Image
-                src="/images/logo-zam.png"
-                alt="Hajj et Oumra ZAM"
-                width={52}
-                height={52}
-                className="object-contain"
-              />
+              <div className="w-[52px] h-[52px] overflow-hidden relative flex-shrink-0">
+                <Image
+                  src="/image ZAM/logo.png"
+                  alt="Hajj et Oumra ZAM"
+                  fill
+                  className="object-cover scale-x-[1.5]"
+                />
+              </div>
               <div className="flex flex-col leading-none">
                 <span
                   className="font-bold text-xl tracking-tight text-[#0f5132]"

@@ -25,6 +25,24 @@ export const metadata: Metadata = {
   },
   description:
     "Hajj et Oumra ZAM, fidèle à ses engagements. Organisation de forfaits Hadj et Oumra adaptés aux besoins des pèlerins depuis Niamey, Niger.",
+  icons: {
+    icon: "/image ZAM/logo.png",
+    shortcut: "/image ZAM/logo.png",
+    apple: "/image ZAM/logo.png",
+  },
+  openGraph: {
+    title: "Hajj et Oumra ZAM — Agence Hadj & Oumra",
+    description: "Organisation de forfaits Hadj et Oumra depuis Niamey, Niger.",
+    images: [{ url: "/image ZAM/logo.png", width: 512, height: 512, alt: "Hajj et Oumra ZAM" }],
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Hajj et Oumra ZAM",
+    description: "Organisation de forfaits Hadj et Oumra depuis Niamey, Niger.",
+    images: ["/image ZAM/logo.png"],
+  },
 };
 
 export function generateStaticParams() {

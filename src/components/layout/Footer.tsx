@@ -25,7 +25,7 @@ function IconTikTok({ size = 16 }: { size?: number }) {
 
 const SOCIAL = [
   { label: "Facebook", href: "https://www.facebook.com/profile.php?id=61582139390008", icon: <IconFacebook size={16} />, hover: "hover:bg-[#1877f2] hover:border-[#1877f2]" },
-  { label: "WhatsApp", href: "https://wa.me/22796969070",                              icon: <IconWhatsApp size={16} />, hover: "hover:bg-[#25d366] hover:border-[#25d366]" },
+  { label: "WhatsApp", href: "https://wa.me/22791882121",                              icon: <IconWhatsApp size={16} />, hover: "hover:bg-[#25d366] hover:border-[#25d366]" },
   { label: "TikTok",   href: "https://www.tiktok.com/@hajjoumra.zam",                 icon: <IconTikTok size={15} />,   hover: "hover:bg-black hover:border-black" },
 ];
 
@@ -150,7 +150,9 @@ export default function Footer() {
           {/* Brand col */}
           <div>
             <div className="flex items-center gap-3 mb-5">
-              <Image src="/images/logo-zam.png" alt="Hajj et Oumra ZAM" width={48} height={48} className="object-contain" />
+              <div className="w-[48px] h-[48px] overflow-hidden relative flex-shrink-0">
+                <Image src="/image ZAM/logo.png" alt="Hajj et Oumra ZAM" fill className="object-cover scale-x-[1.5]" />
+              </div>
               <div>
                 <p className="font-bold text-xl leading-none" style={{ fontFamily: "var(--font-playfair, serif)" }}>Hajj et Oumra ZAM</p>
                 <p className="text-xs tracking-widest text-amber-400 font-semibold mt-0.5">HADJ &amp; OUMRA</p>

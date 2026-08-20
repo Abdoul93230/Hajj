@@ -174,7 +174,7 @@ export default function HomePage() {
                 <Phone size={14} /> +227 96 96 39 61
               </a>
               <span className="text-white/30">|</span>
-              <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+              <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors text-sm font-medium">
                 <IconWhatsApp size={16} />
                 {t("whatsappAvailable")}
@@ -574,7 +574,7 @@ export default function HomePage() {
           </h2>
           <p className="text-white/60 mb-10 text-lg">{t("ctaSubtitle")}</p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+            <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
               className="btn-gold hover:scale-105 transition-transform shadow-xl shadow-amber-900/30 text-base px-8 py-3.5">
               <IconWhatsApp size={18} /> {t("ctaWhatsapp")}
             </a>

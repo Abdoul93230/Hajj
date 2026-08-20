@@ -8,15 +8,15 @@ import { Shield, Heart, Star, Users, ArrowRight, MapPin, Quote, ChevronLeft, Che
 
 const VALUE_ICONS = [<Shield size={24} />, <Heart size={24} />, <Star size={24} />, <Users size={24} />];
 const GALLERY = [
+  "/images/med.jpeg",
+  "/images/medine - Copy.jpg",
+  "/images/kaaba3.jpg",
+  "/images/med2.jpeg",
   "/images/kaaba.jpg",
-  "/images/medine.jpg",
-  "/images/kaaba.jpg",
-  "/images/medine.jpg",
-  "/images/kaaba.jpg",
-  "/images/medine.jpg",
+  "/images/medine - Copy.jpg",
 ];
-const TEAM_IMAGES = ["/images/kaaba.jpg", "/images/medine.jpg", "/images/kaaba.jpg", "/images/medine.jpg"];
-const STATS_VALUES = [{ value: 25, suffix: "+" }, { value: 1200, suffix: "+" }, { value: 98, suffix: "%" }, { value: 3, suffix: "" }];
+const TEAM_IMAGES = ["/images/kaaba.jpg", "/images/medine - Copy.jpg"];
+const STATS_VALUES = [{ value: 5, suffix: "+" }, { value: 200, suffix: "+" }, { value: 98, suffix: "%" }, { value: 2, suffix: "" }];
 
 function useReveal() {
   useEffect(() => {
@@ -129,7 +129,7 @@ export default function NotreHistoirePage() {
             <div key={i} className={`reveal grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${i % 2 === 1 ? "lg:[direction:rtl]" : ""}`}>
               <div className="[direction:ltr]">
                 <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-xl">
-                  <Image src={TEAM_IMAGES[i]} alt={member.name} fill className="object-cover" />
+                  <Image src={TEAM_IMAGES[i] ?? TEAM_IMAGES[0]} alt={member.name} fill className="object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#06251a]/70 to-transparent" />
                   <div className="absolute bottom-5 left-5">
                     <span className="inline-block bg-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">

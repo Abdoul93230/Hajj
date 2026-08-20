@@ -337,7 +337,7 @@ export default function GuidePelerinPage() {
                     className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm px-6 py-3 rounded-xl transition-all hover:scale-105">
                     {t("btnSeeOffers")} <ArrowRight size={14} />
                   </Link>
-                  <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+                  <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all">
                     <IconWhatsApp size={16} /> {t("btnContact")}
                   </a>
@@ -361,7 +361,7 @@ export default function GuidePelerinPage() {
             <Link href="/offres" className="btn-primary px-8 py-3 flex items-center gap-2">
               {t("btnOffers")} <ArrowRight size={14} />
             </Link>
-            <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+            <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 border-2 border-[#0f5132] text-[#0f5132] font-semibold text-sm px-6 py-3 rounded-full hover:bg-emerald-50 transition-all">
               <IconWhatsApp size={16} /> WhatsApp
             </a>

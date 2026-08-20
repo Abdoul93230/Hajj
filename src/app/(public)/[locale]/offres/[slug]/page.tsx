@@ -28,6 +28,16 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
   const t = useTranslations("offers");
   const testimonialTexts = t.raw("testimonialTexts") as string[];
   const TESTIMONIALS = TESTIMONIAL_STATIC.map((s, i) => ({ ...s, text: testimonialTexts[i] }));
+  const offersData = t.raw("offersData") as Record<string, any>;
+  const od = offersData[offer.slug] ?? {};
+  const highlights = (od.highlights ?? offer.highlights) as typeof offer.highlights;
+  const hotels = offer.hotels.map((h, i) => ({ ...h, ...(od.hotels?.[i] ?? {}) }));
+  const flights = offer.flights.map((f, i) => ({ ...f, ...(od.flights?.[i] ?? {}) }));
+  const pricing = offer.pricing.map((p, i) => ({ ...p, ...(od.pricing?.[i] ?? {}) }));
+  const program = (od.program ?? offer.program) as typeof offer.program;
+  const documents = (od.documents ?? offer.documents) as typeof offer.documents;
+  const included = (od.included ?? offer.included) as string[];
+  const notIncluded = (od.notIncluded ?? offer.notIncluded) as string[];
   const [activeTab, setActiveTab] = useState<Tab>("sejour");
 
   const TABS: { id: Tab; label: string }[] = [
@@ -67,14 +77,14 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
             <ChevronRight size={12} />
             <Link href="/offres" className="hover:text-white transition-colors">{t("breadOffers")}</Link>
             <ChevronRight size={12} />
-            <span className="text-white/80">{offer.title}</span>
+            <span className="text-white/80">{od.title ?? offer.title}</span>
           </div>
-          <span className="inline-block text-xs font-bold bg-white/20 text-white px-3 py-1 rounded-full mb-3">{offer.subtitle}</span>
+          <span className="inline-block text-xs font-bold bg-white/20 text-white px-3 py-1 rounded-full mb-3">{od.subtitle ?? offer.subtitle}</span>
           <h1 className="text-4xl md:text-6xl font-black text-white mb-4" style={{ fontFamily: "var(--font-playfair, serif)" }}>
-            {offer.title}
+            {od.title ?? offer.title}
           </h1>
           <div className="flex flex-wrap gap-3">
-            {offer.highlights.map((h) => (
+            {highlights.map((h) => (
               <div key={h.label} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 text-white text-xs font-medium">
                 <span>{h.icon}</span>
                 <span className="text-white/60">{h.label} :</span>
@@ -94,11 +104,11 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
             <span className="text-xs text-gray-400">{t("perPerson")}</span>
           </div>
           <div className="flex gap-2">
-            <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+            <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-2 border-2 border-[#0f5132] text-[#0f5132] text-sm font-semibold px-4 py-2 rounded-full hover:bg-emerald-50 transition-all">
               <IconWhatsApp size={16} /> WhatsApp
             </a>
-            <a href="tel:+22796969070"
+            <a href="tel:+22791882121"
               className={`flex items-center gap-2 ${btnClass} text-white text-sm font-bold px-5 py-2 rounded-full transition-all`}>
               {t("confirmBtn")} <ArrowRight size={13} />
             </a>
@@ -163,7 +173,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
                         {t("includedTitle")}
                       </h3>
                       <ul className="space-y-2">
-                        {offer.included.map((item) => (
+                        {included.map((item) => (
                           <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
                             <Check size={13} className="text-[#0f5132] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
                             {item}
@@ -179,7 +189,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
                         {t("notIncludedTitle")}
                       </h3>
                       <ul className="space-y-2">
-                        {offer.notIncluded.map((item) => (
+                        {notIncluded.map((item) => (
                           <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
                             <X size={13} className="text-amber-400 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
                             {item}
@@ -194,7 +204,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
               {/* HÔTELS */}
               {activeTab === "hotels" && (
                 <div className="space-y-5">
-                  {offer.hotels.map((h) => (
+                  {hotels.map((h) => (
                     <div key={h.city} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                       <div className="flex items-start justify-between mb-4">
                         <div>
@@ -230,7 +240,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
               {/* VOLS */}
               {activeTab === "vols" && (
                 <div className="space-y-5">
-                  {offer.flights.map((f) => (
+                  {flights.map((f) => (
                     <div key={f.direction} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                       <p className={`text-xs font-bold tracking-widest uppercase mb-4 ${accentText}`}>{t("flightLabel")} {f.direction}</p>
                       <div className="flex items-center gap-4 mb-5">
@@ -276,7 +286,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
                     <p className="text-white/70 text-sm">{t("priceSubtitle")}</p>
                   </div>
                   <div className="divide-y divide-gray-50">
-                    {offer.pricing.map((p) => (
+                    {pricing.map((p) => (
                       <div key={p.label} className={`flex items-center justify-between px-6 py-4 ${p.highlight ? "bg-emerald-50/50" : ""}`}>
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
@@ -303,7 +313,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
                   </div>
                   <div className="px-6 py-5 bg-gray-50 border-t border-gray-100">
                     <p className="text-xs text-gray-500 mb-4">{t("acompteNote")}</p>
-                    <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+                    <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
                       className={`inline-flex items-center gap-2 ${btnClass} text-white font-bold text-sm px-6 py-3 rounded-xl transition-all hover:scale-105`}>
                       {t("bookNow")} <ArrowRight size={14} />
                     </a>
@@ -318,7 +328,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
                   <div className="relative">
                     <div className="absolute left-5 top-0 bottom-0 w-px bg-gray-100" />
                     <div className="space-y-6">
-                      {offer.program.map((step) => (
+                      {program.map((step) => (
                         <div key={step.step} className="flex gap-5 relative">
                           <div className={`w-10 h-10 rounded-full ${accentClass} flex items-center justify-center flex-shrink-0 z-10 shadow-sm`}>
                             <span className="text-white text-xs font-black">{step.step}</span>
@@ -342,7 +352,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
                       {t("docWarning")}
                     </p>
                   </div>
-                  {offer.documents.map((doc) => (
+                  {documents.map((doc) => (
                     <div key={doc.title} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-start gap-4">
                       <div className="w-11 h-11 bg-gray-50 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
                         {doc.icon}
@@ -369,30 +379,30 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
                   <p className="text-sm text-white/70">{offer.priceCurrency} {t("perPerson")}</p>
                 </div>
                 <div className="p-5 space-y-3">
-                  {offer.departure && (
+                  {(od.departure ?? offer.departure) && (
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Calendar size={14} className={accentText} />
-                      <span>{t("departure")} : <strong>{offer.departure}</strong></span>
+                      <span>{t("departure")} : <strong>{od.departure ?? offer.departure}</strong></span>
                     </div>
                   )}
-                  {offer.returnDate && (
+                  {(od.returnDate ?? offer.returnDate) && (
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Calendar size={14} className={accentText} />
-                      <span>{t("return")} : <strong>{offer.returnDate}</strong></span>
+                      <span>{t("return")} : <strong>{od.returnDate ?? offer.returnDate}</strong></span>
                     </div>
                   )}
-                  {offer.duration && (
+                  {(od.duration ?? offer.duration) && (
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Clock size={14} className={accentText} />
-                      <span><strong>{offer.duration}</strong></span>
+                      <span><strong>{od.duration ?? offer.duration}</strong></span>
                     </div>
                   )}
                   <div className="pt-2 space-y-2">
-                    <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+                    <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
                       className={`flex items-center justify-center gap-2 w-full ${btnClass} text-white font-bold text-sm py-3 rounded-xl transition-all hover:scale-105`}>
                       {t("confirmBtn")} <ArrowRight size={14} />
                     </a>
-                    <a href="tel:+22796969070"
+                    <a href="tel:+22791882121"
                       className="flex items-center justify-center gap-2 w-full border-2 border-gray-200 text-gray-700 font-semibold text-sm py-3 rounded-xl hover:border-emerald-300 transition-all">
                       <Phone size={14} /> {t("callBtn")}
                     </a>
@@ -409,8 +419,8 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
                     <Link key={o.slug} href={`/offres/${o.slug}` as `/offres/${string}`}
                       className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all group">
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 group-hover:text-[#0f5132] transition-colors">{o.title}</p>
-                        {o.departure && <p className="text-xs text-gray-400">{o.departure}</p>}
+                        <p className="text-sm font-semibold text-gray-900 group-hover:text-[#0f5132] transition-colors">{offersData[o.slug]?.title ?? o.title}</p>
+                        {(offersData[o.slug]?.departure ?? o.departure) && <p className="text-xs text-gray-400">{offersData[o.slug]?.departure ?? o.departure}</p>}
                         <p className="text-xs font-bold text-[#0f5132] mt-0.5">
                           {t("fromLabel")} {o.priceFrom.toLocaleString("fr-FR")} {o.priceCurrency}
                         </p>
@@ -426,11 +436,11 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
                 <p className="font-bold text-sm mb-1">{t("questionLabel")}</p>
                 <p className="text-white/60 text-xs mb-4">{t("teamReply")}</p>
                 <div className="space-y-2">
-                  <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+                  <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
                     <IconWhatsApp size={16} /> WhatsApp
                   </a>
-                  <a href="tel:+22796969070"
+                  <a href="tel:+22791882121"
                     className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
                     <Phone size={14} /> +227 96 96 39 61
                   </a>
@@ -482,7 +492,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ slug: st
           </h2>
           <p className="text-white/60 mb-8">{t("trustText")}</p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <a href="https://wa.me/22796969070" target="_blank" rel="noopener noreferrer"
+            <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
               className="btn-gold hover:scale-105 transition-transform px-8 py-3.5">
               <IconWhatsApp size={16} /> WhatsApp
             </a>
