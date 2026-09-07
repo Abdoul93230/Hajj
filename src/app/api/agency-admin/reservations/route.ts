@@ -33,26 +33,35 @@ export async function POST(req: Request) {
   const selectedYear = !isNaN(parsedYear) ? parsedYear : currentYear;
   const createdAt = selectedYear === currentYear ? new Date() : new Date(selectedYear, 0, 2);
 
-  // Supprimer l'ancienne réservation pour ce pèlerin sur cette saison (1 voyage à la fois)
+  // Chercher une réservation existante pour ce pèlerin sur cette saison
   const from = new Date(selectedYear, 0, 1);
   const to   = new Date(selectedYear + 1, 0, 1);
-  await prisma.reservation.deleteMany({
+  const existing = await prisma.reservation.findFirst({
     where: { tenantId, userId: pilgrimId, createdAt: { gte: from, lt: to } },
   });
 
-  // Créer la nouvelle
-  const reservation = await prisma.reservation.create({
-    data: {
-      tenantId,
-      userId: pilgrimId,
-      offerId,
-      status,
-      totalAmount: amount,
-      category: "ADULT",
-      createdAt,
-    },
-    include: { offer: true },
-  });
+  let reservation;
+  if (existing) {
+    // Mettre à jour sans toucher aux paiements liés
+    reservation = await prisma.reservation.update({
+      where: { id: existing.id },
+      data: { offerId, status, totalAmount: amount },
+      include: { offer: true },
+    });
+  } else {
+    reservation = await prisma.reservation.create({
+      data: {
+        tenantId,
+        userId: pilgrimId,
+        offerId,
+        status,
+        totalAmount: amount,
+        category: "ADULT",
+        createdAt,
+      },
+      include: { offer: true },
+    });
+  }
 
   return NextResponse.json({ reservation }, { status: 201 });
 }

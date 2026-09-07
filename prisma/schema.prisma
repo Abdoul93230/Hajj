@@ -29,6 +29,7 @@ model Tenant {
   users         User[]
   offers        Offer[]
   reservations  Reservation[]
+  payments      Payment[]
   reviews       Review[]
   messages      ContactMessage[]
   auditLogs     AuditLog[]
@@ -69,6 +70,7 @@ model User {
 
   tenant       Tenant            @relation(fields: [tenantId], references: [id])
   reservations Reservation[]
+  payments     Payment[]         @relation("PilgrimPayments")
   auditLogs    AuditLog[]
   documents    PilgrimDocument[]
 
@@ -117,16 +119,42 @@ model Reservation {
   offerId     String            @db.ObjectId
   category    PilgrimCategory
   status      ReservationStatus @default(PENDING)
-  deposit     Float?
-  totalAmount Float?
+  deposit     Float?            // acompte initial (legacy / référence)
+  totalAmount Float?            // montant total du forfait
   notes       String?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
   createdBy   String?           @db.ObjectId
 
-  tenant Tenant @relation(fields: [tenantId], references: [id])
-  user   User?  @relation(fields: [userId], references: [id])
-  offer  Offer  @relation(fields: [offerId], references: [id])
+  tenant   Tenant    @relation(fields: [tenantId], references: [id])
+  user     User?     @relation(fields: [userId], references: [id])
+  offer    Offer     @relation(fields: [offerId], references: [id])
+  payments Payment[]
+}
+
+// ─── PAYMENT ──────────────────────────────────────────────────────────────────
+
+model Payment {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId      String        @db.ObjectId
+  reservationId String        @db.ObjectId
+  pilgrimId     String?       @db.ObjectId
+  amount        Float
+  type          PaymentType
+  method        PaymentMethod @default(CASH)
+  status        PaymentStatus @default(COMPLETED)
+  reference     String?       // numéro de reçu / référence
+  notes         String?
+  paidAt        DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  createdBy     String?       @db.ObjectId
+
+  tenant      Tenant      @relation(fields: [tenantId], references: [id])
+  reservation Reservation @relation(fields: [reservationId], references: [id])
+  pilgrim     User?       @relation("PilgrimPayments", fields: [pilgrimId], references: [id])
+
+  @@map("payments")
 }
 
 
@@ -261,4 +289,25 @@ enum ReservationStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+}
+
+enum PaymentType {
+  DEPOSIT      // acompte initial
+  INSTALLMENT  // versement / tranche
+  FINAL        // solde final
+  REFUND       // remboursement
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  MOBILE_MONEY
+  CHECK
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING    // prévu mais pas encore reçu
+  COMPLETED  // reçu / confirmé
+  CANCELLED  // annulé
 }

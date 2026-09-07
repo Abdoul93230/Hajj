@@ -43,11 +43,10 @@ export default async function DocumentsPage() {
     pilgrimStatus: p.pilgrimStatus,
     hasPassport: p.hasPassport,
     hasCni: p.hasCni,
-    hasVaccine: p.hasVaccine,
-    documents: p.documents.map((d) => ({
+    documents: p.documents.filter((d) => d.type !== "VACCINE").map((d) => ({
       id: d.id,
-      type: d.type,
-      status: d.status,
+      type: d.type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER",
+      status: d.status as "RECEIVED" | "VALID" | "EXPIRED" | "REJECTED",
       label: d.label,
       fileUrl: d.fileUrl,
       expiresAt: d.expiresAt ? d.expiresAt.toISOString() : null,

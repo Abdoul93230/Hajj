@@ -32,6 +32,14 @@ export type SerializedOffer = {
   createdBy: string | null;
 };
 
+export type SerializedPaymentRecord = {
+  id: string;
+  amount: number;
+  type: string;
+  status: string;
+  paidAt: string;
+};
+
 export type SerializedReservation = {
   id: string;
   tenantId: string;
@@ -46,6 +54,7 @@ export type SerializedReservation = {
   updatedAt: string;
   createdBy: string | null;
   offer: SerializedOffer;
+  payments: SerializedPaymentRecord[];
 };
 
 export type SerializedPilgrim = {
@@ -73,7 +82,6 @@ export type SerializedPilgrim = {
   emergencyPhone: string | null;
   hasPassport: boolean;
   hasCni: boolean;
-  hasVaccine: boolean;
   pilgrimStatus: string;
   reservations: SerializedReservation[];
 };
@@ -118,15 +126,50 @@ function formatPrice(amount: number, currency: string): string {
 }
 
 const STATUS_MAP: Record<string, { label: string; className: string }> = {
-  PENDING: { label: "En attente", className: "text-gray-400" },
-  INCOMPLETE: { label: "Incomplet", className: "text-orange-500" },
-  REGISTERED: { label: "Inscrit", className: "text-blue-600" },
-  VISA_OK: { label: "Visa OK", className: "text-[#0f5132] font-semibold" },
+  NOUVEAU:     { label: "Nouveau",     className: "text-gray-400" },
+  EN_COURS:    { label: "En cours",    className: "text-orange-500" },
+  COMPLET:     { label: "Complet",     className: "text-blue-600" },
+  VISA_DEPOSE: { label: "Visa déposé", className: "text-purple-600 font-semibold" },
+  VISA_OK:     { label: "Visa obtenu", className: "text-[#0f5132] font-semibold" },
+  PARTI:       { label: "En voyage",   className: "text-cyan-600 font-semibold" },
+  RETOUR:      { label: "Retour",      className: "text-emerald-600" },
+  CANCELLED:   { label: "Annulé",      className: "text-red-400" },
+  PENDING:     { label: "Nouveau",     className: "text-gray-400" },
+  INCOMPLETE:  { label: "En cours",    className: "text-orange-500" },
+  REGISTERED:  { label: "Complet",     className: "text-blue-600" },
 };
 
 function getPilgrimStatusDisplay(status: string) {
   return STATUS_MAP[status] ?? { label: status, className: "text-gray-400" };
 }
+
+// ─── Payment status ────────────────────────────────────────────────────────────
+
+type PaymentStatus = "paid" | "partial" | "none";
+
+function getPaymentStatus(reservation: SerializedReservation | null): PaymentStatus {
+  if (!reservation) return "none";
+  const total = reservation.totalAmount ?? 0;
+
+  // Utilise la somme réelle des Payment si disponible, sinon fallback sur deposit
+  const payments = reservation.payments ?? [];
+  const actualPaid = payments.length > 0
+    ? payments.reduce((sum, p) => {
+        if (p.status !== "COMPLETED") return sum;
+        return p.type === "REFUND" ? sum - p.amount : sum + p.amount;
+      }, 0)
+    : (reservation.deposit ?? 0);
+
+  if (total > 0 && actualPaid >= total) return "paid";
+  if (actualPaid > 0)                   return "partial";
+  return "none";
+}
+
+const PAYMENT_ROW: Record<PaymentStatus, string> = {
+  paid:    "bg-green-50  border-l-4 border-l-green-500  hover:bg-green-100/60",
+  partial: "bg-orange-50 border-l-4 border-l-orange-400 hover:bg-orange-100/60",
+  none:    "bg-white     border-l-4 border-l-transparent hover:bg-gray-50/60",
+};
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -151,6 +194,7 @@ export default function PilgrimsClient({
   const [deleteTarget, setDeleteTarget] = useState<SerializedPilgrim | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [paymentFilter, setPaymentFilter] = useState<"ALL" | PaymentStatus>("ALL");
 
   const today = new Date();
   const dateLabel = today.toLocaleDateString("fr-FR", {
@@ -169,10 +213,17 @@ export default function PilgrimsClient({
         (p.city ?? "").toLowerCase().includes(q) ||
         (p.phone ?? "").toLowerCase().includes(q) ||
         (p.country ?? "").toLowerCase().includes(q);
-      const matchStatus = statusFilter === "ALL" || p.pilgrimStatus === statusFilter;
-      return matchSearch && matchStatus;
+      const normalizedStatus = p.pilgrimStatus === "PENDING" ? "NOUVEAU"
+        : p.pilgrimStatus === "INCOMPLETE" ? "EN_COURS"
+        : p.pilgrimStatus === "REGISTERED" ? "COMPLET"
+        : p.pilgrimStatus;
+      const matchStatus = statusFilter === "ALL" || normalizedStatus === statusFilter;
+      const matchPayment =
+        paymentFilter === "ALL" ||
+        getPaymentStatus(p.reservations[0] ?? null) === paymentFilter;
+      return matchSearch && matchStatus && matchPayment;
     });
-  }, [pilgrims, search, statusFilter]);
+  }, [pilgrims, search, statusFilter, paymentFilter]);
 
   function openAddModal() {
     setEditPilgrim(null);
@@ -247,10 +298,26 @@ export default function PilgrimsClient({
           className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-600 cursor-pointer transition"
         >
           <option value="ALL">Tous les statuts</option>
-          <option value="PENDING">En attente</option>
-          <option value="INCOMPLETE">Incomplet</option>
-          <option value="REGISTERED">Inscrit</option>
-          <option value="VISA_OK">Visa OK</option>
+          <option value="NOUVEAU">Nouveau</option>
+          <option value="EN_COURS">En cours</option>
+          <option value="COMPLET">Complet</option>
+          <option value="VISA_DEPOSE">Visa déposé</option>
+          <option value="VISA_OK">Visa obtenu</option>
+          <option value="PARTI">En voyage</option>
+          <option value="RETOUR">Retour</option>
+          <option value="CANCELLED">Annulé</option>
+        </select>
+
+        {/* Payment filter */}
+        <select
+          value={paymentFilter}
+          onChange={(e) => setPaymentFilter(e.target.value as "ALL" | PaymentStatus)}
+          className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-600 cursor-pointer transition"
+        >
+          <option value="ALL">Tous les paiements</option>
+          <option value="paid">Payé intégralement</option>
+          <option value="partial">Paiement restant</option>
+          <option value="none">Non payé</option>
         </select>
 
         {/* Add button */}
@@ -263,6 +330,22 @@ export default function PilgrimsClient({
           </svg>
           Ajouter un Pèlerin
         </button>
+      </div>
+
+      {/* ── Payment legend ── */}
+      <div className="flex items-center gap-5 text-[11px] text-gray-400 px-1">
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-sm bg-green-500 inline-block flex-shrink-0" />
+          Payé intégralement
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-sm bg-orange-400 inline-block flex-shrink-0" />
+          Paiement restant
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-sm bg-gray-200 inline-block flex-shrink-0" />
+          Non payé / Remboursement
+        </span>
       </div>
 
       {/* ── Table ── */}
@@ -300,10 +383,8 @@ export default function PilgrimsClient({
                     key={pilgrim.id}
                     pilgrim={pilgrim}
                     onEdit={() => openEditModal(pilgrim)}
-                    onDelete={() => {
-                      setDeleteTarget(pilgrim);
-                      setDeleteError("");
-                    }}
+                    onDelete={() => { setDeleteTarget(pilgrim); setDeleteError(""); }}
+                    onView={() => router.push(`/agency-admin/pilgrims/${pilgrim.id}`)}
                   />
                 ))}
               </tbody>
@@ -379,16 +460,19 @@ function PilgrimRow({
   pilgrim,
   onEdit,
   onDelete,
+  onView,
 }: {
   pilgrim: SerializedPilgrim;
   onEdit: () => void;
   onDelete: () => void;
+  onView: () => void;
 }) {
   const avatarColor = getAvatarColor(pilgrim.name);
   const initials = getInitials(pilgrim.name);
   const age = getAge(pilgrim.birthDate);
   const statusDisplay = getPilgrimStatusDisplay(pilgrim.pilgrimStatus);
   const latestReservation = pilgrim.reservations[0] ?? null;
+  const paymentStatus = getPaymentStatus(latestReservation);
 
   const genderLabel =
     pilgrim.gender === "M" || pilgrim.gender === "Masculin"
@@ -398,7 +482,7 @@ function PilgrimRow({
       : null;
 
   return (
-    <tr className="hover:bg-gray-50/60 transition group">
+    <tr className={`${PAYMENT_ROW[paymentStatus]} transition group`}>
       {/* PÈLERIN */}
       <td className="px-5 py-4">
         <div className="flex items-center gap-3">
@@ -441,6 +525,25 @@ function PilgrimRow({
             <p className="text-gray-400 text-[11px] mt-0.5">
               Forfait: {formatPrice(latestReservation.offer.priceAdult, latestReservation.offer.currency)}
             </p>
+            {(() => {
+              const pmts = latestReservation.payments ?? [];
+              const paid = pmts.length > 0
+                ? pmts.reduce((s, p) => p.status === "COMPLETED" && p.type !== "REFUND" ? s + p.amount : s, 0)
+                : (latestReservation.deposit ?? 0);
+              const total = latestReservation.totalAmount ?? 0;
+              const currency = latestReservation.offer.currency;
+              if (paymentStatus === "paid") return (
+                <p className="text-[11px] mt-0.5 font-semibold text-green-600">
+                  ✓ Soldé — {formatPrice(paid, currency)}
+                </p>
+              );
+              if (paymentStatus === "partial" && total > 0) return (
+                <p className="text-[11px] mt-0.5 font-semibold text-orange-500">
+                  Versé {formatPrice(paid, currency)} · Reste {formatPrice(Math.max(0, total - paid), currency)}
+                </p>
+              );
+              return null;
+            })()}
           </div>
         ) : (
           <span className="text-gray-300 text-sm">—</span>
@@ -451,8 +554,7 @@ function PilgrimRow({
       <td className="px-3 py-4">
         <div className="flex items-center justify-center gap-1.5 flex-wrap">
           <DocBadge label="PASS" active={pilgrim.hasPassport} />
-          <DocBadge label="CNI" active={pilgrim.hasCni} />
-          <DocBadge label="VAC" active={pilgrim.hasVaccine} />
+          <DocBadge label="CNI"  active={pilgrim.hasCni} />
         </div>
       </td>
 
@@ -481,11 +583,17 @@ function PilgrimRow({
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </ActionBtn>
 
-          {/* View (placeholder) */}
-          <ActionBtn title="Voir" color="text-gray-400">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </ActionBtn>
+          {/* View detail */}
+          <button
+            onClick={onView}
+            title="Voir le dossier"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-blue-500 hover:bg-blue-50 transition"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
 
           {/* Edit */}
           <button

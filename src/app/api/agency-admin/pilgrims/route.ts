@@ -28,7 +28,10 @@ export async function GET() {
     },
     include: {
       reservations: {
-        include: { offer: true },
+        include: {
+          offer: true,
+          payments: { orderBy: { paidAt: "asc" } },
+        },
         orderBy: { createdAt: "desc" },
         take: 1,
       },
@@ -72,7 +75,6 @@ export async function POST(req: Request) {
     emergencyPhone,
     hasPassport,
     hasCni,
-    hasVaccine,
     pilgrimStatus,
   } = body;
 
@@ -116,14 +118,16 @@ export async function POST(req: Request) {
       emergencyPhone: emergencyPhone?.trim() || null,
       hasPassport: hasPassport ?? false,
       hasCni: hasCni ?? false,
-      hasVaccine: hasVaccine ?? false,
       pilgrimStatus: pilgrimStatus || "PENDING",
       createdBy: session.id,
       createdAt,
     },
     include: {
       reservations: {
-        include: { offer: true },
+        include: {
+          offer: true,
+          payments: { orderBy: { paidAt: "asc" } },
+        },
         orderBy: { createdAt: "desc" },
         take: 1,
       },

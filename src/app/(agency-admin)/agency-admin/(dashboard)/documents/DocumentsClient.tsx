@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type DocType   = "PASSPORT" | "CNI" | "VACCINE" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER";
+type DocType   = "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER";
 type DocStatus = "RECEIVED" | "VALID" | "EXPIRED" | "REJECTED";
 
 type PilgrimDoc = {
@@ -28,7 +28,6 @@ type PilgrimRow = {
   pilgrimStatus: string;
   hasPassport: boolean;
   hasCni: boolean;
-  hasVaccine: boolean;
   documents: PilgrimDoc[];
 };
 
@@ -37,7 +36,6 @@ type PilgrimRow = {
 const DOC_TYPES: { value: DocType; label: string; short: string; color: string }[] = [
   { value: "PASSPORT", label: "Passeport",          short: "PASS",  color: "bg-blue-100 text-blue-700" },
   { value: "CNI",      label: "Carte Nationale",    short: "CNI",   color: "bg-violet-100 text-violet-700" },
-  { value: "VACCINE",  label: "Vaccin Méningite",   short: "VAC",   color: "bg-green-100 text-green-700" },
   { value: "VISA",     label: "Visa",               short: "VISA",  color: "bg-amber-100 text-amber-700" },
   { value: "PHOTO",    label: "Photo d'identité",   short: "PHOTO", color: "bg-pink-100 text-pink-700" },
   { value: "MEDICAL",  label: "Certificat médical", short: "MED",   color: "bg-red-100 text-red-700" },
@@ -52,13 +50,20 @@ const DOC_STATUSES: { value: DocStatus; label: string; cls: string }[] = [
 ];
 
 const PILGRIM_STATUSES: Record<string, { label: string; dot: string; cls: string }> = {
-  PENDING:    { label: "En attente", dot: "bg-gray-400",   cls: "bg-gray-100 text-gray-500" },
-  INCOMPLETE: { label: "Incomplet",  dot: "bg-orange-400", cls: "bg-orange-100 text-orange-600" },
-  REGISTERED: { label: "Inscrit",    dot: "bg-blue-400",   cls: "bg-blue-100 text-blue-600" },
-  VISA_OK:    { label: "Visa OK",    dot: "bg-green-500",  cls: "bg-green-100 text-green-700" },
+  NOUVEAU:     { label: "Nouveau",      dot: "bg-gray-400",    cls: "bg-gray-100 text-gray-500"    },
+  EN_COURS:    { label: "En cours",     dot: "bg-orange-400",  cls: "bg-orange-100 text-orange-600" },
+  COMPLET:     { label: "Complet",      dot: "bg-blue-400",    cls: "bg-blue-100 text-blue-600"    },
+  VISA_DEPOSE: { label: "Visa déposé",  dot: "bg-purple-500",  cls: "bg-purple-100 text-purple-700" },
+  VISA_OK:     { label: "Visa obtenu",  dot: "bg-green-500",   cls: "bg-green-100 text-green-700"  },
+  PARTI:       { label: "En voyage",    dot: "bg-cyan-500",    cls: "bg-cyan-100 text-cyan-700"    },
+  RETOUR:      { label: "Retour",       dot: "bg-emerald-500", cls: "bg-emerald-100 text-emerald-700" },
+  CANCELLED:   { label: "Annulé",       dot: "bg-red-400",     cls: "bg-red-100 text-red-600"      },
+  PENDING:     { label: "Nouveau",      dot: "bg-gray-400",    cls: "bg-gray-100 text-gray-500"    },
+  INCOMPLETE:  { label: "En cours",     dot: "bg-orange-400",  cls: "bg-orange-100 text-orange-600" },
+  REGISTERED:  { label: "Complet",      dot: "bg-blue-400",    cls: "bg-blue-100 text-blue-600"    },
 };
 
-const REQUIRED: DocType[] = ["PASSPORT", "CNI", "VACCINE"];
+const REQUIRED: DocType[] = ["PASSPORT", "CNI"];
 
 function docTypeMeta(type: DocType) {
   return DOC_TYPES.find((d) => d.value === type) ?? DOC_TYPES[DOC_TYPES.length - 1];
@@ -100,10 +105,9 @@ export default function DocumentsClient({
   const selected = pilgrims.find((p) => p.id === selectedId) ?? null;
 
   const stats = useMemo(() => ({
-    total:       pilgrims.length,
+    total:        pilgrims.length,
     withPassport: pilgrims.filter((p) => p.hasPassport).length,
     withCni:      pilgrims.filter((p) => p.hasCni).length,
-    withVaccine:  pilgrims.filter((p) => p.hasVaccine).length,
   }), [pilgrims]);
 
   function onChanged() {
@@ -124,10 +128,9 @@ export default function DocumentsClient({
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Pèlerins",   value: stats.total,       sub: "inscrits",  color: "bg-gray-50",    bar: "bg-gray-400" },
-          { label: "Passeports", value: stats.withPassport, sub: "déposés",   color: "bg-blue-50",    bar: "bg-blue-500" },
-          { label: "CNI",        value: stats.withCni,      sub: "déposées",  color: "bg-violet-50",  bar: "bg-violet-500" },
-          { label: "Vaccins",    value: stats.withVaccine,  sub: "déposés",   color: "bg-green-50",   bar: "bg-green-500" },
+          { label: "Pèlerins",   value: stats.total,        sub: "inscrits",  color: "bg-gray-50",   bar: "bg-gray-400" },
+          { label: "Passeports", value: stats.withPassport, sub: "déposés",   color: "bg-blue-50",   bar: "bg-blue-500" },
+          { label: "CNI",        value: stats.withCni,      sub: "déposées",  color: "bg-violet-50", bar: "bg-violet-500" },
         ].map((s) => (
           <div key={s.label} className={`${s.color} rounded-xl px-4 py-3 border border-gray-100`}>
             <div className="flex items-center justify-between mb-2">

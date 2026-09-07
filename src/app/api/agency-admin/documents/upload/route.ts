@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
-import { uploadDocumentBuffer } from "@/lib/cloudinary";
+import { uploadDocumentBuffer, deleteCloudinaryFile } from "@/lib/cloudinary";
 
 export const runtime = "nodejs";
 
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "file, userId et type sont requis" }, { status: 400 });
   }
 
-  const validTypes = ["PASSPORT", "CNI", "VACCINE", "VISA", "PHOTO", "MEDICAL", "OTHER"];
+  const validTypes = ["PASSPORT", "CNI", "VISA", "PHOTO", "MEDICAL", "OTHER"];
   if (!validTypes.includes(type)) {
     return NextResponse.json({ error: "Type de document invalide" }, { status: 400 });
   }
@@ -35,23 +35,40 @@ export async function POST(req: Request) {
   const pilgrim = await prisma.user.findFirst({ where: { id: userId, tenantId, role: "PILGRIM" } });
   if (!pilgrim) return NextResponse.json({ error: "Pèlerin introuvable" }, { status: 404 });
 
-  // Upload vers Cloudinary
+  // Chercher un document existant du même type pour ce pèlerin
+  // (pour supprimer l'ancien fichier Cloudinary avant d'uploader le nouveau)
+  const existingDoc = await prisma.pilgrimDocument.findFirst({
+    where: { tenantId, userId, type: type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER" },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, fileUrl: true },
+  });
+
+  // Upload vers Cloudinary — publicId fixe par type + pèlerin pour écraser l'ancien
   const bytes  = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
   const ext    = file.name.split(".").pop()?.toLowerCase() ?? "bin";
-  const publicId = `hajj-platform/${tenantId}/documents/${userId}/${type.toLowerCase()}-${Date.now()}`;
+  const fixedPublicId = `${type.toLowerCase()}-${userId}`;
 
   let fileUrl: string;
   try {
     const result = await uploadDocumentBuffer(buffer, {
-      folder: `hajj-platform/${tenantId}/documents/${userId}`,
-      publicId: `${type.toLowerCase()}-${Date.now()}`,
+      folder:       `hajj-platform/${tenantId}/documents/${userId}`,
+      publicId:     fixedPublicId,
       resourceType: ["pdf"].includes(ext) ? "raw" : "image",
     });
     fileUrl = result.secure_url;
   } catch (e) {
     console.error("Cloudinary upload error:", e);
     return NextResponse.json({ error: "Erreur lors de l'upload du fichier" }, { status: 500 });
+  }
+
+  // Supprimer l'ancien record DB si même type (et l'ancien fichier Cloudinary si publicId différent)
+  if (existingDoc) {
+    if (existingDoc.fileUrl) {
+      const oldPublicId = extractCloudinaryPublicId(existingDoc.fileUrl);
+      if (oldPublicId) await deleteCloudinaryFile(oldPublicId).catch(() => {});
+    }
+    await prisma.pilgrimDocument.delete({ where: { id: existingDoc.id } }).catch(() => {});
   }
 
   // Dater dans l'année sélectionnée
@@ -66,7 +83,7 @@ export async function POST(req: Request) {
     data: {
       tenantId,
       userId,
-      type: type as "PASSPORT" | "CNI" | "VACCINE" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER",
+      type: type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER",
       status: status as "RECEIVED" | "VALID" | "EXPIRED" | "REJECTED",
       label,
       fileUrl,
@@ -83,10 +100,35 @@ export async function POST(req: Request) {
   // Sync flags booléens
   await syncPilgrimFlags(tenantId, userId);
 
-  // Supprimer l'import inutilisé
-  void publicId;
+  // Upload d'un visa → auto-avance le statut vers VISA_OK
+  if (type === "VISA") {
+    const current = await prisma.user.findFirst({
+      where: { id: userId, tenantId },
+      select: { pilgrimStatus: true },
+    });
+    const advanceable = ["NOUVEAU", "EN_COURS", "COMPLET", "VISA_DEPOSE",
+      "PENDING", "INCOMPLETE", "REGISTERED"];
+    if (current && advanceable.includes(current.pilgrimStatus)) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { pilgrimStatus: "VISA_OK" },
+      });
+    }
+  }
 
   return NextResponse.json({ document: doc }, { status: 201 });
+}
+
+// Extrait le publicId depuis une URL Cloudinary
+// Ex: https://res.cloudinary.com/xxx/image/upload/v123/hajj-platform/.../file.jpg
+//   → hajj-platform/.../file
+function extractCloudinaryPublicId(url: string): string | null {
+  try {
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
 }
 
 async function syncPilgrimFlags(tenantId: string, userId: string) {
@@ -100,7 +142,6 @@ async function syncPilgrimFlags(tenantId: string, userId: string) {
     data: {
       hasPassport: types.has("PASSPORT"),
       hasCni:      types.has("CNI"),
-      hasVaccine:  types.has("VACCINE"),
     },
   });
 }

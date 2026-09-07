@@ -42,7 +42,6 @@ type PilgrimBrief = {
   pilgrimStatus: string;
   hasPassport: boolean;
   hasCni: boolean;
-  hasVaccine: boolean;
   photoUrl: string | null;
   reservationId?: string;
   totalAmount?: number | null;
@@ -68,8 +67,15 @@ function getDurationDays(from: string, to: string): number {
 }
 
 const STATUS_LABELS: Record<string, { label: string; cls: string }> = {
-  PENDING:    { label: "En attente", cls: "bg-gray-100 text-gray-500" },
-  INCOMPLETE: { label: "Incomplet",  cls: "bg-orange-100 text-orange-600" },
+  NOUVEAU:     { label: "Nouveau",      cls: "bg-gray-100 text-gray-500" },
+  EN_COURS:    { label: "En cours",     cls: "bg-orange-100 text-orange-600" },
+  COMPLET:     { label: "Complet",      cls: "bg-blue-100 text-blue-600" },
+  VISA_DEPOSE: { label: "Visa déposé",  cls: "bg-purple-100 text-purple-700" },
+  PARTI:       { label: "En voyage",    cls: "bg-cyan-100 text-cyan-700" },
+  RETOUR:      { label: "Retour",       cls: "bg-emerald-100 text-emerald-700" },
+  CANCELLED:   { label: "Annulé",       cls: "bg-red-100 text-red-500" },
+  PENDING:     { label: "Nouveau",      cls: "bg-gray-100 text-gray-500" },
+  INCOMPLETE:  { label: "En cours",     cls: "bg-orange-100 text-orange-600" },
   REGISTERED: { label: "Inscrit",    cls: "bg-blue-100 text-blue-600" },
   VISA_OK:    { label: "Visa OK",    cls: "bg-green-100 text-green-700" },
 };

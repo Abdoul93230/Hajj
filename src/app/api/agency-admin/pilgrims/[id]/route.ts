@@ -35,7 +35,6 @@ export async function PUT(
     emergencyPhone,
     hasPassport,
     hasCni,
-    hasVaccine,
     pilgrimStatus,
   } = body;
 
@@ -55,12 +54,11 @@ export async function PUT(
       ...(emergencyPhone !== undefined && { emergencyPhone: emergencyPhone?.trim() || null }),
       ...(hasPassport !== undefined && { hasPassport }),
       ...(hasCni !== undefined && { hasCni }),
-      ...(hasVaccine !== undefined && { hasVaccine }),
       ...(pilgrimStatus !== undefined && { pilgrimStatus }),
     },
     include: {
       reservations: {
-        include: { offer: true },
+        include: { offer: true, payments: { orderBy: { paidAt: "asc" } } },
         orderBy: { createdAt: "desc" },
         take: 1,
       },

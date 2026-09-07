@@ -46,7 +46,10 @@ export default async function PilgrimsPage() {
     },
     include: {
       reservations: {
-        include: { offer: true },
+        include: {
+          offer: true,
+          payments: { orderBy: { paidAt: "asc" } },
+        },
         orderBy: { createdAt: "desc" },
         take: 1,
       },
@@ -78,6 +81,12 @@ export default async function PilgrimsPage() {
         createdAt: r.offer.createdAt.toISOString(),
         updatedAt: r.offer.updatedAt.toISOString(),
       },
+      payments: r.payments.map((pay) => ({
+        ...pay,
+        paidAt:    pay.paidAt.toISOString(),
+        createdAt: pay.createdAt.toISOString(),
+        updatedAt: pay.updatedAt.toISOString(),
+      })),
     })),
   }));
 

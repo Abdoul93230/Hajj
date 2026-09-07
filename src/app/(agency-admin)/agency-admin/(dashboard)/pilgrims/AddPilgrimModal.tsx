@@ -23,12 +23,20 @@ const COUNTRIES = [
   "Togo",
 ];
 
-const STATUT_OPTIONS = [
-  { value: "PENDING", label: "En attente" },
-  { value: "INCOMPLETE", label: "Incomplet" },
-  { value: "REGISTERED", label: "Inscrit" },
-  { value: "VISA_OK", label: "Visa OK" },
-];
+const STATUT_DISPLAY: Record<string, { label: string; color: string }> = {
+  NOUVEAU:     { label: "Nouveau",      color: "bg-gray-100 text-gray-500" },
+  EN_COURS:    { label: "En cours",     color: "bg-orange-100 text-orange-600" },
+  COMPLET:     { label: "Complet",      color: "bg-blue-100 text-blue-700" },
+  VISA_DEPOSE: { label: "Visa déposé",  color: "bg-purple-100 text-purple-700" },
+  PARTI:       { label: "En voyage",    color: "bg-cyan-100 text-cyan-700" },
+  RETOUR:      { label: "Retour",       color: "bg-emerald-100 text-emerald-700" },
+  CANCELLED:   { label: "Annulé",       color: "bg-red-100 text-red-600" },
+  PENDING:     { label: "Nouveau",      color: "bg-gray-100 text-gray-500" },
+  INCOMPLETE:  { label: "En cours",     color: "bg-orange-100 text-orange-600" },
+  REGISTERED:  { label: "Complet",      color: "bg-blue-100 text-blue-700" },
+  VISA_OK:    { label: "Visa OK",     color: "bg-green-100 text-green-700" },
+  CANCELLED:  { label: "Annulé",      color: "bg-red-100 text-red-600" },
+};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,11 +52,8 @@ interface FormData {
   address: string;
   emergencyName: string;
   emergencyPhone: string;
-  // hasPassport / hasCni / hasVaccine : lecture seule, alimentés par les documents réels
   hasPassport: boolean;
   hasCni: boolean;
-  hasVaccine: boolean;
-  pilgrimStatus: string;
   offerId: string;
 }
 
@@ -70,8 +75,10 @@ export default function AddPilgrimModal({
   const isEdit = !!pilgrim;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(pilgrim?.photoUrl ?? null);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [photoFile,    setPhotoFile]    = useState<File | null>(null);
+  const [uploading,    setUploading]    = useState(false);
+  const [submitting,   setSubmitting]   = useState(false);
+  const [error,        setError]        = useState("");
 
   const currentOfferId = useMemo(
     () => pilgrim?.reservations?.[0]?.offerId ?? "",
@@ -93,10 +100,8 @@ export default function AddPilgrimModal({
     emergencyName: pilgrim?.emergencyName ?? "",
     emergencyPhone: pilgrim?.emergencyPhone ?? "",
     hasPassport: pilgrim?.hasPassport ?? false,
-    hasCni: pilgrim?.hasCni ?? false,
-    hasVaccine: pilgrim?.hasVaccine ?? false,
-    pilgrimStatus: pilgrim?.pilgrimStatus ?? "PENDING",
-    offerId: currentOfferId,
+    hasCni:      pilgrim?.hasCni      ?? false,
+    offerId:     currentOfferId,
   });
 
   // Close on Escape
@@ -115,6 +120,7 @@ export default function AddPilgrimModal({
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setPhotoFile(file);
     const reader = new FileReader();
     reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
     reader.readAsDataURL(file);
@@ -160,9 +166,8 @@ export default function AddPilgrimModal({
         address: form.address.trim() || null,
         emergencyName: form.emergencyName.trim(),
         emergencyPhone: form.emergencyPhone.trim(),
-        pilgrimStatus: form.pilgrimStatus,
-        // hasPassport / hasCni / hasVaccine gérés automatiquement par les documents
-        // photoUrl: photoPreview — omitted for now (would need file upload)
+        // pilgrimStatus : calculé automatiquement depuis les paiements
+        // hasPassport / hasCni / hasVaccine : alimentés par la page Documents
       };
 
       const url = isEdit
@@ -183,10 +188,25 @@ export default function AddPilgrimModal({
       }
 
       const savedPilgrim = resData.pilgrim;
+      const pilgrimId = isEdit ? pilgrim!.id : savedPilgrim?.id;
+
+      // Upload photo de profil si sélectionnée
+      if (photoFile && pilgrimId) {
+        setUploading(true);
+        const fd = new FormData();
+        fd.append("file", photoFile);
+        fd.append("pilgrimId", pilgrimId);
+        const upRes = await fetch("/api/agency-admin/pilgrims/photo", { method: "POST", body: fd });
+        setUploading(false);
+        if (!upRes.ok) {
+          setError("Pèlerin sauvegardé mais erreur d'upload de la photo.");
+          setSubmitting(false);
+          return;
+        }
+      }
 
       // Gérer l'assignation voyage
       const offerId = form.offerId;
-      const pilgrimId = isEdit ? pilgrim!.id : savedPilgrim?.id;
 
       if (offerId && pilgrimId) {
         // Assigner (ou changer) le voyage
@@ -514,7 +534,6 @@ export default function AddPilgrimModal({
                 {[
                   { flag: form.hasPassport, label: "Passeport", short: "PASS" },
                   { flag: form.hasCni,      label: "CNI",        short: "CNI" },
-                  { flag: form.hasVaccine,  label: "Vaccin",     short: "VAC" },
                 ].map(({ flag, label, short }) => (
                   <div key={short} className="flex items-center gap-2.5">
                     <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${
@@ -535,20 +554,30 @@ export default function AddPilgrimModal({
               </div>
             </div>
 
-            {/* Statut */}
+            {/* Statut — calculé automatiquement */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
-                Statut
-              </label>
-              <select
-                value={form.pilgrimStatus}
-                onChange={(e) => handleField("pilgrimStatus", e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition cursor-pointer"
-              >
-                {STATUT_OPTIONS.map((s) => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Statut</p>
+              {isEdit ? (
+                <div className="flex flex-col gap-1.5">
+                  <span className={`inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold w-fit ${
+                    (STATUT_DISPLAY[pilgrim!.pilgrimStatus] ?? STATUT_DISPLAY.PENDING).color
+                  }`}>
+                    {(STATUT_DISPLAY[pilgrim!.pilgrimStatus] ?? STATUT_DISPLAY.PENDING).label}
+                  </span>
+                  <p className="text-[10px] text-gray-400 leading-relaxed">
+                    Calculé automatiquement depuis les paiements.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold w-fit bg-gray-100 text-gray-500">
+                    En attente
+                  </span>
+                  <p className="text-[10px] text-gray-400 leading-relaxed">
+                    Sera mis à jour lors du premier versement.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -570,19 +599,15 @@ export default function AddPilgrimModal({
             </button>
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || uploading}
               className="flex-1 py-2.5 px-4 text-sm font-semibold text-white bg-[#0f5132] hover:bg-[#0d4429] rounded-xl transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
-              {submitting ? (
-                <>
-                  <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                  </svg>
-                  Enregistrement...
-                </>
-              ) : (
-                isEdit ? "Enregistrer les modifications" : "Enregistrer le Pèlerin"
+              {(submitting || uploading) && (
+                <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                </svg>
               )}
+              {uploading ? "Upload photo..." : submitting ? "Enregistrement..." : isEdit ? "Enregistrer les modifications" : "Enregistrer le Pèlerin"}
             </button>
           </div>
         </form>

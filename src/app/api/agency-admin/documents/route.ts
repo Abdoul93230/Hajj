@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "userId et type sont requis" }, { status: 400 });
   }
 
-  const validTypes = ["PASSPORT", "CNI", "VACCINE", "VISA", "PHOTO", "MEDICAL", "OTHER"];
+  const validTypes = ["PASSPORT", "CNI", "VISA", "PHOTO", "MEDICAL", "OTHER"];
   if (!validTypes.includes(type)) {
     return NextResponse.json({ error: "Type de document invalide" }, { status: 400 });
   }
@@ -90,7 +90,6 @@ export async function POST(req: Request) {
   return NextResponse.json({ document: doc }, { status: 201 });
 }
 
-// Helper : met à jour hasPassport / hasCni / hasVaccine sur le User
 async function syncPilgrimFlags(tenantId: string, userId: string) {
   const docs = await prisma.pilgrimDocument.findMany({
     where: { tenantId, userId, status: { in: ["RECEIVED", "VALID"] } },
@@ -102,7 +101,6 @@ async function syncPilgrimFlags(tenantId: string, userId: string) {
     data: {
       hasPassport: types.has("PASSPORT"),
       hasCni:      types.has("CNI"),
-      hasVaccine:  types.has("VACCINE"),
     },
   });
 }
