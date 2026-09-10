@@ -30,6 +30,8 @@ export default async function PacksPage({
   const serialized = offers
     .map((o) => {
       const data = (o.data ?? {}) as { maxCapacity?: number };
+      const departStart = o.departureDate ? new Date(o.departureDate) : null;
+      departStart?.setHours(0, 0, 0, 0);
       return {
         id: o.id,
         titleFr: o.titleFr,
@@ -46,6 +48,7 @@ export default async function PacksPage({
         confirmedCount: o._count.reservations,
         maxCapacity: data.maxCapacity ?? 0,
         alreadyBooked: myOfferIds.has(o.id),
+        bookingClosed: departStart ? new Date() >= departStart : false,
       };
     })
     .sort((a, b) => {

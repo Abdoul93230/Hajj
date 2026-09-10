@@ -23,6 +23,18 @@ export async function POST(req: Request) {
   if (!pilgrim) return NextResponse.json({ error: "Pèlerin introuvable" }, { status: 404 });
   if (!offer)   return NextResponse.json({ error: "Voyage introuvable" }, { status: 404 });
 
+  // Inscriptions fermées si la date de départ est atteinte (départ aujourd'hui inclus)
+  if (offer.departureDate) {
+    const departStart = new Date(offer.departureDate);
+    departStart.setHours(0, 0, 0, 0);
+    if (new Date() >= departStart) {
+      return NextResponse.json(
+        { error: "Les inscriptions à ce voyage sont fermées (date de départ atteinte)." },
+        { status: 410 }
+      );
+    }
+  }
+
   const amount = totalAmount ?? offer.priceAdult;
 
   // Dater dans l'année sélectionnée

@@ -18,6 +18,7 @@ export type VoyageOffer = {
   confirmedCount: number;
   maxCapacity: number;
   alreadyBooked: boolean;
+  bookingClosed: boolean;
 };
 
 export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
@@ -116,15 +117,21 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
                       <Users size={12} className="text-gray-400 inline mr-1" />
                       {o.maxCapacity > 0 ? (isFull(o) ? <span className="font-semibold text-red-500">{t("full")}</span> : <span>{t("placesLeft", { n: o.maxCapacity - o.confirmedCount })}</span>) : <span className="italic text-gray-300">{t("capacityNA")}</span>}
                     </div>
+                    {o.bookingClosed && (
+                      <div className="mt-2 inline-flex items-center gap-1 self-start text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                        <Calendar size={10} />
+                        {t("closed")}
+                      </div>
+                    )}
                     <div className="mt-auto pt-4">
-                      <button type="button" disabled={o.alreadyBooked || isFull(o)} onClick={() => { setBooking(o); setMsg(null); }}
+                      <button type="button" disabled={o.alreadyBooked || isFull(o) || o.bookingClosed} onClick={() => { setBooking(o); setMsg(null); }}
                         className={`w-full py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 ${
                           o.alreadyBooked ? "bg-[#0f5132]/10 text-[#0f5132] cursor-default"
-                          : isFull(o) ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : isFull(o) || o.bookingClosed ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                           : "bg-[#0f5132] hover:bg-[#0d4429] text-white shadow-sm"
                         }`}>
                         {o.alreadyBooked ? <Check size={15} /> : null}
-                        {o.alreadyBooked ? t("booked") : isFull(o) ? t("full") : t("book")}
+                        {o.alreadyBooked ? t("booked") : isFull(o) ? t("full") : o.bookingClosed ? t("closed") : t("book")}
                       </button>
                     </div>
                   </div>
@@ -157,15 +164,21 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
                       <Users size={12} className="text-gray-400 inline mr-1" />
                       {o.maxCapacity > 0 ? (isFull(o) ? <span className="font-semibold text-red-500">{t("full")}</span> : <span>{t("placesLeft", { n: o.maxCapacity - o.confirmedCount })}</span>) : <span className="italic text-gray-300">{t("capacityNA")}</span>}
                     </div>
+                    {o.bookingClosed && (
+                      <div className="mt-2 inline-flex items-center gap-1 self-start text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                        <Calendar size={10} />
+                        {t("closed")}
+                      </div>
+                    )}
                     <div className="mt-auto pt-4">
-                      <button type="button" disabled={o.alreadyBooked || isFull(o)} onClick={() => { setBooking(o); setMsg(null); }}
+                      <button type="button" disabled={o.alreadyBooked || isFull(o) || o.bookingClosed} onClick={() => { setBooking(o); setMsg(null); }}
                         className={`w-full py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 ${
                           o.alreadyBooked ? "bg-[#0f5132]/10 text-[#0f5132] cursor-default"
-                          : isFull(o) ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : isFull(o) || o.bookingClosed ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                           : "bg-[#0f5132] hover:bg-[#0d4429] text-white shadow-sm"
                         }`}>
                         {o.alreadyBooked ? <Check size={15} /> : null}
-                        {o.alreadyBooked ? t("booked") : isFull(o) ? t("full") : t("book")}
+                        {o.alreadyBooked ? t("booked") : isFull(o) ? t("full") : o.bookingClosed ? t("closed") : t("book")}
                       </button>
                     </div>
                   </div>

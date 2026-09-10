@@ -21,6 +21,7 @@ export type PackOffer = {
   confirmedCount: number;
   maxCapacity: number;
   alreadyBooked: boolean;
+  bookingClosed: boolean;
 };
 
 const CATEGORIES = ["ADULT", "COUPLE", "CHILD", "BABY"] as const;
@@ -91,6 +92,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
           {offers.map((o) => {
             const full = isFull(o);
             const booked = o.alreadyBooked;
+            const closed = o.bookingClosed;
             return (
               <div
                 key={o.id}
@@ -158,23 +160,29 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                   ) : (
                     <span className="text-gray-300 italic">{t("capacityNA")}</span>
                   )}
+                  {closed && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                      <Calendar size={10} />
+                      {t("closed")}
+                    </span>
+                  )}
                 </div>
 
                 <div className="mt-auto pt-4">
                   <button
                     type="button"
-                    disabled={booked || full}
+                    disabled={booked || full || closed}
                     onClick={() => { setBooking(o); setCategory("ADULT"); setMsg(null); }}
                     className={`w-full py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 ${
                       booked
                         ? "bg-[#0f5132]/10 text-[#0f5132] cursor-default"
-                        : full
+                        : full || closed
                           ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                           : "bg-[#0f5132] hover:bg-[#0d4429] text-white shadow-sm"
                     }`}
                   >
                     {booked ? <Check size={15} /> : null}
-                    {booked ? t("booked") : full ? t("full") : t("book")}
+                    {booked ? t("booked") : full ? t("full") : closed ? t("closed") : t("book")}
                   </button>
                 </div>
               </div>

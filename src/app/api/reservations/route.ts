@@ -48,6 +48,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Voyage introuvable" }, { status: 404 });
   }
 
+  // Inscriptions fermées si la date de départ est atteinte (départ aujourd'hui inclus)
+  if (offer.departureDate) {
+    const departStart = new Date(offer.departureDate);
+    departStart.setHours(0, 0, 0, 0);
+    if (new Date() >= departStart) {
+      return NextResponse.json(
+        { error: "Les inscriptions à ce voyage sont fermées (date de départ atteinte)." },
+        { status: 410 }
+      );
+    }
+  }
+
   // Pas de double inscription sur le même voyage
   const existing = await prisma.reservation.findFirst({
     where: { tenantId, userId: session.id, offerId, status: { not: "CANCELLED" } },
