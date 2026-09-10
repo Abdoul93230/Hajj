@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Upload, Trash2, ExternalLink, Pencil, X } from "lucide-react";
@@ -60,6 +60,18 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
   const [editExpiresAt, setEditExpiresAt] = useState("");
   const [editFile, setEditFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+
+  // Types pas encore déposés (sauf rejetés) — n'apparaissent plus dans la liste
+  const availableTypes = TYPES.filter(
+    (tp) => !docs.some((d) => d.type === tp && d.status !== "REJECTED")
+  );
+
+  useEffect(() => {
+    if (availableTypes.length && !availableTypes.includes(type)) {
+      setType(availableTypes[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableTypes.join(",")]);
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
@@ -189,7 +201,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
               onChange={(e) => setType(e.target.value)}
               className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
-              {TYPES.map((tp) => (
+              {availableTypes.map((tp) => (
                 <option key={tp} value={tp}>
                   {t(tp)}
                 </option>

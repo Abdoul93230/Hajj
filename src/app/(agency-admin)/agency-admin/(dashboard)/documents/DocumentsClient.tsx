@@ -600,6 +600,18 @@ function AddDocumentModal({
   const ini = initials(pilgrim.name);
   const selectedTypeMeta = docTypeMeta(form.type);
 
+  // N'afficher que les types de documents pas encore déposés (sauf rejetés)
+  const availableTypes = DOC_TYPES.filter(
+    (t) => !pilgrim.documents.some((d) => d.type === t.value && d.status !== "REJECTED")
+  );
+
+  useEffect(() => {
+    if (availableTypes.length && !availableTypes.some((t) => t.value === form.type)) {
+      setForm((f) => ({ ...f, type: availableTypes[0].value }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableTypes.length]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
@@ -708,7 +720,7 @@ function AddDocumentModal({
                 onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as DocType }))}
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 cursor-pointer transition"
               >
-                {DOC_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                {availableTypes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
             <div>
