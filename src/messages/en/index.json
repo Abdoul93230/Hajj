@@ -870,7 +870,105 @@
     "loggingIn": "Logging in...",
     "registering": "Registering...",
     "loginError": "Connection error",
-    "registerError": "Registration error"
+    "registerError": "Registration error",
+    "forgotPassword": "Forgot password?",
+    "forgotTitle": "Reset your password",
+    "forgotDesc": "Enter your email address to receive a verification code.",
+    "sendCode": "Send code",
+    "sendingCode": "Sending...",
+    "codeSentTo": "A 6-digit code has been sent to:",
+    "otpCode": "Verification code",
+    "otpHint": "Check your spam folder if you don't receive anything.",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm password",
+    "resetPassword": "Reset",
+    "resetting": "Resetting...",
+    "resetSuccess": "Password successfully reset!",
+    "resetSuccessDesc": "You can now sign in with your new password.",
+    "backToLogin": "Back to sign in",
+    "backToEmail": "Change email",
+    "resendCode": "Resend code",
+    "resendIn": "Resend in {seconds}s",
+    "passwordsDontMatch": "Passwords do not match",
+    "forgotError": "Something went wrong. Please try again."
+  },
+  "portal": {
+    "nav": { "dossier": "My file", "voyages": "Voyages", "documents": "My documents", "program": "My program" },
+    "status": {
+      "NOUVEAU": "New", "EN_COURS": "File in progress", "COMPLET": "Complete file",
+      "VISA_DEPOSE": "Visa submitted", "VISA_OK": "Visa obtained", "PARTI": "Travelling", "RETOUR": "Returned"
+    },
+    "statusBannerCancelled": "Your file has been cancelled. Contact your agency for more information.",
+    "personal": {
+      "title": "My information",
+      "email": "Email", "phone": "Phone", "birthDate": "Date of birth",
+      "city": "City / Country", "address": "Address", "profession": "Profession",
+      "emergency": "Emergency contact"
+    },
+    "profile": {
+      "edit": "Edit", "title": "Edit my information",
+      "phone": "Phone", "address": "Address",
+      "emergencyName": "Emergency contact — name", "emergencyPhone": "Emergency contact — phone",
+      "save": "Save", "saving": "Saving...", "saved": "Profile updated ✓", "error": "Something went wrong"
+    },
+    "trips": {
+      "title": "My trips",
+      "empty": "No trip yet",
+      "departure": "Departure", "return": "Return", "cancelled": "Cancelled",
+      "forfait": "Package", "remaining": "Remaining", "settled": "Paid in full ✓",
+      "payments": "Payments", "noPayments": "No payment recorded",
+      "viewReceipt": "View / print receipt"
+    },
+    "category": { "ADULT": "Adult", "CHILD": "Child", "BABY": "Baby", "COUPLE": "Couple" },
+    "paymentType": { "DEPOSIT": "Deposit", "INSTALLMENT": "Installment", "FINAL": "Balance", "REFUND": "Refund" },
+    "paymentMethod": { "CASH": "Cash", "BANK_TRANSFER": "Bank transfer", "MOBILE_MONEY": "Mobile money", "CHECK": "Check", "OTHER": "Other" },
+    "docs": {
+      "title": "My documents",
+      "PASSPORT": "Passport", "CNI": "National ID", "VISA": "Visa",
+      "PHOTO": "Photo", "OTHER": "Other",
+      "goToDocuments": "Manage my documents",
+      "upload": "Upload a document", "type": "Document type", "expiresAt": "Expiry date",
+      "label": "Label (optional)", "file": "File (image or PDF, max 10 MB)",
+      "send": "Upload document", "uploading": "Uploading...", "success": "Document uploaded ✓ It will be checked by the agency.",
+      "errorGeneric": "Something went wrong", "empty": "No document uploaded",
+      "delete": "Delete", "deleteConfirm": "Delete this document?",
+      "cannotDelete": "Already reviewed by the agency — cannot be deleted",
+"edit": "Edit",
+    "editTitle": "Edit document",
+    "changeFile": "Replace file (optional)",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Document updated ✓",
+      "uploadedOn": "Uploaded on", "expires": "Expires on",
+      "rejectedReason": "Rejection reason", "expiringSoon": "Expiring soon",
+      "docStatus": {
+        "RECEIVED": "Under review", "VALID": "Validated", "EXPIRED": "Expired", "REJECTED": "Rejected"
+      }
+    },
+    "program": {
+      "empty": "No scheduled trip",
+      "departure": "Departure", "return": "Return", "duration": "{days} days",
+      "countdown": "D-{days}", "departed": "Ongoing", "finished": "Finished",
+      "noProgram": "The detailed program has not been published by the agency yet.",
+      "flights": "Flights", "hotels": "Hotels", "daily": "Day-by-day program",
+      "day": "Day", "nights": "{n} nights", "included": "What is included",
+      "contacts": "Emergency / agency contact", "callAgency": "Call the agency"
+    },
+    "voyages": {
+      "sections": { "hajj": "Hajj", "umrah": "Umrah" },
+      "category": { "ADULT": "Adult", "COUPLE": "Couple", "CHILD": "Child", "BABY": "Baby" },
+      "empty": "No journey available at the moment",
+      "provisional": "Provisional", "booked": "Already booked", "book": "Book", "from": "From",
+      "departure": "Departure", "return": "Return",
+      "full": "Full", "placesLeft": "{n} spots left", "capacityNA": "Capacity not set",
+      "errorGeneric": "Something went wrong",
+      "modal": {
+        "title": "Book this journey", "category": "Choose your category",
+        "notes": "Message to the agency (optional)", "cancel": "Cancel",
+        "booking": "Booking...", "confirm": "Confirm booking",
+        "success": "Booking confirmed ✓ Find it in « My file »."
+      }
+    }
   },
   "comingSoon": {
     "title": "Coming Soon",

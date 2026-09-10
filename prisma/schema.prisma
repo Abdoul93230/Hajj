@@ -17,7 +17,12 @@ model Tenant {
   phone         String?
   address       String?
   country       String       @default("NE")
-  customDomain  String?      @unique
+  // Index unique SPARSE créé manuellement côté MongoDB (Tenant_customDomain_key).
+  // ⚠️ Ne PAS remettre @unique ici : Prisma génèrerait un index non-sparse qui
+  // refuse plusieurs tenants sans domaine custom (champ absent indexé comme null).
+  // Recréation si nouvelle base :
+  //   db.Tenant.createIndex({ customDomain: 1 }, { unique: true, sparse: true })
+  customDomain  String?
   plan          Plan         @default(STARTER)
   status        TenantStatus @default(ACTIVE)
   trialEndsAt   DateTime?
@@ -34,6 +39,7 @@ model Tenant {
   messages      ContactMessage[]
   auditLogs     AuditLog[]
   documents     PilgrimDocument[]
+  passwordResetOtps PasswordResetOtp[]
 }
 
 // ─── USER ─────────────────────────────────────────────────────────────────────
@@ -73,6 +79,7 @@ model User {
   payments     Payment[]         @relation("PilgrimPayments")
   auditLogs    AuditLog[]
   documents    PilgrimDocument[]
+  passwordResetOtps PasswordResetOtp[]
 
   @@unique([tenantId, email])
 }
@@ -229,6 +236,27 @@ model AuditLog {
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
   user   User    @relation(fields: [userId], references: [id])
+}
+
+// ─── PASSWORD RESET OTP ───────────────────────────────────────────────────────
+
+model PasswordResetOtp {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId   String    @db.ObjectId
+  userId     String    @db.ObjectId
+  email      String
+  codeHash   String    // SHA-256 du code à 6 chiffres (jamais stocké en clair)
+  expiresAt  DateTime  // durée de vie : 10 minutes
+  usedAt     DateTime? // code consommé (reset réussi ou invalidé par un nouveau code)
+  attempts   Int       @default(0) // tentatives de vérification (max 5)
+  lastSentAt DateTime  @default(now()) // anti-spam : cooldown 60s entre 2 envois
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId, email])
 }
 
 // ─── ENUMS ────────────────────────────────────────────────────────────────────

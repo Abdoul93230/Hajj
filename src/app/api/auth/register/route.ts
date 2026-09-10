@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { headers } from "next/headers";
+import { resolveTenantSlugFromHost } from "@/lib/tenant-slug";
 
 export async function POST(req: Request) {
   try {
@@ -13,9 +14,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Mot de passe trop court (min. 6 caractères)" }, { status: 400 });
     }
 
-    // Résoudre le tenant depuis le header injecté par le middleware
+    // Résolution du tenant — le middleware n'injecte pas x-tenant-slug sur /api :
+    // 1. header (si présent)  2. host de la requête  3. fallback DEV_DEFAULT_TENANT
     const headersList = await headers();
-    const tenantSlug = headersList.get("x-tenant-slug");
+    const tenantSlug = headersList.get("x-tenant-slug")
+      ?? resolveTenantSlugFromHost(headersList.get("host"));
 
     const tenant = tenantSlug
       ? await prisma.tenant.findUnique({ where: { slug: tenantSlug } })
@@ -23,6 +26,13 @@ export async function POST(req: Request) {
 
     if (!tenant) {
       return NextResponse.json({ error: "Agence introuvable" }, { status: 404 });
+    }
+    // Une agence suspendue/annulée ne doit plus accepter d'inscriptions
+    if (tenant.status !== "ACTIVE" && tenant.status !== "TRIAL") {
+      return NextResponse.json(
+        { error: "Cette agence ne peut plus accepter d'inscriptions." },
+        { status: 403 }
+      );
     }
 
     const existing = await prisma.user.findUnique({

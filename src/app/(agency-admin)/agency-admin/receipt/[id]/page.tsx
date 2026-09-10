@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
-import ReceiptView from "./ReceiptView";
+import ReceiptView from "@/components/receipt/ReceiptView";
 
 export default async function ReceiptPage({
   params,
@@ -92,6 +92,7 @@ export default async function ReceiptPage({
       paidBefore={paidBefore}
       totalPaid={totalPaid}
       remaining={remaining}
+      copies={2}
     />
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CreateVoyageModal from "./CreateVoyageModal";
+import ProgramModal from "./ProgramModal";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -98,6 +99,7 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [programOffer, setProgramOffer] = useState<SerializedOffer | null>(null);
 
   const filtered = useMemo(() => {
     return offers.filter((o) => {
@@ -116,6 +118,10 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
   function openEdit(o: SerializedOffer) {
     setEditOffer(o);
     setShowModal(true);
+  }
+
+  function openProgram(o: SerializedOffer) {
+    setProgramOffer(o);
   }
 
   function closeModal() {
@@ -235,6 +241,7 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
                     expanded={expandedId === offer.id}
                     onToggleExpand={() => toggleExpand(offer.id)}
                     onEdit={() => openEdit(offer)}
+                    onProgram={() => openProgram(offer)}
                     onDelete={() => {
                       setDeleteTarget(offer);
                       setDeleteError("");
@@ -304,6 +311,18 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
           </div>
         </div>
       )}
+
+      {/* ── Programme Modal ── */}
+      {programOffer && (
+        <ProgramModal
+          offer={programOffer}
+          onClose={() => setProgramOffer(null)}
+          onSaved={() => {
+            setProgramOffer(null);
+            router.refresh();
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -315,6 +334,7 @@ function VoyageRowWithPanel({
   expanded,
   onToggleExpand,
   onEdit,
+  onProgram,
   onDelete,
   onPilgrimChanged,
 }: {
@@ -322,6 +342,7 @@ function VoyageRowWithPanel({
   expanded: boolean;
   onToggleExpand: () => void;
   onEdit: () => void;
+  onProgram: () => void;
   onDelete: () => void;
   onPilgrimChanged: () => void;
 }) {
@@ -434,6 +455,15 @@ function VoyageRowWithPanel({
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </button>
+            <button
+              onClick={onProgram}
+              title="Programme du voyage"
+              className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-[#0f5132] transition"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
               </svg>
             </button>
             <button

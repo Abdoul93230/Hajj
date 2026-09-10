@@ -45,7 +45,7 @@ export default async function DocumentsPage() {
     hasCni: p.hasCni,
     documents: p.documents.filter((d) => d.type !== "VACCINE").map((d) => ({
       id: d.id,
-      type: d.type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER",
+      type: d.type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER",
       status: d.status as "RECEIVED" | "VALID" | "EXPIRED" | "REJECTED",
       label: d.label,
       fileUrl: d.fileUrl,

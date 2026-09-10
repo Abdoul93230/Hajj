@@ -870,7 +870,105 @@
     "loggingIn": "جارٍ تسجيل الدخول...",
     "registering": "جارٍ التسجيل...",
     "loginError": "خطأ في تسجيل الدخول",
-    "registerError": "خطأ في التسجيل"
+    "registerError": "خطأ في التسجيل",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "forgotTitle": "إعادة تعيين كلمة المرور",
+    "forgotDesc": "أدخل بريدك الإلكتروني لتلقي رمز التحقق.",
+    "sendCode": "إرسال الرمز",
+    "sendingCode": "جارٍ الإرسال...",
+    "codeSentTo": "تم إرسال رمز مكوّن من 6 أرقام إلى:",
+    "otpCode": "رمز التحقق",
+    "otpHint": "تحقق من مجلد الرسائل غير المرغوبة إذا لم تستلم شيئًا.",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmNewPassword": "تأكيد كلمة المرور",
+    "resetPassword": "إعادة التعيين",
+    "resetting": "جارٍ إعادة التعيين...",
+    "resetSuccess": "تم إعادة تعيين كلمة المرور بنجاح!",
+    "resetSuccessDesc": "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.",
+    "backToLogin": "العودة لتسجيل الدخول",
+    "backToEmail": "تغيير البريد الإلكتروني",
+    "resendCode": "إعادة إرسال الرمز",
+    "resendIn": "إعادة الإرسال بعد {seconds} ثانية",
+    "passwordsDontMatch": "كلمتا المرور غير متطابقتين",
+    "forgotError": "حدث خطأ. يرجى المحاولة مرة أخرى."
+  },
+  "portal": {
+    "nav": { "dossier": "ملفي", "voyages": "الرحلات", "documents": "مستنداتي", "program": "برنامج رحلتي" },
+    "status": {
+      "NOUVEAU": "جديد", "EN_COURS": "ملف قيد الإنجاز", "COMPLET": "ملف مكتمل",
+      "VISA_DEPOSE": "تم إيداع التأشيرة", "VISA_OK": "تم الحصول على التأشيرة", "PARTI": "في الرحلة", "RETOUR": "عائد"
+    },
+    "statusBannerCancelled": "تم إلغاء ملفك. اتصل بوكالتك لمزيد من المعلومات.",
+    "personal": {
+      "title": "معلوماتي",
+      "email": "البريد الإلكتروني", "phone": "الهاتف", "birthDate": "تاريخ الميلاد",
+      "city": "المدينة / الدولة", "address": "العنوان", "profession": "المهنة",
+      "emergency": "جهة الاتصال الطارئة"
+    },
+    "profile": {
+      "edit": "تعديل", "title": "تعديل معلوماتي",
+      "phone": "الهاتف", "address": "العنوان",
+      "emergencyName": "الطوارئ — الاسم", "emergencyPhone": "الطوارئ — الهاتف",
+      "save": "حفظ", "saving": "جارٍ الحفظ...", "saved": "تم تحديث الملف ✓", "error": "حدث خطأ"
+    },
+    "trips": {
+      "title": "رحلاتي",
+      "empty": "لا توجد رحلة بعد",
+      "departure": "المغادرة", "return": "العودة", "cancelled": "ملغاة",
+      "forfait": "الباقة", "remaining": "المتبقي", "settled": "مسددة بالكامل ✓",
+      "payments": "الدفعات", "noPayments": "لا توجد دفعات مسجلة",
+      "viewReceipt": "عرض / طباعة الوصل"
+    },
+    "category": { "ADULT": "بالغ", "CHILD": "طفل", "BABY": "رضيع", "COUPLE": "زوجان" },
+    "paymentType": { "DEPOSIT": "عربون", "INSTALLMENT": "دفعة", "FINAL": "الرصيد", "REFUND": "استرداد" },
+    "paymentMethod": { "CASH": "نقدًا", "BANK_TRANSFER": "تحويل بنكي", "MOBILE_MONEY": "محفظة موبايل", "CHECK": "شيك", "OTHER": "أخرى" },
+    "docs": {
+      "title": "مستنداتي",
+      "PASSPORT": "جواز السفر", "CNI": "البطاقة الوطنية", "VISA": "التأشيرة",
+      "PHOTO": "صورة", "OTHER": "أخرى",
+      "goToDocuments": "إدارة مستنداتي",
+      "upload": "إرسال مستند", "type": "نوع المستند", "expiresAt": "تاريخ الانتهاء",
+      "label": "تسمية (اختياري)", "file": "ملف (صورة أو PDF، بحد أقصى 10 ميجابايت)",
+      "send": "إرسال المستند", "uploading": "جارٍ الإرسال...", "success": "تم إرسال المستند ✓ سيتم مراجعته من قبل الوكالة.",
+      "errorGeneric": "حدث خطأ", "empty": "لم يتم إرسال أي مستند",
+      "delete": "حذف", "deleteConfirm": "حذف هذا المستند؟",
+      "cannotDelete": "تمت مراجعته من الوكالة — لا يمكن الحذف",
+"edit": "تعديل",
+    "editTitle": "تعديل الوثيقة",
+    "changeFile": "استبدال الملف (اختياري)",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ...",
+    "saved": "تم تحديث الوثيقة ✓",
+      "uploadedOn": "أُرسل في", "expires": "ينتهي في",
+      "rejectedReason": "سبب الرفض", "expiringSoon": "ينتهي قريبًا",
+      "docStatus": {
+        "RECEIVED": "قيد المراجعة", "VALID": "مُعتمد", "EXPIRED": "منتهي", "REJECTED": "مرفوض"
+      }
+    },
+    "program": {
+      "empty": "لا توجد رحلة مبرمجة",
+      "departure": "المغادرة", "return": "العودة", "duration": "{days} يومًا",
+      "countdown": "قبل {days} يومًا", "departed": "جارية", "finished": "منتهية",
+      "noProgram": "لم تنشر الوكالة البرنامج التفصيلي بعد.",
+      "flights": "الرحلات الجوية", "hotels": "الفنادق", "daily": "البرنامج اليومي",
+      "day": "يوم", "nights": "{n} ليالٍ", "included": "ما هو مشمول",
+      "contacts": "جهة الاتصال الطارئة / الوكالة", "callAgency": "اتصل بالوكالة"
+    },
+    "voyages": {
+      "sections": { "hajj": "الحج", "umrah": "العمرة" },
+      "category": { "ADULT": "بالغ", "COUPLE": "زوجان", "CHILD": "طفل", "BABY": "رضيع" },
+      "empty": "لا توجد رحلات متاحة حاليًا",
+      "provisional": "مؤقت", "booked": "محجوز مسبقًا", "book": "احجز", "from": "تبدأ من",
+      "departure": "المغادرة", "return": "العودة",
+      "full": "مكتمل", "placesLeft": "{n} أماكن متبقية", "capacityNA": "السعة غير محددة",
+      "errorGeneric": "حدث خطأ",
+      "modal": {
+        "title": "احجز هذه الرحلة", "category": "اختر فئتك",
+        "notes": "رسالة إلى الوكالة (اختياري)", "cancel": "إلغاء",
+        "booking": "جارٍ الحجز...", "confirm": "تأكيد الحجز",
+        "success": "تم تأكيد الحجز ✓ تجده في « ملفي »."
+      }
+    }
   },
   "comingSoon": {
     "title": "قريباً",

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type DocType   = "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER";
+type DocType   = "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER";
 type DocStatus = "RECEIVED" | "VALID" | "EXPIRED" | "REJECTED";
 
 type PilgrimDoc = {
@@ -38,7 +38,6 @@ const DOC_TYPES: { value: DocType; label: string; short: string; color: string }
   { value: "CNI",      label: "Carte Nationale",    short: "CNI",   color: "bg-violet-100 text-violet-700" },
   { value: "VISA",     label: "Visa",               short: "VISA",  color: "bg-amber-100 text-amber-700" },
   { value: "PHOTO",    label: "Photo d'identité",   short: "PHOTO", color: "bg-pink-100 text-pink-700" },
-  { value: "MEDICAL",  label: "Certificat médical", short: "MED",   color: "bg-red-100 text-red-700" },
   { value: "OTHER",    label: "Autre document",     short: "AUTRE", color: "bg-gray-100 text-gray-600" },
 ];
 

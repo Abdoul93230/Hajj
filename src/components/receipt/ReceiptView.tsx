@@ -44,6 +44,7 @@ interface Props {
   paidBefore:  number;
   totalPaid:   number;
   remaining:   number;
+  copies?:     1 | 2; // 2 par défaut (agence) · 1 pour le pèlerin
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -300,7 +301,8 @@ export default function ReceiptView(props: Props) {
             border-bottom: 1px solid #ccc !important;
           }
 
-          /* Ligne de coupe */
+          /* Ligne de coupe (2 exemplaires agence uniquement) */
+          ${props.copies === 2 ? `
           .cut-line {
             display: block !important;
             width: 100% !important;
@@ -321,8 +323,13 @@ export default function ReceiptView(props: Props) {
           .receipt-block * { font-size: 9pt !important; line-height: 1.3 !important; }
           .receipt-block .amount-big { font-size: 13pt !important; }
           .receipt-block table * { font-size: 8.5pt !important; }
+          ` : `
+          /* Exemplaire unique (pèlerin) : garder un rendu pleine page confortable */
+          .receipt-paper { /* pleine largeur dans @page margin 8mm */ }
+          .receipt-block { page-break-inside: avoid; }
+          `}
 
-          @page { size: A4 portrait; margin: 8mm 12mm; }
+          @page { size: A4 portrait; margin: ${props.copies === 2 ? "8mm 12mm" : "10mm 14mm"}; }
         }
       `}</style>
 
@@ -366,11 +373,15 @@ export default function ReceiptView(props: Props) {
           <Receipt {...props} />
         </div>
 
-        {/* Cut line + 2nd copy (print only) */}
-        <hr className="cut-line" />
-        <div className="print-copy receipt-paper" style={{ width: "100%" }}>
-          <Receipt {...props} />
-        </div>
+        {/* Cut line + 2nd copy (print only) — uniquement pour l'agence (2 exemplaires) */}
+        {props.copies !== 1 && (
+          <>
+            <hr className="cut-line" />
+            <div className="print-copy receipt-paper" style={{ width: "100%" }}>
+              <Receipt {...props} />
+            </div>
+          </>
+        )}
       </div>
     </>
   );

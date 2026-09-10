@@ -72,3 +72,30 @@ export async function requireAgencySession(): Promise<
 
   return { session };
 }
+
+// Vérifie la session PÈLERIN (role PILGRIM) + statut actif du tenant.
+// Utilisé par les routes /api/pilgrim/* — toutes les requêtes sont scopées sur
+// session.id + session.tenantId : un pèlerin ne peut accéder qu'à SES données.
+export async function requirePilgrimSession(): Promise<
+  { session: SessionPayload; error?: never } | { session?: never; error: NextResponse }
+> {
+  const session = await getSession();
+  if (!session || session.role !== "PILGRIM") {
+    return { error: NextResponse.json({ error: "Connexion requise" }, { status: 401 }) };
+  }
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: session.tenantId },
+    select: { status: true },
+  });
+  if (!tenant || (tenant.status !== "ACTIVE" && tenant.status !== "TRIAL")) {
+    return {
+      error: NextResponse.json(
+        { error: "Ce compte agence est suspendu." },
+        { status: 403 }
+      ),
+    };
+  }
+
+  return { session };
+}

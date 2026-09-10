@@ -225,7 +225,7 @@ model Tenant {
   phone        String?
   address      String?
   country      String       @default("NE")    // ISO 3166-1
-  customDomain String?      @unique           // "www.agencezam.com"
+  customDomain String?                        // "www.agencezam.com" — unicité via index SPARSE MongoDB (voir schema.prisma)
   plan         Plan         @default(STARTER)
   status       TenantStatus @default(ACTIVE)
   trialEndsAt  DateTime?
@@ -1000,6 +1000,16 @@ JWT_SECRET="your-strong-random-secret-min-32-chars"
 # App
 NEXT_PUBLIC_APP_URL="https://hajj-platform.com"
 NEXT_PUBLIC_APP_NAME="Hajj Platform"
+
+# Tenant par défaut en dev (portail public + API en single-domain localhost:3000)
+DEV_DEFAULT_TENANT="zam"
+
+# SMTP Gmail — mot de passe oublié / OTP
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="465"
+SMTP_USER="axionaa.academy@gmail.com"
+SMTP_APP_PASSWORD="xxxx xxxx xxxx xxxx"
+SMTP_FROM_NAME="ZAM Hajj & Oumra"
 
 # Email (Resend)
 RESEND_API_KEY="re_xxxxxxxxxxxx"

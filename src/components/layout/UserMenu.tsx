@@ -19,9 +19,12 @@ export default function UserMenu({ user }: Props) {
   if (user) {
     return (
       <div className="hidden sm:flex items-center gap-2">
-        <span className="text-sm font-semibold text-[#0f5132]">
+        <Link
+          href="/compte/mon-dossier"
+          className="text-sm font-semibold text-[#0f5132] hover:underline"
+        >
           {user.name.split(" ")[0]}
-        </span>
+        </Link>
         <button
           onClick={handleLogout}
           className="text-xs text-gray-500 border border-gray-200 px-2 py-1 rounded-full hover:border-amber-400 hover:text-amber-500 transition-colors"

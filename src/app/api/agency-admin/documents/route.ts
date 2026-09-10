@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "userId et type sont requis" }, { status: 400 });
   }
 
-  const validTypes = ["PASSPORT", "CNI", "VISA", "PHOTO", "MEDICAL", "OTHER"];
+  const validTypes = ["PASSPORT", "CNI", "VISA", "PHOTO", "OTHER"];
   if (!validTypes.includes(type)) {
     return NextResponse.json({ error: "Type de document invalide" }, { status: 400 });
   }

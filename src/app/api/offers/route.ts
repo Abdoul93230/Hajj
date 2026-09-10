@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
+import { resolveTenantSlugFromHost } from "@/lib/tenant-slug";
 
 export async function GET() {
   const headersList = await headers();
-  const tenantSlug = headersList.get("x-tenant-slug");
+  const tenantSlug = headersList.get("x-tenant-slug")
+    ?? resolveTenantSlugFromHost(headersList.get("host"));
   const tenant = tenantSlug
     ? await prisma.tenant.findUnique({ where: { slug: tenantSlug } })
     : null;

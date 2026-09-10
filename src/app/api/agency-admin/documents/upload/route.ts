@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "file, userId et type sont requis" }, { status: 400 });
   }
 
-  const validTypes = ["PASSPORT", "CNI", "VISA", "PHOTO", "MEDICAL", "OTHER"];
+  const validTypes = ["PASSPORT", "CNI", "VISA", "PHOTO", "OTHER"];
   if (!validTypes.includes(type)) {
     return NextResponse.json({ error: "Type de document invalide" }, { status: 400 });
   }
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   // Chercher un document existant du même type pour ce pèlerin
   // (pour supprimer l'ancien fichier Cloudinary avant d'uploader le nouveau)
   const existingDoc = await prisma.pilgrimDocument.findFirst({
-    where: { tenantId, userId, type: type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER" },
+    where: { tenantId, userId, type: type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER" },
     orderBy: { createdAt: "desc" },
     select: { id: true, fileUrl: true },
   });
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
     data: {
       tenantId,
       userId,
-      type: type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "MEDICAL" | "OTHER",
+      type: type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER",
       status: status as "RECEIVED" | "VALID" | "EXPIRED" | "REJECTED",
       label,
       fileUrl,

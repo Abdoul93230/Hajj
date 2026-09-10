@@ -720,7 +720,7 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
   const [type,      setType]      = useState<PType>(payment?.type ?? defaultType);
   const [method,    setMethod]    = useState<PMethod>(payment?.method ?? "CASH");
   const [status,    setStatus]    = useState<PStatus>(payment?.status ?? "COMPLETED");
-  const [reference, setReference] = useState(payment?.reference ?? "");
+  const [reference] = useState(payment?.reference ?? "");
   const [notes,     setNotes]     = useState(payment?.notes ?? "");
   const [paidAt,    setPaidAt]    = useState(
     payment ? new Date(payment.paidAt).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
@@ -860,7 +860,7 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
             </div>
           </div>
 
-          {/* Date + référence */}
+          {/* Date + référence (auto-générée par le système) */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1.5">Date</label>
@@ -869,9 +869,20 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1.5">Référence / Reçu</label>
-              <input type="text" value={reference} onChange={e => setReference(e.target.value)}
-                placeholder="REC-2026-001"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30" />
+              {payment?.reference ? (
+                // Édition : la référence existante est conservée (lecture seule)
+                <div className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl text-gray-600 font-mono">
+                  {payment.reference}
+                </div>
+              ) : (
+                // Création : générée automatiquement par l'API
+                <div className="w-full px-3 py-2 text-sm bg-[#0f5132]/5 border border-[#0f5132]/20 rounded-xl text-[#0f5132] flex items-center gap-2">
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <span className="text-xs font-semibold">Auto-générée (REC-{new Date().getFullYear()}-XXXXX)</span>
+                </div>
+              )}
             </div>
           </div>
 

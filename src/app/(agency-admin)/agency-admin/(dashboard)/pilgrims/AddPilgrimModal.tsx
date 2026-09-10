@@ -35,7 +35,6 @@ const STATUT_DISPLAY: Record<string, { label: string; color: string }> = {
   INCOMPLETE:  { label: "En cours",     color: "bg-orange-100 text-orange-600" },
   REGISTERED:  { label: "Complet",      color: "bg-blue-100 text-blue-700" },
   VISA_OK:    { label: "Visa OK",     color: "bg-green-100 text-green-700" },
-  CANCELLED:  { label: "Annulé",      color: "bg-red-100 text-red-600" },
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────

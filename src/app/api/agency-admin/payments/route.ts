@@ -70,6 +70,31 @@ export async function GET(req: Request) {
   return NextResponse.json({ payments });
 }
 
+// ─── Génération automatique de référence / reçu ──────────────────────────────
+// Format : REC-<année>-<5 caractères aléatoires> (ex: REC-2026-K7X2F)
+// Unicité vérifiée au sein du tenant.
+async function generateReference(tenantId: string): Promise<string> {
+  const year = new Date().getFullYear();
+  const CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // sans I/L/O/0/1 (ambigus)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = prisma as any;
+
+  for (let attempt = 0; attempt < 5; attempt++) {
+    let suffix = "";
+    for (let i = 0; i < 5; i++) {
+      suffix += CHARS[Math.floor(Math.random() * CHARS.length)];
+    }
+    const reference = `REC-${year}-${suffix}`;
+    const existing = await db.payment.findFirst({
+      where: { tenantId, reference },
+      select: { id: true },
+    });
+    if (!existing) return reference;
+  }
+  // Fallback quasi-impossible (5 collisions) : horodatage
+  return `REC-${year}-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+}
+
 // ─── POST /api/agency-admin/payments ─────────────────────────────────────────
 export async function POST(req: Request) {
   const { session, error } = await requireAgencySession();
@@ -90,6 +115,9 @@ export async function POST(req: Request) {
   const db = prisma as any;
   const resolvedPilgrimId = pilgrimId || reservation.userId || null;
 
+  // Référence auto-générée si l'admin n'en saisit pas une
+  const finalReference = reference?.trim() || (await generateReference(tenantId));
+
   const payment = await db.payment.create({
     data: {
       tenantId,
@@ -99,7 +127,7 @@ export async function POST(req: Request) {
       type,
       method:     method    || "CASH",
       status:     "COMPLETED",
-      reference:  reference?.trim() || null,
+      reference:  finalReference,
       notes:      notes?.trim()     || null,
       paidAt:     paidAt ? new Date(paidAt) : new Date(),
       createdBy:  session.id,

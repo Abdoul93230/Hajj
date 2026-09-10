@@ -870,7 +870,105 @@
     "loggingIn": "Connexion...",
     "registering": "Inscription...",
     "loginError": "Erreur de connexion",
-    "registerError": "Erreur d'inscription"
+    "registerError": "Erreur d'inscription",
+    "forgotPassword": "Mot de passe oublié ?",
+    "forgotTitle": "Réinitialiser le mot de passe",
+    "forgotDesc": "Saisissez votre adresse email pour recevoir un code de vérification.",
+    "sendCode": "Recevoir le code",
+    "sendingCode": "Envoi...",
+    "codeSentTo": "Un code à 6 chiffres a été envoyé à :",
+    "otpCode": "Code de vérification",
+    "otpHint": "Pensez à vérifier vos spams si vous ne recevez rien.",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le mot de passe",
+    "resetPassword": "Réinitialiser",
+    "resetting": "Réinitialisation...",
+    "resetSuccess": "Mot de passe réinitialisé avec succès !",
+    "resetSuccessDesc": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+    "backToLogin": "Retour à la connexion",
+    "backToEmail": "Modifier l'email",
+    "resendCode": "Renvoyer le code",
+    "resendIn": "Renvoyer dans {seconds}s",
+    "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+    "forgotError": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "portal": {
+    "nav": { "dossier": "Mon dossier", "voyages": "Voyages", "documents": "Mes documents", "program": "Mon programme" },
+    "status": {
+      "NOUVEAU": "Nouveau", "EN_COURS": "Dossier en cours", "COMPLET": "Dossier complet",
+      "VISA_DEPOSE": "Visa déposé", "VISA_OK": "Visa obtenu", "PARTI": "En voyage", "RETOUR": "Retour"
+    },
+    "statusBannerCancelled": "Votre dossier a été annulé. Contactez votre agence pour plus d'informations.",
+    "personal": {
+      "title": "Mes informations",
+      "email": "Email", "phone": "Téléphone", "birthDate": "Date de naissance",
+      "city": "Ville / Pays", "address": "Adresse", "profession": "Profession",
+      "emergency": "Contact d'urgence"
+    },
+    "profile": {
+      "edit": "Modifier", "title": "Modifier mes informations",
+      "phone": "Téléphone", "address": "Adresse",
+      "emergencyName": "Contact urgence — nom", "emergencyPhone": "Contact urgence — téléphone",
+      "save": "Enregistrer", "saving": "Enregistrement...", "saved": "Profil mis à jour ✓", "error": "Une erreur est survenue"
+    },
+    "trips": {
+      "title": "Mes voyages",
+      "empty": "Aucun voyage pour le moment",
+      "departure": "Départ", "return": "Retour", "cancelled": "Annulé",
+      "forfait": "Forfait", "remaining": "Reste", "settled": "Soldé ✓",
+      "payments": "Paiements", "noPayments": "Aucun paiement enregistré",
+      "viewReceipt": "Voir / imprimer le reçu"
+    },
+    "category": { "ADULT": "Adulte", "CHILD": "Enfant", "BABY": "Bébé", "COUPLE": "Couple" },
+    "paymentType": { "DEPOSIT": "Acompte", "INSTALLMENT": "Versement", "FINAL": "Solde", "REFUND": "Remboursement" },
+    "paymentMethod": { "CASH": "Espèces", "BANK_TRANSFER": "Virement", "MOBILE_MONEY": "Mobile Money", "CHECK": "Chèque", "OTHER": "Autre" },
+    "docs": {
+      "title": "Mes documents",
+      "PASSPORT": "Passeport", "CNI": "Carte d'identité", "VISA": "Visa",
+      "PHOTO": "Photo", "OTHER": "Autre",
+      "goToDocuments": "Gérer mes documents",
+      "upload": "Envoyer un document", "type": "Type de document", "expiresAt": "Date d'expiration",
+      "label": "Libellé (optionnel)", "file": "Fichier (image ou PDF, max 10 Mo)",
+      "send": "Envoyer le document", "uploading": "Envoi...", "success": "Document envoyé ✓ Il sera vérifié par l'agence.",
+      "errorGeneric": "Une erreur est survenue", "empty": "Aucun document envoyé",
+      "delete": "Supprimer", "deleteConfirm": "Supprimer ce document ?",
+      "cannotDelete": "Déjà vérifié par l'agence — suppression impossible",
+"edit": "Modifier",
+    "editTitle": "Modifier le document",
+    "changeFile": "Remplacer le fichier (optionnel)",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "saved": "Document mis à jour ✓",
+      "uploadedOn": "Envoyé le", "expires": "Expire le",
+      "rejectedReason": "Motif du rejet", "expiringSoon": "Expire bientôt",
+      "docStatus": {
+        "RECEIVED": "En vérification", "VALID": "Validé", "EXPIRED": "Expiré", "REJECTED": "Rejeté"
+      }
+    },
+    "program": {
+      "empty": "Aucun voyage programmé",
+      "departure": "Départ", "return": "Retour", "duration": "{days} jours",
+      "countdown": "J-{days}", "departed": "En cours", "finished": "Terminé",
+      "noProgram": "Le programme de détail n'a pas encore été publié par l'agence.",
+      "flights": "Vols", "hotels": "Hôtels", "daily": "Programme jour par jour",
+      "day": "Jour", "nights": "{n} nuits", "included": "Ce qui est inclus",
+      "contacts": "Contact d'urgence / agence", "callAgency": "Appeler l'agence"
+    },
+    "voyages": {
+      "sections": { "hajj": "Hajj", "umrah": "Omra" },
+      "category": { "ADULT": "Adulte", "COUPLE": "Couple", "CHILD": "Enfant", "BABY": "Bébé" },
+      "empty": "Aucun voyage disponible pour le moment",
+      "provisional": "Provisoire", "booked": "Déjà réservé", "book": "Réserver", "from": "À partir de",
+      "departure": "Départ", "return": "Retour",
+      "full": "Complet", "placesLeft": "{n} places restantes", "capacityNA": "Capacité non définie",
+      "errorGeneric": "Une erreur est survenue",
+      "modal": {
+        "title": "Réserver ce voyage", "category": "Choisissez votre catégorie",
+        "notes": "Message à l'agence (optionnel)", "cancel": "Annuler",
+        "booking": "Réservation...", "confirm": "Confirmer la réservation",
+        "success": "Réservation confirmée ✓ Retrouvez-la dans « Mon dossier »."
+      }
+    }
   },
   "comingSoon": {
     "title": "Bientôt disponible",
