@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import DirectionSetter from "@/components/ui/DirectionSetter";
 import { getSession } from "@/lib/session";
+import { prisma } from "@/lib/prisma";
 import "../../globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -65,6 +66,16 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const session = await getSession();
 
+  // Photo de profil de l'utilisateur connecté (affichée dans le header)
+  let photoUrl: string | null = null;
+  if (session) {
+    const u = await prisma.user.findUnique({
+      where: { id: session.id },
+      select: { photoUrl: true },
+    });
+    photoUrl = u?.photoUrl ?? null;
+  }
+
   return (
     <div
       className={`${inter.variable} ${playfair.variable} min-h-screen flex flex-col`}
@@ -72,7 +83,7 @@ export default async function LocaleLayout({
     >
       <NextIntlClientProvider messages={messages}>
         <DirectionSetter />
-        <Header user={session ? { name: session.name, role: session.role } : null} />
+        <Header user={session ? { name: session.name, role: session.role, photoUrl } : null} />
         <main className="flex-1">{children}</main>
         <Footer />
         <WhatsAppButton />

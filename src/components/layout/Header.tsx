@@ -72,7 +72,11 @@ function MegaDropdown({ item }: { item: NavItem }) {
   );
 }
 
-export default function Header({ user }: { user: { name: string; role: string } | null }) {
+export default function Header({
+  user,
+}: {
+  user: { name: string; role: string; photoUrl?: string | null } | null;
+}) {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
