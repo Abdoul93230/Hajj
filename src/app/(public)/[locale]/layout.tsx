@@ -67,6 +67,8 @@ export default async function LocaleLayout({
   const session = await getSession();
 
   // Photo de profil de l'utilisateur connecté (affichée dans le header)
+  // 1) user.photoUrl (photo définie par l'agence)
+  // 2) fallback : photo de pèlerin — son document PHOTO en attente ou validé
   let photoUrl: string | null = null;
   if (session) {
     const u = await prisma.user.findUnique({
@@ -74,6 +76,21 @@ export default async function LocaleLayout({
       select: { photoUrl: true },
     });
     photoUrl = u?.photoUrl ?? null;
+
+    if (!photoUrl) {
+      const photoDoc = await prisma.pilgrimDocument.findFirst({
+        where: {
+          userId: session.id,
+          type: "PHOTO",
+          status: { not: "REJECTED" },
+          // exclure les PDF (pas affichables en avatar)
+          fileUrl: { not: { endsWith: ".pdf" } },
+        },
+        orderBy: { createdAt: "desc" },
+        select: { fileUrl: true },
+      });
+      photoUrl = photoDoc?.fileUrl ?? null;
+    }
   }
 
   return (
