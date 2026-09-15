@@ -29,34 +29,59 @@ export default async function OffresPage() {
   const dbOffers = tenant
     ? await prisma.offer.findMany({
         where: { tenantId: tenant.id, active: true, priceAdult: { gt: 0 } },
+        include: {
+          _count: { select: { reservations: { where: { status: "CONFIRMED" } } } },
+        },
         orderBy: [{ type: "asc" }, { departureDate: "asc" }],
       })
     : [];
 
+  // ── Année en cours uniquement ──────────────────────────────────────────────
+  // Une offre appartient à une saison via seasonYear (fallback : année de la
+  // date de départ, puis année de création). Les saisons passées ne sont pas
+  // affichées ; celles de l'année en cours le sont, avec un statut.
+  const currentYear = new Date().getFullYear();
+
   const offers = dbOffers
-    .map((o) => ({
-      id: o.id,
-      slug: o.slug,
-      type: o.type as string,
-      title: o.titleFr,
-      desc: o.descFr,
-      departureDate: o.departureDate ? o.departureDate.toISOString() : null,
-      returnDate: o.returnDate ? o.returnDate.toISOString() : null,
-      durationDays:
-        o.departureDate && o.returnDate
-          ? Math.max(
-              1,
-              Math.round(
-                (new Date(o.returnDate).getTime() - new Date(o.departureDate).getTime()) /
-                  (1000 * 60 * 60 * 24)
+    .map((o) => {
+      const seasonYear =
+        o.seasonYear ??
+        (o.departureDate
+          ? new Date(o.departureDate).getFullYear()
+          : new Date(o.createdAt).getFullYear());
+      const maxCapacity =
+        o.data && typeof o.data === "object" && "maxCapacity" in (o.data as object)
+          ? (o.data as { maxCapacity?: number }).maxCapacity ?? 0
+          : 0;
+      const confirmed = o._count.reservations;
+      return {
+        id: o.id,
+        slug: o.slug,
+        type: o.type as string,
+        title: o.titleFr,
+        desc: o.descFr,
+        departureDate: o.departureDate ? o.departureDate.toISOString() : null,
+        returnDate: o.returnDate ? o.returnDate.toISOString() : null,
+        durationDays:
+          o.departureDate && o.returnDate
+            ? Math.max(
+                1,
+                Math.round(
+                  (new Date(o.returnDate).getTime() - new Date(o.departureDate).getTime()) /
+                    (1000 * 60 * 60 * 24)
+                )
               )
-            )
-          : null,
-      priceAdult: o.priceAdult,
-      currency: o.currency,
-      provisional: o.provisional,
-      closed: isBookingClosed(o.departureDate),
-    }))
+            : null,
+        priceAdult: o.priceAdult,
+        currency: o.currency,
+        provisional: o.provisional,
+        seasonYear,
+        // Expiré = date de départ atteinte · Complet = capacité atteinte
+        expired: isBookingClosed(o.departureDate),
+        soldOut: maxCapacity > 0 && confirmed >= maxCapacity,
+      };
+    })
+    .filter((o) => o.seasonYear === currentYear)
     .sort((a, b) => {
       // Hajj d'abord (1 offre/an), puis Omra par date de départ (sans date à la fin)
       if (a.type !== b.type) return a.type === "HAJJ" ? -1 : 1;
@@ -115,7 +140,7 @@ export default async function OffresPage() {
                 </div>
                 <div className="space-y-8">
                     {list.map((offer) => {
-                      const available = !offer.closed;
+                      const available = !offer.expired && !offer.soldOut;
                       return (
                         <div key={offer.id} id={offer.slug}
                           className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden scroll-mt-24 hover:shadow-lg transition-shadow">
@@ -136,9 +161,13 @@ export default async function OffresPage() {
                                   {t("provisional")}
                                 </span>
                               )}
-                              {offer.closed ? (
-                                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-black/25 text-white/80">
-                                  Inscriptions fermées
+                              {offer.expired ? (
+                                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-black/30 text-white/80">
+                                  Expiré
+                                </span>
+                              ) : offer.soldOut ? (
+                                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-red-900/70 text-white">
+                                  Complet
                                 </span>
                               ) : (
                                 <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/20 text-white">
