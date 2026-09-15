@@ -91,6 +91,7 @@ model Offer {
   tenantId      String    @db.ObjectId
   slug          String
   type          OfferType
+  seasonYear    Int?      // année de la saison (null = ancien -> fallback createdAt)
   titleFr       String
   titleEn       String?
   titleAr       String?

@@ -86,13 +86,20 @@ const STATUS_LABELS: Record<string, { label: string; cls: string }> = {
 interface VoyagesClientProps {
   offers: SerializedOffer[];
   tenantSlug: string;
+  selectedYear: number;
 }
 
-export default function VoyagesClient({ offers }: VoyagesClientProps) {
+type CreatePreset = {
+  defaultType?: string;
+  lockType?: boolean;
+  defaultTitle?: string;
+} | null;
+
+export default function VoyagesClient({ offers, selectedYear }: VoyagesClientProps) {
   const router = useRouter();
 
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("ALL");
+  const [createPreset, setCreatePreset] = useState<CreatePreset>(null);
   const [showModal, setShowModal] = useState(false);
   const [editOffer, setEditOffer] = useState<SerializedOffer | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<SerializedOffer | null>(null);
@@ -102,16 +109,17 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
   const [programOffer, setProgramOffer] = useState<SerializedOffer | null>(null);
 
   const filtered = useMemo(() => {
-    return offers.filter((o) => {
-      const q = search.toLowerCase();
-      const matchSearch = !q || o.titleFr.toLowerCase().includes(q);
-      const matchType = typeFilter === "ALL" || o.type === typeFilter;
-      return matchSearch && matchType;
-    });
-  }, [offers, search, typeFilter]);
+    const q = search.toLowerCase();
+    return offers.filter((o) => !q || o.titleFr.toLowerCase().includes(q));
+  }, [offers, search]);
 
-  function openCreate() {
+  // ── Organisation : Hajj (1 offre/an) + Omra (libre) ──
+  const hajjOffers = useMemo(() => filtered.filter((o) => o.type === "HAJJ"), [filtered]);
+  const umrahOffers = useMemo(() => filtered.filter((o) => o.type === "UMRAH"), [filtered]);
+
+  function openCreate(preset?: Exclude<CreatePreset, null>) {
     setEditOffer(null);
+    setCreatePreset(preset ?? null);
     setShowModal(true);
   }
 
@@ -127,6 +135,7 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
   function closeModal() {
     setShowModal(false);
     setEditOffer(null);
+    setCreatePreset(null);
   }
 
   function onSaved() {
@@ -136,6 +145,62 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
 
   function toggleExpand(id: string) {
     setExpandedId((prev) => (prev === id ? null : id));
+  }
+
+  // Table des voyages — réutilisée pour les sections Hajj et Omra
+  function renderTable(rows: SerializedOffer[]) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px]">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="text-left text-[10px] font-bold uppercase tracking-wider text-gray-400 px-5 py-3">
+                  Nom du Voyage
+                </th>
+                <th className="text-left text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-3">
+                  Dates &amp; Durée
+                </th>
+                <th className="text-left text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-3">
+                  Capacité / Reste
+                </th>
+                <th className="text-left text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-3">
+                  Tarif Forfaitaire
+                </th>
+                <th className="text-center text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-3">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((offer) => (
+                <VoyageRowWithPanel
+                  key={offer.id}
+                  offer={offer}
+                  expanded={expandedId === offer.id}
+                  onToggleExpand={() => toggleExpand(offer.id)}
+                  onEdit={() => openEdit(offer)}
+                  onProgram={() => openProgram(offer)}
+                  onDelete={() => {
+                    setDeleteTarget(offer);
+                    setDeleteError("");
+                  }}
+                  onPilgrimChanged={() => router.refresh()}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer count */}
+        <div className="px-5 py-3 border-t border-gray-50 flex items-center justify-between">
+          <p className="text-gray-400 text-xs">
+            {rows.length} voyage{rows.length > 1 ? "s" : ""} affiché{rows.length > 1 ? "s" : ""}
+          </p>
+          <p className="text-gray-300 text-xs">{offers.length} total</p>
+        </div>
+      </div>
+    );
   }
 
   async function handleDelete() {
@@ -184,20 +249,9 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
           />
         </div>
 
-        {/* Type filter */}
-        <select
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-600 cursor-pointer transition"
-        >
-          <option value="ALL">Tous types</option>
-          <option value="HAJJ">Hajj</option>
-          <option value="UMRAH">Umrah</option>
-        </select>
-
         {/* Create button */}
         <button
-          onClick={openCreate}
+          onClick={() => openCreate()}
           className="flex items-center gap-2 bg-[#0f5132] hover:bg-[#0d4429] text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm transition active:scale-95"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
@@ -207,59 +261,105 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
         </button>
       </div>
 
-      {/* ── Table ── */}
+      {/* ── Sections : Hajj (1/an) + Omra (libre) ── */}
       {filtered.length === 0 ? (
-        <EmptyState hasFilter={!!search || typeFilter !== "ALL"} onAdd={openCreate} />
+        <EmptyState hasFilter={!!search} onAdd={() => openCreate()} />
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px]">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left text-[10px] font-bold uppercase tracking-wider text-gray-400 px-5 py-3">
-                    Nom du Voyage
-                  </th>
-                  <th className="text-left text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-3">
-                    Dates &amp; Durée
-                  </th>
-                  <th className="text-left text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-3">
-                    Capacité / Reste
-                  </th>
-                  <th className="text-left text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-3">
-                    Tarif Forfaitaire
-                  </th>
-                  <th className="text-center text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-3">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((offer) => (
-                  <VoyageRowWithPanel
-                    key={offer.id}
-                    offer={offer}
-                    expanded={expandedId === offer.id}
-                    onToggleExpand={() => toggleExpand(offer.id)}
-                    onEdit={() => openEdit(offer)}
-                    onProgram={() => openProgram(offer)}
-                    onDelete={() => {
-                      setDeleteTarget(offer);
-                      setDeleteError("");
-                    }}
-                    onPilgrimChanged={() => router.refresh()}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="space-y-6">
 
-          {/* Footer count */}
-          <div className="px-5 py-3 border-t border-gray-50 flex items-center justify-between">
-            <p className="text-gray-400 text-xs">
-              {filtered.length} voyage{filtered.length > 1 ? "s" : ""} affiché{filtered.length > 1 ? "s" : ""}
-            </p>
-            <p className="text-gray-300 text-xs">{offers.length} total</p>
-          </div>
+          {/* ─── Section HAJJ : une seule offre par an ─── */}
+          <section>
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center text-base">🕋</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base font-bold text-gray-800">Hajj {selectedYear}</h2>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                    1 offre / an
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-400">
+                  Le Hajj a lieu une seule fois par saison — cette offre est celle affichée côté public.
+                </p>
+              </div>
+            </div>
+
+            {hajjOffers.length > 0 ? (
+              renderTable(hajjOffers)
+            ) : (
+              <button
+                onClick={() => openCreate({ defaultType: "HAJJ", lockType: true, defaultTitle: `Hajj ${selectedYear}` })}
+                className="w-full bg-white rounded-2xl border-2 border-dashed border-amber-200 hover:border-amber-400 hover:bg-amber-50/50 transition p-8 flex flex-col items-center gap-2 group"
+              >
+                <span className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                  🕋
+                </span>
+                <p className="text-sm font-semibold text-gray-700">
+                  Créer l&apos;offre Hajj {selectedYear}
+                </p>
+                <p className="text-xs text-gray-400">
+                  Un brouillon est déjà présent — cliquez pour le compléter depuis la liste.
+                </p>
+              </button>
+            )}
+          </section>
+
+          {/* ─── Section OMRA : plusieurs départs, libre ─── */}
+          <section>
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-9 h-9 rounded-xl bg-[#0f5132]/10 flex items-center justify-center text-base">🕌</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base font-bold text-gray-800">Omra {selectedYear}</h2>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0f5132]/10 text-[#0f5132]">
+                    {umrahOffers.length} départ{umrahOffers.length > 1 ? "s" : ""}
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-400">
+                  Autant de voyages que vous voulez, aux périodes de votre choix.
+                </p>
+              </div>
+            </div>
+
+            {umrahOffers.length > 0 ? (
+              renderTable(umrahOffers)
+            ) : (
+              <p className="text-sm text-gray-400 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-6 text-center">
+                Aucun voyage Omra pour cette saison.
+              </p>
+            )}
+
+            {/* Création rapide par période */}
+            <div className="grid sm:grid-cols-3 gap-3 mt-4">
+              {[
+                { label: "Omra Décembre", emoji: "🎯", desc: "Départ décembre (fin d'année)" },
+                { label: "Omra Ramadan", emoji: "🌙", desc: "Pendant le mois de Ramadan" },
+                { label: "Omra Vacances", emoji: "🏖️", desc: "Période de vacances" },
+              ].map((p) => (
+                <button
+                  key={p.label}
+                  onClick={() => openCreate({ defaultType: "UMRAH", defaultTitle: `${p.label} ${selectedYear}` })}
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-[#0f5132]/40 hover:shadow-md transition p-4 text-left group"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-lg group-hover:scale-110 transition-transform">{p.emoji}</span>
+                    <p className="text-sm font-semibold text-gray-700">{p.label} {selectedYear}</p>
+                  </div>
+                  <p className="text-[11px] text-gray-400">{p.desc}</p>
+                  <p className="text-[11px] font-semibold text-[#0f5132] mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    + Créer ce voyage
+                  </p>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => openCreate({ defaultType: "UMRAH" })}
+              className="mt-3 text-sm font-semibold text-[#0f5132] hover:underline"
+            >
+              + Créer un voyage Omra librement (autre période)
+            </button>
+          </section>
         </div>
       )}
 
@@ -269,6 +369,9 @@ export default function VoyagesClient({ offers }: VoyagesClientProps) {
           offer={editOffer}
           onClose={closeModal}
           onSaved={onSaved}
+          defaultType={createPreset?.defaultType}
+          lockType={createPreset?.lockType}
+          defaultTitle={createPreset?.defaultTitle}
         />
       )}
 

@@ -35,6 +35,36 @@ export async function PUT(
     provisional,
   } = body;
 
+  // Le Hajj n'a lieu qu'une fois par an : empêcher le passage en HAJJ
+  // si une autre offre Hajj active existe déjà sur la même saison
+  if (type === "HAJJ" && existing.type !== "HAJJ") {
+    const seasonYear =
+      existing.seasonYear ??
+      new Date(existing.createdAt).getFullYear();
+    const yearRange = {
+      gte: new Date(seasonYear, 0, 1),
+      lt: new Date(seasonYear + 1, 0, 1),
+    };
+    const existingHajj = await prisma.offer.findFirst({
+      where: {
+        tenantId,
+        type: "HAJJ",
+        active: true,
+        id: { not: id },
+        OR: [
+          { seasonYear },
+          { seasonYear: null, createdAt: yearRange },
+        ],
+      },
+    });
+    if (existingHajj) {
+      return NextResponse.json(
+        { error: `Une offre Hajj existe déjà pour ${seasonYear} — le Hajj a lieu une seule fois par an.` },
+        { status: 409 }
+      );
+    }
+  }
+
   const updated = await prisma.offer.update({
     where: { id },
     data: {

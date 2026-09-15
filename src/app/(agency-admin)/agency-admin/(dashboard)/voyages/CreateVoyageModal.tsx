@@ -24,6 +24,12 @@ interface CreateVoyageModalProps {
   offer: SerializedOffer | null;
   onClose: () => void;
   onSaved: () => void;
+  /** Type présélectionné à la création (section Hajj / Omra) */
+  defaultType?: string;
+  /** Verrouille le champ type (ex: création depuis la section Hajj) */
+  lockType?: boolean;
+  /** Titre pré-rempli à la création (ex: "Omra Ramadan 2026") */
+  defaultTitle?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -41,14 +47,17 @@ export default function CreateVoyageModal({
   offer,
   onClose,
   onSaved,
+  defaultType,
+  lockType,
+  defaultTitle,
 }: CreateVoyageModalProps) {
   const isEdit = !!offer;
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const [form, setForm] = useState<FormData>({
-    titleFr: offer?.titleFr ?? "",
-    type: offer?.type ?? "UMRAH",
+    titleFr: offer?.titleFr ?? defaultTitle ?? "",
+    type: offer?.type ?? defaultType ?? "UMRAH",
     descFr: offer?.descFr ?? "",
     departureDate: offer?.departureDate ? offer.departureDate.substring(0, 10) : "",
     returnDate: offer?.returnDate ? offer.returnDate.substring(0, 10) : "",
@@ -191,11 +200,21 @@ export default function CreateVoyageModal({
                 <select
                   value={form.type}
                   onChange={(e) => handleField("type", e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition cursor-pointer"
+                  disabled={!isEdit && lockType}
+                  className={`w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition ${
+                    !isEdit && lockType ? "bg-gray-50 text-gray-400 cursor-not-allowed" : "cursor-pointer"
+                  }`}
                 >
                   <option value="HAJJ">Hajj</option>
                   <option value="UMRAH">Umrah</option>
                 </select>
+                {!isEdit && lockType && (
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    {form.type === "HAJJ"
+                      ? "Le Hajj a lieu une seule fois par an — type verrouillé."
+                      : "Type imposé par la section Omra."}
+                  </p>
+                )}
               </div>
               <div className="flex items-end pb-1">
                 <label className="flex items-center gap-2.5 cursor-pointer group">

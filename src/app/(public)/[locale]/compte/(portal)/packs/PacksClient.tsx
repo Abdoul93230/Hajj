@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Plane, Calendar, Users, X, Check } from "lucide-react";
+import { Plane, Calendar, Users, X, Check, Landmark, MoonStar } from "lucide-react";
 
 export type PackOffer = {
   id: string;
@@ -28,6 +28,7 @@ const CATEGORIES = ["ADULT", "COUPLE", "CHILD", "BABY"] as const;
 
 export default function PacksClient({ offers }: { offers: PackOffer[] }) {
   const t = useTranslations("portal.packs");
+  const tv = useTranslations("portal.voyages");
   const router = useRouter();
 
   const [booking, setBooking] = useState<PackOffer | null>(null);
@@ -81,6 +82,17 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
     }
   }
 
+  // ── Regroupement par catégorie : Hajj (1/an) / Omra (libre), tri par date ──
+  const sortFn = (a: PackOffer, b: PackOffer) => {
+    if (!a.departureDate) return 1;
+    if (!b.departureDate) return -1;
+    return a.departureDate.localeCompare(b.departureDate);
+  };
+  const sections = [
+    { key: "HAJJ" as const, label: tv("sections.hajj"), list: offers.filter((o) => o.type === "HAJJ").sort(sortFn) },
+    { key: "OMRAH" as const, label: tv("sections.umrah"), list: offers.filter((o) => o.type !== "HAJJ").sort(sortFn) },
+  ];
+
   return (
     <div className="space-y-5">
       {offers.length === 0 ? (
@@ -88,8 +100,18 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
           <p className="text-sm text-gray-400">{t("empty")}</p>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 gap-5">
-          {offers.map((o) => {
+        <div className="space-y-8">
+          {sections.map(({ key, label, list }) =>
+            list.length > 0 ? (
+              <div key={key}>
+                <div className="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
+                  <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] flex items-center justify-center">
+                    {key === "HAJJ" ? <Landmark size={16} /> : <MoonStar size={16} />}
+                  </span>
+                  <h2 className="text-xl font-bold text-gray-900">{label}</h2>
+                </div>
+                <div className="grid md:grid-cols-2 gap-5">
+                  {list.map((o) => {
             const full = isFull(o);
             const booked = o.alreadyBooked;
             const closed = o.bookingClosed;
@@ -187,7 +209,11 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                 </div>
               </div>
             );
-          })}
+                  })}
+                </div>
+              </div>
+            ) : null
+          )}
         </div>
       )}
 

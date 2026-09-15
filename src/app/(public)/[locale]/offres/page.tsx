@@ -1,12 +1,72 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import { headers } from "next/headers";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, Calendar, Clock, Plane, Users, Check } from "lucide-react";
+import { ArrowRight, Calendar, Clock, Users } from "lucide-react";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
-import { OFFERS } from "@/lib/offers-data";
+import { prisma } from "@/lib/prisma";
+import { resolveTenantSlugFromHost } from "@/lib/tenant-slug";
 
-export default function OffresPage() {
-  const t = useTranslations("offers");
-  const offersData = t.raw("offersData") as Record<string, any>;
+// Inscriptions fermées dès que la date de départ est atteinte (départ aujourd'hui inclus)
+function isBookingClosed(departureDate: Date | null): boolean {
+  if (!departureDate) return false;
+  const departStart = new Date(departureDate);
+  departStart.setHours(0, 0, 0, 0);
+  return new Date() >= departStart;
+}
+
+export default async function OffresPage() {
+  const t = await getTranslations("offers");
+
+  // Offres réelles de l'agence (résolution tenant : header middleware puis host).
+  // On masque les brouillons (tarif 0) : seul ce que l'admin a finalisé est public.
+  const headersList = await headers();
+  const tenantSlug = headersList.get("x-tenant-slug")
+    ?? resolveTenantSlugFromHost(headersList.get("host"));
+  const tenant = tenantSlug
+    ? await prisma.tenant.findUnique({ where: { slug: tenantSlug } })
+    : null;
+
+  const dbOffers = tenant
+    ? await prisma.offer.findMany({
+        where: { tenantId: tenant.id, active: true, priceAdult: { gt: 0 } },
+        orderBy: [{ type: "asc" }, { departureDate: "asc" }],
+      })
+    : [];
+
+  const offers = dbOffers
+    .map((o) => ({
+      id: o.id,
+      slug: o.slug,
+      type: o.type as string,
+      title: o.titleFr,
+      desc: o.descFr,
+      departureDate: o.departureDate ? o.departureDate.toISOString() : null,
+      returnDate: o.returnDate ? o.returnDate.toISOString() : null,
+      durationDays:
+        o.departureDate && o.returnDate
+          ? Math.max(
+              1,
+              Math.round(
+                (new Date(o.returnDate).getTime() - new Date(o.departureDate).getTime()) /
+                  (1000 * 60 * 60 * 24)
+              )
+            )
+          : null,
+      priceAdult: o.priceAdult,
+      currency: o.currency,
+      provisional: o.provisional,
+      closed: isBookingClosed(o.departureDate),
+    }))
+    .sort((a, b) => {
+      // Hajj d'abord (1 offre/an), puis Omra par date de départ (sans date à la fin)
+      if (a.type !== b.type) return a.type === "HAJJ" ? -1 : 1;
+      if (!a.departureDate) return 1;
+      if (!b.departureDate) return -1;
+      return a.departureDate.localeCompare(b.departureDate);
+    });
+
+  const hajjOffers = offers.filter((o) => o.type === "HAJJ");
+  const umrahOffers = offers.filter((o) => o.type !== "HAJJ");
 
   return (
     <>
@@ -23,135 +83,140 @@ export default function OffresPage() {
         </div>
       </section>
 
-      {/* Offers */}
+      {/* Offers — organisation par saison : Hajj (1/an) puis Omra (plusieurs départs) */}
       <section className="py-16 bg-gray-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          {OFFERS.map((offer) => {
-            const od = offersData[offer.slug] ?? {};
-            const hotels = offer.hotels.map((h, i) => ({ ...h, ...(od.hotels?.[i] ?? {}) }));
-            const included = od.included ?? offer.included;
-            return (
-            <div key={offer.slug} id={offer.slug}
-              className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden scroll-mt-24 hover:shadow-lg transition-shadow">
-
-              {/* Header band */}
-              <div className={`px-6 py-4 flex items-center justify-between ${
-                offer.badgeColor === "amber"  ? "bg-amber-700"  :
-                offer.badgeColor === "purple" ? "bg-purple-800" :
-                "bg-[#0f5132]"
-              } text-white`}>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full tracking-wider">{offer.type}</span>
-                  <h2 className="font-bold text-lg">{od.title ?? offer.title}</h2>
-                </div>
-                <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                  offer.available ? "bg-white/20 text-white" : "bg-black/20 text-white/70"
-                }`}>
-                  {od.badge ?? offer.badge}
-                </span>
-              </div>
-
-              <div className="p-6 md:p-8">
-                <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 items-start">
-                  {/* Left */}
-                  <div>
-                    {/* Quick stats */}
-                    <div className="flex flex-wrap gap-4 mb-6 text-sm text-gray-600">
-                      {(od.departure ?? offer.departure) && (
-                        <span className="flex items-center gap-1.5">
-                          <Calendar size={14} className="text-[#0f5132]" />
-                          {t("departure")} : <strong className="text-gray-900">{od.departure ?? offer.departure}</strong>
-                        </span>
-                      )}
-                      {(od.returnDate ?? offer.returnDate) && (
-                        <span className="flex items-center gap-1.5">
-                          <Calendar size={14} className="text-[#0f5132]" />
-                          {t("return")} : <strong className="text-gray-900">{od.returnDate ?? offer.returnDate}</strong>
-                        </span>
-                      )}
-                      {(od.duration ?? offer.duration) && (
-                        <span className="flex items-center gap-1.5">
-                          <Clock size={14} className="text-[#0f5132]" />
-                          <strong className="text-gray-900">{od.duration ?? offer.duration}</strong>
-                        </span>
-                      )}
-                      {offer.airline && (
-                        <span className="flex items-center gap-1.5">
-                          <Plane size={14} className="text-[#0f5132]" />
-                          <strong className="text-gray-900">{offer.airline}</strong>
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Hotels */}
-                    <div className="flex flex-wrap gap-3 mb-6">
-                      {hotels.map((h) => (
-                        <div key={h.city} className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
-                          <span className="text-base">🏨</span>
-                          <div>
-                            <p className="font-semibold text-gray-900 text-xs">{h.city} — {h.name}</p>
-                            <p className="text-gray-400 text-xs">{h.distance}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Included */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                      {(included as string[]).slice(0, 6).map((item) => (
-                        <div key={item} className="flex items-center gap-2 text-xs text-gray-600">
-                          <Check size={12} className="text-[#0f5132] flex-shrink-0" strokeWidth={2.5} />
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Right — price + CTA */}
-                  <div className="md:min-w-[200px] flex flex-col items-center md:items-end gap-4">
-                    <div className="text-center md:text-right">
-                      <p className="text-xs text-gray-400 mb-1">{t("fromLabel")}</p>
-                      <p className="text-3xl font-black text-[#0f5132]">
-                        {offer.priceFrom.toLocaleString("fr-FR")}
-                      </p>
-                      <p className="text-sm text-gray-500">{offer.priceCurrency} {t("perPerson")}</p>
-                    </div>
-                    <div className="flex flex-col gap-2 w-full md:w-auto">
-                      <Link href={`/offres/${offer.slug}` as `/offres/${string}`}
-                        className={`flex items-center justify-center gap-2 font-bold text-sm px-6 py-3 rounded-xl text-white transition-all hover:scale-105 ${
-                          offer.badgeColor === "amber"  ? "bg-amber-600 hover:bg-amber-500"   :
-                          offer.badgeColor === "purple" ? "bg-purple-700 hover:bg-purple-600" :
-                          "bg-[#0f5132] hover:bg-[#0f5132]"
-                        }`}>
-                        {t("details")} <ArrowRight size={14} />
-                      </Link>
-                      {offer.available && (
-                        <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl border-2 border-[#0f5132] text-[#0f5132] hover:bg-emerald-50 transition-all">
-                          <Users size={14} /> {t("bookBtn")}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          {offers.length === 0 && (
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-12 text-center">
+              <p className="text-gray-500 text-sm">{t("soon")}</p>
             </div>
-            );
-          })}
-        </div>
-      </section>
+          )}
 
-      {/* CTA */}
-      <section className="bg-[#062b1a] py-14 px-4 text-center text-white">
-        <p className="text-xs font-bold tracking-widest text-amber-400 uppercase mb-3">{t("questionLabel")}</p>
-        <h2 className="text-2xl md:text-3xl font-bold mb-4">{t("contactTeam")}</h2>
-        <p className="text-white/60 mb-7 text-sm">{t("contactHours")}</p>
-        <div className="flex flex-wrap gap-3 justify-center">
-          <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-            className="btn-gold flex items-center gap-2"><IconWhatsApp size={16} /> {t("contactWhatsapp")}</a>
-          <a href="tel:+22791882121" className="px-6 py-2.5 rounded-full border border-white/30 text-white text-sm font-semibold hover:bg-white/10 transition">
-            📞 {t("contactCall")}
-          </a>
+          {[
+            { key: "hajj" as const, list: hajjOffers },
+            { key: "umrah" as const, list: umrahOffers },
+          ].map(({ key, list }) =>
+            list.length > 0 ? (
+              <div key={key}>
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-lg">
+                    {key === "hajj" ? "🕋" : "🕌"}
+                  </span>
+                  <div>
+                    <h2 className="text-2xl font-black text-gray-900" style={{ fontFamily: "var(--font-playfair, serif)" }}>
+                      {t(key)}
+                    </h2>
+                    <p className="text-xs text-gray-400">
+                      {key === "hajj"
+                        ? "Une seule offre par saison — le Hajj a lieu une fois par an."
+                        : "Plusieurs départs dans l'année, au choix de l'agence."}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-8">
+                    {list.map((offer) => {
+                      const available = !offer.closed;
+                      return (
+                        <div key={offer.id} id={offer.slug}
+                          className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden scroll-mt-24 hover:shadow-lg transition-shadow">
+
+                          {/* Header band */}
+                          <div className={`px-6 py-4 flex items-center justify-between gap-3 ${
+                            offer.type === "HAJJ" ? "bg-amber-700" : "bg-[#0f5132]"
+                          } text-white`}>
+                            <div className="flex items-center gap-3 min-w-0">
+                              <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full tracking-wider flex-shrink-0">
+                                {t(offer.type === "HAJJ" ? "hajj" : "umrah")}
+                              </span>
+                              <h3 className="font-bold text-lg truncate">{offer.title}</h3>
+                            </div>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              {offer.provisional && (
+                                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/20 text-white">
+                                  {t("provisional")}
+                                </span>
+                              )}
+                              {offer.closed ? (
+                                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-black/25 text-white/80">
+                                  Inscriptions fermées
+                                </span>
+                              ) : (
+                                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/20 text-white">
+                                  {t("reserve")}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                            <div className="p-6 md:p-8">
+                              <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 items-start">
+                                {/* Left — stats + description */}
+                                <div>
+                                  <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-600">
+                                    {offer.departureDate && (
+                                      <span className="flex items-center gap-1.5">
+                                        <Calendar size={14} className="text-[#0f5132]" />
+                                        {t("departure")} : <strong className="text-gray-900">
+                                          {new Date(offer.departureDate).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                                        </strong>
+                                      </span>
+                                    )}
+                                    {offer.returnDate && (
+                                      <span className="flex items-center gap-1.5">
+                                        <Calendar size={14} className="text-[#0f5132]" />
+                                        {t("return")} : <strong className="text-gray-900">
+                                          {new Date(offer.returnDate).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                                        </strong>
+                                      </span>
+                                    )}
+                                    {offer.durationDays && (
+                                      <span className="flex items-center gap-1.5">
+                                        <Clock size={14} className="text-[#0f5132]" />
+                                        {offer.durationDays} {t("nights")}
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {offer.desc && (
+                                    <p className="text-sm text-gray-500 line-clamp-3">{offer.desc}</p>
+                                  )}
+                                </div>
+
+                                {/* Right — price + CTA */}
+                                <div className="md:min-w-[200px] flex flex-col items-center md:items-end gap-4">
+                                  <div className="text-center md:text-right">
+                                    <p className="text-xs text-gray-400 mb-1">{t("fromLabel")}</p>
+                                    <p className="text-3xl font-black text-[#0f5132]">
+                                      {offer.priceAdult.toLocaleString("fr-FR")}
+                                    </p>
+                                    <p className="text-sm text-gray-500">{offer.currency} {t("perPerson")}</p>
+                                  </div>
+                                  <div className="flex flex-col gap-2 w-full md:w-auto">
+                                    <Link href={`/offres/${offer.slug}` as `/offres/${string}`}
+                                      className={`flex items-center justify-center gap-2 font-bold text-sm px-6 py-3 rounded-xl text-white transition-all hover:scale-105 ${
+                                        offer.type === "HAJJ" ? "bg-amber-600 hover:bg-amber-500" : "bg-[#0f5132] hover:bg-[#157347]"
+                                      }`}>
+                                      {t("details")} <ArrowRight size={14} />
+                                    </Link>
+                                    {available && (
+                                      <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
+                                        className="flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl border-2 border-[#0f5132] text-[#0f5132] hover:bg-emerald-50 transition-all">
+                                        <Users size={14} /> {t("bookBtn")}
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                      );
+                    })}
+
+                </div>
+              </div>
+            ) : null
+          )}
+
         </div>
       </section>
     </>

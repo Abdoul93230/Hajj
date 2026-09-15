@@ -82,6 +82,31 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Le tarif adulte est requis" }, { status: 400 });
   }
 
+  // Le Hajj n'a lieu qu'une fois par an : une seule offre HAJJ active par saison
+  if (type === "HAJJ") {
+    const yearRange = {
+      gte: new Date(selectedYear, 0, 1),
+      lt: new Date(selectedYear + 1, 0, 1),
+    };
+    const existingHajj = await prisma.offer.findFirst({
+      where: {
+        tenantId,
+        type: "HAJJ",
+        active: true,
+        OR: [
+          { seasonYear: selectedYear },
+          { seasonYear: null, createdAt: yearRange },
+        ],
+      },
+    });
+    if (existingHajj) {
+      return NextResponse.json(
+        { error: `Une offre Hajj existe déjà pour ${selectedYear} — le Hajj a lieu une seule fois par an.` },
+        { status: 409 }
+      );
+    }
+  }
+
   const slug =
     titleFr
       .toLowerCase()
@@ -109,6 +134,7 @@ export async function POST(req: Request) {
       currency: currency ?? "FCFA",
       provisional: provisional ?? false,
       active: true,
+      seasonYear: selectedYear,
       data: maxCapacity !== undefined && maxCapacity !== "" && maxCapacity !== null
         ? { maxCapacity: Number(maxCapacity) }
         : undefined,

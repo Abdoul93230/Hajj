@@ -13,8 +13,10 @@ export default async function PacksPage({
   const session = await getSession();
   if (!session || session.role !== "PILGRIM") redirect(`/${locale}/compte`);
 
+  // Masquer les brouillons admin (tarif 0) : les pèlerins ne voient que
+  // les voyages finalisés de l'agence.
   const offers = await prisma.offer.findMany({
-    where: { tenantId: session.tenantId, active: true },
+    where: { tenantId: session.tenantId, active: true, priceAdult: { gt: 0 } },
     include: {
       _count: { select: { reservations: { where: { status: "CONFIRMED" } } } },
     },
