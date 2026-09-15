@@ -1000,7 +1000,11 @@
         "VALID": "Validated",
         "EXPIRED": "Expired",
         "REJECTED": "Rejected"
-      }
+      },
+      "preview": "Document preview",
+      "download": "Download",
+      "openTab": "Open in a new tab",
+      "close": "Close"
     },
     "program": {
       "empty": "No scheduled trip",

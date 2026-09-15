@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Upload, Trash2, ExternalLink, Pencil, X } from "lucide-react";
+import { Upload, Trash2, Pencil, X, Download } from "lucide-react";
+import DocumentViewer from "@/components/ui/DocumentViewer";
 
 export type PortalDoc = {
   id: string;
@@ -53,6 +54,9 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  // ── Visionneuse intégrée (aperçu + téléchargement) ──
+  const [viewing, setViewing] = useState<PortalDoc | null>(null);
 
   // ── Modal d'édition ──
   const [editing, setEditing] = useState<PortalDoc | null>(null);
@@ -271,23 +275,37 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                     deletingId === doc.id ? "opacity-60" : ""
                   }`}
                 >
-                  {/* Aperçu fichier */}
+                  {/* Aperçu fichier — le clic ouvre la visionneuse intégrée */}
                   {doc.fileUrl ? (
-                    <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="block">
+                    <button
+                      type="button"
+                      onClick={() => setViewing(doc)}
+                      title={t("preview")}
+                      className="block w-full relative group text-left"
+                    >
                       {isImage ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={doc.fileUrl}
                           alt={t(doc.type)}
-                          className="w-full h-32 object-cover bg-gray-50 hover:opacity-90 transition"
+                          className="w-full h-32 object-cover bg-gray-50 group-hover:opacity-90 transition"
                         />
                       ) : (
-                        <div className="w-full h-32 bg-gray-50 flex flex-col items-center justify-center gap-2 hover:bg-gray-100 transition">
-                          <ExternalLink size={24} className="text-gray-300" />
-                          <span className="text-[10px] text-gray-400 font-medium">PDF</span>
+                        <div className="w-full h-32 bg-gray-50 relative overflow-hidden group-hover:bg-gray-100 transition">
+                          {/* Aperçu de la 1re page du PDF (visionneuse native du navigateur) */}
+                          <iframe
+                            src={`${doc.fileUrl}#toolbar=0&navpanes=0&view=FitH`}
+                            title={doc.label ?? t(doc.type)}
+                            loading="lazy"
+                            tabIndex={-1}
+                            className="w-full h-32 border-0 bg-white pointer-events-none"
+                          />
+                          <span className="absolute bottom-1 left-1 text-[9px] font-bold bg-black/60 text-white px-1.5 py-0.5 rounded">
+                            PDF
+                          </span>
                         </div>
                       )}
-                    </a>
+                    </button>
                   ) : (
                     <div className="w-full h-32 bg-gray-50 flex flex-col items-center justify-center gap-2">
                       <Upload size={24} className="text-gray-200" />
@@ -331,6 +349,15 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                         >
                           <Pencil size={15} />
                         </button>
+                        {doc.fileUrl && (
+                          <button
+                            onClick={() => setViewing(doc)}
+                            title={t("download")}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#0f5132] hover:bg-[#0f5132]/10 transition"
+                          >
+                            <Download size={15} />
+                          </button>
+                        )}
                         <button
                           onClick={() => handleDelete(doc.id)}
                           disabled={deletingId === doc.id || doc.status !== "RECEIVED"}
@@ -430,6 +457,25 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Visionneuse intégrée : aperçu, téléchargement, nouvel onglet */}
+      {viewing && viewing.fileUrl && (
+        <DocumentViewer
+          url={viewing.fileUrl}
+          title={viewing.label ?? t(viewing.type)}
+          subtitle={t(viewing.type)}
+          isPdf={
+            viewing.fileUrl.toLowerCase().includes(".pdf") ||
+            viewing.fileUrl.includes("/raw/")
+          }
+          labels={{
+            download: t("download"),
+            openTab: t("openTab"),
+            close: t("close"),
+          }}
+          onClose={() => setViewing(null)}
+        />
       )}
     </div>
   );

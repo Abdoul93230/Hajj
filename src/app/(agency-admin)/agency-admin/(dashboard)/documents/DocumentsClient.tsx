@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import DocumentViewer from "@/components/ui/DocumentViewer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -414,9 +415,11 @@ function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void })
   const meta   = docTypeMeta(doc.type);
   const [updating, setUpdating] = useState(false);
   const [removing, setRemoving] = useState(false);
+  const [viewer, setViewer] = useState(false);
 
   const isPdf   = doc.fileUrl?.toLowerCase().includes(".pdf") || doc.fileUrl?.includes("/raw/");
   const isImage = doc.fileUrl && !isPdf;
+  const docTitle = doc.label ?? meta.label;
 
   async function changeStatus(status: DocStatus) {
     setUpdating(true);
@@ -445,21 +448,33 @@ function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void })
 
   return (
     <div className={`rounded-xl border bg-white overflow-hidden transition ${updating || removing ? "opacity-60" : ""}`}>
-      {/* Aperçu fichier */}
+      {/* Aperçu fichier — le clic ouvre la visionneuse intégrée */}
       {doc.fileUrl ? (
-        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="block">
+        <button
+          type="button"
+          onClick={() => setViewer(true)}
+          title="Ouvrir l'aperçu"
+          className="block w-full relative group text-left"
+        >
           {isImage ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={doc.fileUrl} alt={meta.label} className="w-full h-32 object-cover bg-gray-50 hover:opacity-90 transition" />
+            <img src={doc.fileUrl} alt={docTitle} className="w-full h-32 object-cover bg-gray-50 group-hover:opacity-90 transition" />
           ) : (
-            <div className="w-full h-32 bg-gray-50 flex flex-col items-center justify-center gap-2 hover:bg-gray-100 transition">
-              <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-              </svg>
-              <span className="text-[10px] text-gray-400 font-medium">Voir le PDF</span>
+            <div className="w-full h-32 bg-gray-50 relative overflow-hidden group-hover:bg-gray-100 transition">
+              {/* Aperçu de la 1re page du PDF (visionneuse native du navigateur) */}
+              <iframe
+                src={`${doc.fileUrl}#toolbar=0&navpanes=0&view=FitH`}
+                title={docTitle}
+                loading="lazy"
+                tabIndex={-1}
+                className="w-full h-32 border-0 bg-white pointer-events-none"
+              />
+              <span className="absolute bottom-1 left-1 text-[9px] font-bold bg-black/60 text-white px-1.5 py-0.5 rounded">
+                PDF
+              </span>
             </div>
           )}
-        </a>
+        </button>
       ) : (
         <div className="w-full h-32 bg-gray-50 flex flex-col items-center justify-center gap-2">
           <svg className="w-8 h-8 text-gray-200" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -518,6 +533,22 @@ function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void })
           <p className="mt-1.5 text-[10px] text-gray-400 italic truncate">{doc.notes}</p>
         )}
       </div>
+
+      {/* Visionneuse intégrée : aperçu, téléchargement, nouvel onglet */}
+      {viewer && doc.fileUrl && (
+        <DocumentViewer
+          url={doc.fileUrl}
+          title={docTitle}
+          subtitle={meta.label}
+          isPdf={!!isPdf}
+          labels={{
+            download: "Télécharger",
+            openTab: "Ouvrir dans un onglet",
+            close: "Fermer",
+          }}
+          onClose={() => setViewer(false)}
+        />
+      )}
     </div>
   );
 }
