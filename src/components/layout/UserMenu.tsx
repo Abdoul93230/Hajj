@@ -2,6 +2,8 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
+import { spaceHomeForRole, isLocaleAwareSpace } from "@/lib/space";
 
 type Props = {
   user: { name: string; role: string; photoUrl?: string | null } | null;
@@ -24,26 +26,46 @@ export default function UserMenu({ user }: Props) {
       .join("")
       .toUpperCase();
 
+    // Redirection selon le rôle : pèlerin → portail, agence → dashboard, super admin → back-office
+    const home = spaceHomeForRole(user.role);
+    const linkProps = {
+      title: user.name,
+      className: "group flex-shrink-0",
+    };
+
     return (
       <div className="hidden sm:flex items-center gap-1.5">
-        <Link
-          href="/compte/mon-dossier"
-          title={user.name}
-          className="group flex-shrink-0"
-        >
-          {user.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={user.photoUrl}
-              alt={user.name}
-              className="w-8 h-8 rounded-full object-cover ring-2 ring-[#0f5132]/20 group-hover:ring-[#0f5132]/60 transition-all"
-            />
-          ) : (
-            <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] text-[11px] font-bold flex items-center justify-center ring-2 ring-[#0f5132]/10 group-hover:ring-[#0f5132]/50 transition-all">
-              {initials}
-            </span>
-          )}
-        </Link>
+        {isLocaleAwareSpace(home) ? (
+          <Link href={home} {...linkProps}>
+            {user.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.photoUrl}
+                alt={user.name}
+                className="w-8 h-8 rounded-full object-cover ring-2 ring-[#0f5132]/20 group-hover:ring-[#0f5132]/60 transition-all"
+              />
+            ) : (
+              <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] text-[11px] font-bold flex items-center justify-center ring-2 ring-[#0f5132]/10 group-hover:ring-[#0f5132]/50 transition-all">
+                {initials}
+              </span>
+            )}
+          </Link>
+        ) : (
+          <NextLink href={home} {...linkProps}>
+            {user.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.photoUrl}
+                alt={user.name}
+                className="w-8 h-8 rounded-full object-cover ring-2 ring-[#0f5132]/20 group-hover:ring-[#0f5132]/60 transition-all"
+              />
+            ) : (
+              <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] text-[11px] font-bold flex items-center justify-center ring-2 ring-[#0f5132]/10 group-hover:ring-[#0f5132]/50 transition-all">
+                {initials}
+              </span>
+            )}
+          </NextLink>
+        )}
         <button
           onClick={handleLogout}
           title="Déconnexion"

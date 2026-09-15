@@ -2,10 +2,12 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { useState } from "react";
 import Image from "next/image";
 import { Menu, X, ShoppingCart, Globe, ChevronDown } from "lucide-react";
 import UserMenu from "./UserMenu";
+import { spaceHomeForRole, spaceLabelForRole, isLocaleAwareSpace } from "@/lib/space";
 
 const locales = ["fr", "en", "ar"] as const;
 const localeNames: Record<string, string> = { fr: "FR", en: "EN", ar: "AR" };
@@ -306,13 +308,30 @@ export default function Header({
                   )}
                 </div>
               ))}
-              <Link
-                href="/compte"
-                onClick={() => setMobileOpen(false)}
-                className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0f5132] hover:bg-emerald-50 rounded"
-              >
-                {th("pilgrimSpace")}
-              </Link>
+              {user ? (
+                (() => {
+                  const home = spaceHomeForRole(user.role);
+                  const label = spaceLabelForRole(user.role);
+                  const cls = "block px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0f5132] hover:bg-emerald-50 rounded";
+                  return isLocaleAwareSpace(home) ? (
+                    <Link href={home} onClick={() => setMobileOpen(false)} className={cls}>
+                      {label}
+                    </Link>
+                  ) : (
+                    <NextLink href={home} onClick={() => setMobileOpen(false)} className={cls}>
+                      {label}
+                    </NextLink>
+                  );
+                })()
+              ) : (
+                <Link
+                  href="/compte"
+                  onClick={() => setMobileOpen(false)}
+                  className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0f5132] hover:bg-emerald-50 rounded"
+                >
+                  {th("pilgrimSpace")}
+                </Link>
+              )}
             </div>
           )}
         </div>
