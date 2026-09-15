@@ -1,19 +1,15 @@
 import { NextResponse } from "next/server";
 import { requirePilgrimSession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
-import { deleteCloudinaryFile, uploadDocumentBuffer } from "@/lib/cloudinary";
+import {
+  deleteCloudinaryFile,
+  uploadDocumentBuffer,
+  buildDocumentPublicId,
+  extractCloudinaryPublicId,
+} from "@/lib/cloudinary";
 import { logAction } from "@/lib/audit";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo (comme l'admin côté upload)
-
-function extractCloudinaryPublicId(url: string): string | null {
-  try {
-    const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
-    return match ? match[1] : null;
-  } catch {
-    return null;
-  }
-}
 
 async function syncPilgrimFlags(tenantId: string, userId: string) {
   const docs = await prisma.pilgrimDocument.findMany({
@@ -79,12 +75,13 @@ export async function PATCH(
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
+    const resourceType: "image" | "raw" = ext === "pdf" ? "raw" : "image";
     try {
       // PublicId fixe par type + pèlerin : écrase l'ancien fichier (comme l'admin)
       const result = await uploadDocumentBuffer(buffer, {
         folder: `hajj-platform/${tenantId}/documents/${userId}`,
-        publicId: `${doc.type.toLowerCase()}-${userId}`,
-        resourceType: ext === "pdf" ? "raw" : "image",
+        publicId: buildDocumentPublicId(doc.type, userId, ext, resourceType),
+        resourceType,
       });
       fileUrl = result.secure_url;
     } catch (e) {

@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
-import { deleteCloudinaryFile } from "@/lib/cloudinary";
-
-function extractCloudinaryPublicId(url: string): string | null {
-  try {
-    const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
-    return match ? match[1] : null;
-  } catch { return null; }
-}
+import { deleteCloudinaryFile, extractCloudinaryPublicId } from "@/lib/cloudinary";
 
 // PATCH /api/agency-admin/documents/[id]
 export async function PATCH(

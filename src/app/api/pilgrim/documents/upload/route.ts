@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { requirePilgrimSession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
-import { uploadDocumentBuffer, deleteCloudinaryFile } from "@/lib/cloudinary";
+import {
+  uploadDocumentBuffer,
+  deleteCloudinaryFile,
+  buildDocumentPublicId,
+  extractCloudinaryPublicId,
+} from "@/lib/cloudinary";
 import { logAction } from "@/lib/audit";
 
 export const runtime = "nodejs";
@@ -9,15 +14,6 @@ export const runtime = "nodejs";
 const ALLOWED_TYPES = ["PASSPORT", "CNI", "VISA", "PHOTO", "OTHER"];
 const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo
 type DocType = "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER";
-
-function extractCloudinaryPublicId(url: string): string | null {
-  try {
-    const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
-    return match ? match[1] : null;
-  } catch {
-    return null;
-  }
-}
 
 async function syncPilgrimFlags(tenantId: string, userId: string) {
   const docs = await prisma.pilgrimDocument.findMany({
@@ -71,13 +67,14 @@ export async function POST(req: Request) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
+  const resourceType: "image" | "raw" = ext === "pdf" ? "raw" : "image";
 
   let fileUrl: string;
   try {
     const result = await uploadDocumentBuffer(buffer, {
       folder: `hajj-platform/${tenantId}/documents/${userId}`,
-      publicId: `${type.toLowerCase()}-${userId}`,
-      resourceType: ext === "pdf" ? "raw" : "image",
+      publicId: buildDocumentPublicId(type, userId, ext, resourceType),
+      resourceType,
     });
     fileUrl = result.secure_url;
   } catch (e) {

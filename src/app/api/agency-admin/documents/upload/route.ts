@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
-import { uploadDocumentBuffer, deleteCloudinaryFile } from "@/lib/cloudinary";
+import {
+  uploadDocumentBuffer,
+  deleteCloudinaryFile,
+  buildDocumentPublicId,
+  extractCloudinaryPublicId,
+} from "@/lib/cloudinary";
 
 export const runtime = "nodejs";
 
@@ -47,14 +52,15 @@ export async function POST(req: Request) {
   const bytes  = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
   const ext    = file.name.split(".").pop()?.toLowerCase() ?? "bin";
-  const fixedPublicId = `${type.toLowerCase()}-${userId}`;
+  const resourceType: "image" | "raw" = ext === "pdf" ? "raw" : "image";
+  const fixedPublicId = buildDocumentPublicId(type, userId, ext, resourceType);
 
   let fileUrl: string;
   try {
     const result = await uploadDocumentBuffer(buffer, {
       folder:       `hajj-platform/${tenantId}/documents/${userId}`,
       publicId:     fixedPublicId,
-      resourceType: ["pdf"].includes(ext) ? "raw" : "image",
+      resourceType,
     });
     fileUrl = result.secure_url;
   } catch (e) {
@@ -117,18 +123,6 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ document: doc }, { status: 201 });
-}
-
-// Extrait le publicId depuis une URL Cloudinary
-// Ex: https://res.cloudinary.com/xxx/image/upload/v123/hajj-platform/.../file.jpg
-//   → hajj-platform/.../file
-function extractCloudinaryPublicId(url: string): string | null {
-  try {
-    const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
-    return match ? match[1] : null;
-  } catch {
-    return null;
-  }
 }
 
 async function syncPilgrimFlags(tenantId: string, userId: string) {
