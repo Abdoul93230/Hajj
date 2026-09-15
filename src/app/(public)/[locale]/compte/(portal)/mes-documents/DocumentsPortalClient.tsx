@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Upload, Trash2, Pencil, X, Download } from "lucide-react";
+import { Upload, Trash2, Pencil, X, Download, Lock } from "lucide-react";
 import DocumentViewer from "@/components/ui/DocumentViewer";
+import { isAgencyOnlyDocType } from "@/lib/documents";
 
 export type PortalDoc = {
   id: string;
@@ -17,7 +18,11 @@ export type PortalDoc = {
   notes: string | null;
 };
 
-const TYPES = ["PASSPORT", "CNI", "VISA", "PHOTO", "OTHER"];
+// Types que le pèlerin peut déposer lui-même. Le VISA est exclu : il est
+// obtenu et déposé par l'agence (voir src/lib/documents.ts).
+const TYPES = ["PASSPORT", "CNI", "PHOTO", "OTHER"].filter(
+  (tp) => !isAgencyOnlyDocType(tp)
+);
 
 const STATUS_BADGE: Record<string, string> = {
   RECEIVED: "bg-amber-100 text-amber-700",
@@ -130,6 +135,8 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
   }
 
   function openEdit(doc: PortalDoc) {
+    // Le VISA est géré par l'agence : pas d'édition côté pèlerin.
+    if (isAgencyOnlyDocType(doc.type)) return;
     setEditing(doc);
     setEditLabel(doc.label ?? "");
     setEditExpiresAt(doc.expiresAt ? doc.expiresAt.slice(0, 10) : "");
@@ -341,14 +348,24 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                       </div>
 
                       <div className="flex items-center gap-1 flex-shrink-0">
-                        <button
-                          onClick={() => openEdit(doc)}
-                          disabled={doc.status !== "RECEIVED"}
-                          title={doc.status !== "RECEIVED" ? t("cannotDelete") : t("edit")}
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#0f5132] hover:bg-[#0f5132]/10 transition disabled:opacity-30 disabled:cursor-not-allowed"
-                        >
-                          <Pencil size={15} />
-                        </button>
+                        {/* VISA : document géré par l'agence, aucune action pèlerin */}
+                        {isAgencyOnlyDocType(doc.type) ? (
+                          <span
+                            title={t("managedByAgency")}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-300 bg-gray-50"
+                          >
+                            <Lock size={14} />
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => openEdit(doc)}
+                            disabled={doc.status !== "RECEIVED"}
+                            title={doc.status !== "RECEIVED" ? t("cannotDelete") : t("edit")}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#0f5132] hover:bg-[#0f5132]/10 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                          >
+                            <Pencil size={15} />
+                          </button>
+                        )}
                         {doc.fileUrl && (
                           <button
                             onClick={() => setViewing(doc)}
@@ -358,14 +375,16 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                             <Download size={15} />
                           </button>
                         )}
-                        <button
-                          onClick={() => handleDelete(doc.id)}
-                          disabled={deletingId === doc.id || doc.status !== "RECEIVED"}
-                          title={doc.status !== "RECEIVED" ? t("cannotDelete") : t("delete")}
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-red-400 hover:bg-red-50 transition disabled:opacity-30 disabled:cursor-not-allowed"
-                        >
-                          <Trash2 size={15} />
-                        </button>
+                        {!isAgencyOnlyDocType(doc.type) && (
+                          <button
+                            onClick={() => handleDelete(doc.id)}
+                            disabled={deletingId === doc.id || doc.status !== "RECEIVED"}
+                            title={doc.status !== "RECEIVED" ? t("cannotDelete") : t("delete")}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-red-400 hover:bg-red-50 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        )}
                       </div>
                     </div>
 
@@ -385,6 +404,11 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                     {doc.status === "REJECTED" && doc.notes && (
                       <p className="text-xs text-red-500 mt-1.5">
                         <span className="font-semibold">{t("rejectedReason")} :</span> {doc.notes}
+                      </p>
+                    )}
+                    {isAgencyOnlyDocType(doc.type) && (
+                      <p className="text-[10px] text-gray-400 mt-1.5 flex items-center gap-1">
+                        <Lock size={11} /> {t("managedByAgency")}
                       </p>
                     )}
                   </div>

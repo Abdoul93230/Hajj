@@ -8,6 +8,7 @@ import {
   extractCloudinaryPublicId,
 } from "@/lib/cloudinary";
 import { logAction } from "@/lib/audit";
+import { isAgencyOnlyDocType, AGENCY_ONLY_ERROR } from "@/lib/documents";
 
 export const runtime = "nodejs";
 
@@ -49,6 +50,10 @@ export async function POST(req: Request) {
   }
   if (!ALLOWED_TYPES.includes(type)) {
     return NextResponse.json({ error: "Type de document invalide" }, { status: 400 });
+  }
+  // Le VISA est géré par l'agence : le pèlerin ne peut pas l'envoyer lui-même.
+  if (isAgencyOnlyDocType(type)) {
+    return NextResponse.json({ error: AGENCY_ONLY_ERROR }, { status: 403 });
   }
   if (file.size > MAX_SIZE) {
     return NextResponse.json({ error: "Fichier trop volumineux (max 10 Mo)" }, { status: 400 });

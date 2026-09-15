@@ -8,6 +8,7 @@ import {
   extractCloudinaryPublicId,
 } from "@/lib/cloudinary";
 import { logAction } from "@/lib/audit";
+import { isAgencyOnlyDocType, AGENCY_ONLY_ERROR } from "@/lib/documents";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo (comme l'admin côté upload)
 
@@ -45,6 +46,10 @@ export async function PATCH(
   });
   if (!doc) {
     return NextResponse.json({ error: "Document introuvable" }, { status: 404 });
+  }
+  // Le VISA est géré par l'agence : aucune modification par le pèlerin.
+  if (isAgencyOnlyDocType(doc.type)) {
+    return NextResponse.json({ error: AGENCY_ONLY_ERROR }, { status: 403 });
   }
   if (doc.status !== "RECEIVED") {
     return NextResponse.json(
@@ -126,6 +131,10 @@ export async function DELETE(
   });
   if (!doc) {
     return NextResponse.json({ error: "Document introuvable" }, { status: 404 });
+  }
+  // Le VISA est géré par l'agence : pas de suppression par le pèlerin.
+  if (isAgencyOnlyDocType(doc.type)) {
+    return NextResponse.json({ error: AGENCY_ONLY_ERROR }, { status: 403 });
   }
   if (doc.status !== "RECEIVED") {
     return NextResponse.json(

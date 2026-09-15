@@ -1004,7 +1004,8 @@
       "preview": "Aperçu du document",
       "download": "Télécharger",
       "openTab": "Ouvrir dans un onglet",
-      "close": "Fermer"
+      "close": "Fermer",
+      "managedByAgency": "Document géré par votre agence"
     },
     "program": {
       "empty": "Aucun voyage programmé",

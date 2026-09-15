@@ -1004,7 +1004,8 @@
       "preview": "Document preview",
       "download": "Download",
       "openTab": "Open in a new tab",
-      "close": "Close"
+      "close": "Close",
+      "managedByAgency": "Document managed by your agency"
     },
     "program": {
       "empty": "No scheduled trip",
