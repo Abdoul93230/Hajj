@@ -2,8 +2,9 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, Calendar, Clock, ChevronRight, Users } from "lucide-react";
+import { ArrowRight, Calendar, Clock, ChevronRight, Users, Plane, Hotel } from "lucide-react";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
+import { type OfferProgramData } from "@/lib/offer-program";
 
 export type DbOffer = {
   slug: string;
@@ -22,7 +23,8 @@ export type DbOffer = {
   priceCouple: number | null;
   currency: string;
   provisional: boolean;
-  program: { step?: number; title?: string; content?: string }[] | null;
+  // Détail complet du voyage (source unique : Offer.data en DB)
+  programData: OfferProgramData;
 };
 
 // Inscriptions fermées dès que la date de départ est atteinte
@@ -49,6 +51,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
 
   const isHajj = offer.type === "HAJJ";
   const closed = isBookingClosed(offer.departureDate);
+  const pd = offer.programData ?? {};
   const durationDays =
     offer.departureDate && offer.returnDate
       ? Math.max(
@@ -156,23 +159,167 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
             </div>
           </div>
 
-          {/* Programme (si renseigné par l'agence) */}
-          {offer.program && offer.program.length > 0 && (
+          {/* Points forts */}
+          {(pd.highlights?.length ?? 0) > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {pd.highlights!.map((h, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 text-center">
+                  <p className="text-2xl leading-none">{h.icon ?? "•"}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mt-2">
+                    {h.label ?? ""}
+                  </p>
+                  <p className="text-sm font-bold text-gray-900 mt-0.5">{h.value ?? ""}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Vols */}
+          {(pd.flights?.length ?? 0) > 0 && (
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Plane size={18} /> {t("tabVols")}
+              </h2>
+              <div className="space-y-3">
+                {pd.flights!.map((f, i) => (
+                  <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-2">
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                      <span className="text-sm font-bold text-gray-900">
+                        {f.direction && (
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#0f5132] bg-[#0f5132]/10 rounded px-1.5 py-0.5 mr-2">
+                            {f.direction}
+                          </span>
+                        )}
+                        {f.airline ?? "—"} {f.flightNo ? `· ${f.flightNo}` : ""}
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        {f.from ?? "—"} → {f.to ?? "—"}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {f.date ?? ""} {f.time ? `· ${f.time}` : ""}
+                        {f.arrivalTime ? ` → ${f.arrivalTime}` : ""}
+                      </span>
+                    </div>
+                    {(f.stopover || f.bagageSoute || f.bagageCabine) && (
+                      <div className="flex items-center gap-4 flex-wrap text-xs text-gray-500">
+                        {f.stopover && <span> {f.stopover}</span>}
+                        {f.bagageSoute && <span>{t("soute")} {f.bagageSoute}</span>}
+                        {f.bagageCabine && <span>{t("cabine")} {f.bagageCabine}</span>}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Hôtels */}
+          {(pd.hotels?.length ?? 0) > 0 && (
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Hotel size={18} /> {t("tabHotels")}
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {pd.hotels!.map((h, i) => (
+                  <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                      {h.city ?? "—"}
+                    </p>
+                    <p className="text-sm font-bold text-gray-900 mt-0.5">{h.name ?? "—"}</p>
+                    {h.nights ? (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {h.checkin ?? ""} {h.checkout ? `→ ${h.checkout}` : ""} · {h.nights} {t("nights")}
+                      </p>
+                    ) : (
+                      (h.checkin || h.checkout) && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {h.checkin ?? ""} {h.checkout ? `→ ${h.checkout}` : ""}
+                        </p>
+                      )
+                    )}
+                    {(h.distance || h.pension) && (
+                      <p className="text-xs text-gray-400 mt-1">
+                        {h.distance ?? ""}
+                        {h.distance && h.pension ? " · " : ""}
+                        {h.pension ?? ""}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Programme jour par jour */}
+          {(pd.program?.length ?? 0) > 0 && (
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4">{t("programTitle")}</h2>
               <ol className="space-y-3">
-                {offer.program.map((step, i) => (
+                {pd.program!.map((step, i) => (
                   <li key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex gap-4">
                     <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] text-sm font-bold flex items-center justify-center flex-shrink-0">
-                      {step.step ?? i + 1}
+                      {step.day ?? i + 1}
                     </span>
                     <div>
                       {step.title && <p className="text-sm font-bold text-gray-900">{step.title}</p>}
-                      {step.content && <p className="text-sm text-gray-500 mt-0.5">{step.content}</p>}
+                      {step.description && <p className="text-sm text-gray-500 mt-0.5">{step.description}</p>}
                     </div>
                   </li>
                 ))}
               </ol>
+            </div>
+          )}
+
+          {/* Inclus / Non inclus */}
+          {((pd.included?.length ?? 0) > 0 || (pd.notIncluded?.length ?? 0) > 0) && (
+            <div className="grid md:grid-cols-2 gap-6">
+              {(pd.included?.length ?? 0) > 0 && (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">{t("includedTitle")}</h3>
+                  <ul className="space-y-1.5">
+                    {pd.included!.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                        <span className="text-green-500 font-bold flex-shrink-0">✓</span> {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {(pd.notIncluded?.length ?? 0) > 0 && (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">{t("notIncludedTitle")}</h3>
+                  <ul className="space-y-1.5">
+                    {pd.notIncluded!.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                        <span className="text-red-400 font-bold flex-shrink-0">✕</span> {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Documents */}
+          {(pd.documents?.length ?? 0) > 0 && (
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">{t("tabDocuments")}</h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {pd.documents!.map((doc, i) => (
+                  <div key={i} className="bg-white rounded-2xl border border-amber-100 shadow-sm p-5">
+                    <p className="text-sm font-bold text-gray-900">
+                      {doc.icon ? `${doc.icon} ` : ""}
+                      {doc.title ?? "—"}
+                    </p>
+                    {doc.content && (
+                      <p className="text-xs text-gray-500 mt-1 leading-relaxed">{doc.content}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mt-3">
+                {t("docWarning")}
+              </p>
             </div>
           )}
 
@@ -188,7 +335,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               {closed ? (
                 <span className="flex items-center justify-center gap-2 font-bold text-sm px-6 py-3 rounded-xl bg-gray-100 text-gray-400">
-                  Inscriptions fermées
+                  {t("closed")}
                 </span>
               ) : (
                 <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"

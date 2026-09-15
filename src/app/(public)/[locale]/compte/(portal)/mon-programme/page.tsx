@@ -2,24 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-
-type ProgramFlight = {
-  airline?: string;
-  flightNo?: string;
-  from?: string;
-  to?: string;
-  date?: string;
-  time?: string;
-};
-type ProgramHotel = { name?: string; city?: string; nights?: number };
-type ProgramDay = { day?: string; title?: string; description?: string };
-type OfferProgramData = {
-  maxCapacity?: number;
-  flights?: ProgramFlight[];
-  hotels?: ProgramHotel[];
-  program?: ProgramDay[];
-  included?: string[];
-};
+import { normalizeProgram, hasProgramContent } from "@/lib/offer-program";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -58,12 +41,8 @@ export default async function MonProgrammePage({ params }: Props) {
         </div>
       ) : (
         reservations.map((r) => {
-          const data = (r.offer.data ?? {}) as OfferProgramData;
-          const hasProgram =
-            (data.program?.length ?? 0) > 0 ||
-            (data.flights?.length ?? 0) > 0 ||
-            (data.hotels?.length ?? 0) > 0 ||
-            (data.included?.length ?? 0) > 0;
+          const data = normalizeProgram(r.offer.data);
+          const hasProgram = hasProgramContent(data);
 
           const dep = r.offer.departureDate;
           const ret = r.offer.returnDate;
@@ -133,17 +112,32 @@ export default async function MonProgrammePage({ params }: Props) {
                       {data.flights!.map((f, i) => (
                         <div
                           key={i}
-                          className="flex items-center justify-between gap-3 flex-wrap rounded-xl border border-gray-100 bg-gray-50/60 px-4 py-3 text-sm"
+                          className="rounded-xl border border-gray-100 bg-gray-50/60 px-4 py-3 text-sm space-y-1"
                         >
-                          <span className="font-semibold text-gray-800">
-                            {f.airline ?? "—"} {f.flightNo ? `· ${f.flightNo}` : ""}
-                          </span>
-                          <span className="text-gray-600">
-                            {f.from ?? "—"} → {f.to ?? "—"}
-                          </span>
-                          <span className="text-gray-500 text-xs">
-                            {f.date ?? ""} {f.time ?? ""}
-                          </span>
+                          <div className="flex items-center justify-between gap-3 flex-wrap">
+                            <span className="font-semibold text-gray-800">
+                              {f.direction ? (
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-[#0f5132] bg-[#0f5132]/10 rounded px-1.5 py-0.5 mr-2">
+                                  {f.direction}
+                                </span>
+                              ) : null}
+                              {f.airline ?? "—"} {f.flightNo ? `· ${f.flightNo}` : ""}
+                            </span>
+                            <span className="text-gray-600">
+                              {f.from ?? "—"} → {f.to ?? "—"}
+                            </span>
+                            <span className="text-gray-500 text-xs">
+                              {f.date ?? ""} {f.time ? `· ${f.time}` : ""}
+                              {f.arrivalTime ? ` → ${f.arrivalTime}` : ""}
+                            </span>
+                          </div>
+                          {(f.stopover || f.bagageSoute || f.bagageCabine) && (
+                            <div className="flex items-center gap-3 flex-wrap text-xs text-gray-500">
+                              {f.stopover && <span>🛬 {f.stopover}</span>}
+                              {f.bagageSoute && <span>🧳 {f.bagageSoute}</span>}
+                              {f.bagageCabine && <span>🎒 {f.bagageCabine}</span>}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -167,6 +161,20 @@ export default async function MonProgrammePage({ params }: Props) {
                             {h.city ?? "—"}
                             {h.nights ? ` · ${t("program.nights", { n: h.nights })}` : ""}
                           </p>
+                          {(h.checkin || h.checkout) && (
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {h.checkin ? ` ${h.checkin}` : ""}
+                              {h.checkin && h.checkout ? " → " : ""}
+                              {h.checkout ?? ""}
+                            </p>
+                          )}
+                          {(h.distance || h.pension) && (
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {h.distance ?? ""}
+                              {h.distance && h.pension ? " · " : ""}
+                              {h.pension ?? ""}
+                            </p>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -214,6 +222,64 @@ export default async function MonProgrammePage({ params }: Props) {
                       {data.included!.map((item, i) => (
                         <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
                           <span className="text-green-500 font-bold">✓</span> {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Non inclus ── */}
+                {(data.notIncluded?.length ?? 0) > 0 && (
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">
+                      ✕ {t("program.notIncluded")}
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-1.5">
+                      {data.notIncluded!.map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="text-red-400 font-bold">✕</span> {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Documents ── */}
+                {(data.documents?.length ?? 0) > 0 && (
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">
+                      📄 {t("program.documents")}
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-2">
+                      {data.documents!.map((doc, i) => (
+                        <div key={i} className="rounded-xl border border-amber-100 bg-amber-50/60 px-4 py-3">
+                          <p className="font-semibold text-gray-800 text-sm">
+                            {doc.icon ? `${doc.icon} ` : ""}
+                            {doc.title ?? "—"}
+                          </p>
+                          {doc.content && (
+                            <p className="text-xs text-gray-600 mt-1 leading-relaxed">{doc.content}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Points forts ── */}
+                {(data.highlights?.length ?? 0) > 0 && (
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">
+                      ⭐ {t("program.highlights")}
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {data.highlights!.map((h, i) => (
+                        <div key={i} className="rounded-xl border border-gray-100 bg-gray-50/60 px-3 py-2.5 text-center">
+                          <p className="text-lg leading-none">{h.icon ?? "•"}</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-1">
+                            {h.label ?? ""}
+                          </p>
+                          <p className="text-xs font-semibold text-gray-800 mt-0.5">{h.value ?? ""}</p>
                         </div>
                       ))}
                     </div>

@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { normalizeProgram } from "@/lib/offer-program";
 import { resolveTenantSlugFromHost } from "@/lib/tenant-slug";
 import StaticOfferDetail from "./StaticOfferDetail";
 import DbOfferDetail from "./DbOfferDetail";
@@ -48,13 +49,7 @@ export default async function OfferDetailPage({
           priceCouple: offer.priceCouple,
           currency: offer.currency,
           provisional: offer.provisional,
-          program:
-            offer.data &&
-            typeof offer.data === "object" &&
-            Array.isArray((offer.data as { program?: unknown }).program)
-              ? ((offer.data as { program: { step?: number; title?: string; content?: string }[] })
-                  .program ?? null)
-              : null,
+          programData: normalizeProgram(offer.data),
         }}
       />
     );

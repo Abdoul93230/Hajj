@@ -4,7 +4,9 @@ import { prisma } from "@/lib/prisma";
 
 // PATCH /api/agency-admin/voyages/[id]/program
 // Met à jour le programme détaillé du voyage dans offer.data :
-// { flights?, hotels?, program?, included? } — préserve maxCapacity.
+// { highlights?, flights?, hotels?, program?, included?, notIncluded?,
+//   documents?, maxCapacity? } — les blocs absents sont préservés, ainsi que
+//   les autres clés de offer.data.
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -20,20 +22,24 @@ export async function PATCH(
   }
 
   const body = await req.json();
-  const { flights, hotels, program, included } = body;
+  const { flights, hotels, program, included, notIncluded, documents, highlights, maxCapacity } =
+    body;
 
   const current = (existing.data ?? {}) as Record<string, unknown>;
-  if (current.maxCapacity === undefined) current.maxCapacity = undefined;
 
   const updated = await prisma.offer.update({
     where: { id },
     data: {
       data: {
         ...current,
-        ...(flights  !== undefined && { flights } ),
-        ...(hotels    !== undefined && { hotels }),
-        ...(program   !== undefined && { program }),
-        ...(included  !== undefined && { included }),
+        ...(flights      !== undefined && { flights }),
+        ...(hotels       !== undefined && { hotels }),
+        ...(program      !== undefined && { program }),
+        ...(included     !== undefined && { included }),
+        ...(notIncluded  !== undefined && { notIncluded }),
+        ...(documents    !== undefined && { documents }),
+        ...(highlights   !== undefined && { highlights }),
+        ...(maxCapacity  !== undefined && { maxCapacity }),
       },
     },
   });

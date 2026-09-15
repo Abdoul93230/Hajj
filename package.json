@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
-    "seed": "tsx --env-file=.env prisma/seed.ts"
+    "seed": "tsx --env-file=.env prisma/seed.ts",
+    "seed:programs": "tsx --env-file=.env prisma/seed-programs.ts"
   },
   "prisma": {
     "seed": "tsx --env-file=.env prisma/seed.ts"

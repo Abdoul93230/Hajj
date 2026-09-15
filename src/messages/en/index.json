@@ -411,7 +411,8 @@
       "My Hajj was a perfect spiritual experience. The support from start to finish was flawless. May Allah reward you.",
       "Very well organized. The hotels were close to the Haram, the guides very competent. I'm going back next year with them.",
       "Transparent pricing, no hidden fees. The team is available at all times. Unforgettable first Umrah!"
-    ]
+    ],
+    "closed": "Booking closed"
   },
   "about": {
     "title": "About Us",
@@ -1017,7 +1018,10 @@
       "nights": "{n} nights",
       "included": "What is included",
       "contacts": "Emergency / agency contact",
-      "callAgency": "Call the agency"
+      "callAgency": "Call the agency",
+      "notIncluded": "Not included",
+      "documents": "Required documents",
+      "highlights": "Highlights"
     },
     "voyages": {
       "sections": {

@@ -411,7 +411,8 @@
       "Mon Hadj a été une expérience spirituelle parfaite. L'accompagnement du début à la fin était irréprochable. Qu'Allah vous récompense.",
       "Très bien organisé. Les hôtels étaient proches du Haram, les guides très compétents. Je repars l'année prochaine avec eux.",
       "Prix transparents, aucun frais caché. L'équipe est disponible à tout moment. Première Oumra inoubliable !"
-    ]
+    ],
+    "closed": "Inscriptions fermées"
   },
   "about": {
     "title": "Qui sommes-nous",
@@ -1017,7 +1018,10 @@
       "nights": "{n} nuits",
       "included": "Ce qui est inclus",
       "contacts": "Contact d'urgence / agence",
-      "callAgency": "Appeler l'agence"
+      "callAgency": "Appeler l'agence",
+      "notIncluded": "Non inclus",
+      "documents": "Documents à fournir",
+      "highlights": "Points forts"
     },
     "voyages": {
       "sections": {

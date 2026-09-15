@@ -55,7 +55,9 @@ export type Offer = {
   notIncluded: string[];
 };
 
-const PROGRAM_OUMRA = [
+// Exportés pour alimenter les modèles standard du programme des offres DB
+// (voir src/lib/offer-program.ts).
+export const PROGRAM_OUMRA = [
   {
     step: 1,
     title: "Départ de Niamey",
