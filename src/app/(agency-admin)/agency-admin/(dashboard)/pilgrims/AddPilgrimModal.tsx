@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
+import Link from "next/link";
 import type { SerializedPilgrim, SerializedOffer } from "./PilgrimsClient";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -189,13 +190,18 @@ export default function AddPilgrimModal({
       const savedPilgrim = resData.pilgrim;
       const pilgrimId = isEdit ? pilgrim!.id : savedPilgrim?.id;
 
-      // Upload photo de profil si sélectionnée
+      // Upload « Photo d'identité » si sélectionnée — MÊME CHAMP que la page
+      // Documents : on crée/remplace le document PHOTO (type=PHOTO), qui
+      // alimente ensuite l'avatar partout via syncPilgrimFlags → user.photoUrl.
       if (photoFile && pilgrimId) {
         setUploading(true);
         const fd = new FormData();
         fd.append("file", photoFile);
-        fd.append("pilgrimId", pilgrimId);
-        const upRes = await fetch("/api/agency-admin/pilgrims/photo", { method: "POST", body: fd });
+        fd.append("userId", pilgrimId);
+        fd.append("type", "PHOTO");
+        // Déposé par l'agence elle-même : considéré validé
+        fd.append("status", "VALID");
+        const upRes = await fetch("/api/agency-admin/documents/upload", { method: "POST", body: fd });
         setUploading(false);
         if (!upRes.ok) {
           setError("Pèlerin sauvegardé mais erreur d'upload de la photo.");
@@ -306,6 +312,10 @@ export default function AddPilgrimModal({
                 </p>
               </>
             )}
+            <p className="text-gray-400 text-[10px] mt-3 leading-snug">
+              C&apos;est le document « Photo d&apos;identité » : la même photo que sur la page
+              Documents, utilisée comme avatar partout dans l&apos;espace agence.
+            </p>
             <input
               ref={fileInputRef}
               type="file"
@@ -520,13 +530,13 @@ export default function AddPilgrimModal({
               <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2.5 flex items-center gap-1.5">
                 Documents reçus
                 {isEdit && (
-                  <a
+                  <Link
                     href="/agency-admin/documents"
                     className="text-[#0f5132] underline underline-offset-2 font-normal normal-case tracking-normal"
                     style={{ fontSize: "10px" }}
                   >
                     (gérer →)
-                  </a>
+                  </Link>
                 )}
               </p>
               <div className="space-y-2">
