@@ -38,7 +38,7 @@ export default async function PaymentsPage({
       where: { tenantId, paidAt: { gte: from, lt: to } },
       include: {
         reservation: { include: { offer: true } },
-        pilgrim: { select: { id: true, name: true, phone: true, city: true } },
+        pilgrim: { select: { id: true, name: true, phone: true, city: true, photoUrl: true } },
       },
       orderBy: { paidAt: "asc" },
     }),

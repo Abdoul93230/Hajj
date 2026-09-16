@@ -62,7 +62,7 @@ export async function GET(req: Request) {
     where,
     include: {
       reservation: { include: { offer: true } },
-      pilgrim:     { select: { id: true, name: true, phone: true, city: true } },
+      pilgrim:     { select: { id: true, name: true, phone: true, city: true, photoUrl: true } },
     },
     orderBy: { paidAt: "desc" },
   });
@@ -134,7 +134,7 @@ export async function POST(req: Request) {
     },
     include: {
       reservation: { include: { offer: true } },
-      pilgrim:     { select: { id: true, name: true, phone: true } },
+      pilgrim:     { select: { id: true, name: true, phone: true, photoUrl: true } },
     },
   });
 

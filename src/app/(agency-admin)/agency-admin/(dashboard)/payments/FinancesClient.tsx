@@ -26,7 +26,7 @@ export type SerializedPayment = {
     totalAmount: number | null;
     offer: { id: string; titleFr: string; currency: string; priceAdult: number };
   };
-  pilgrim: { id: string; name: string; phone: string | null; city: string | null } | null;
+  pilgrim: { id: string; name: string; phone: string | null; city: string | null; photoUrl: string | null } | null;
 };
 
 type ReservationOffer = { id: string; titleFr: string; currency: string; priceAdult: number };
@@ -36,6 +36,7 @@ type SimplePilgrim = {
   name: string;
   phone: string | null;
   city: string | null;
+  photoUrl: string | null;
   pilgrimStatus: string;
   reservations: {
     id: string;
@@ -362,10 +363,15 @@ function PilgrimPayCard({ summary, selected, onClick }: {
 
       {/* Avatar + name */}
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-sm"
-          style={{ backgroundColor: avatarColor(pilgrim.name) }}>
-          {initials(pilgrim.name)}
-        </div>
+        {pilgrim.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={pilgrim.photoUrl} alt="" className="w-10 h-10 rounded-full object-cover flex-shrink-0 shadow-sm" />
+        ) : (
+          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-sm"
+            style={{ backgroundColor: avatarColor(pilgrim.name) }}>
+            {initials(pilgrim.name)}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <p className="font-semibold text-gray-800 text-sm leading-tight truncate">{pilgrim.name}</p>
           <p className="text-gray-400 text-[11px] mt-0.5 truncate">
@@ -488,10 +494,15 @@ function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRe
 
       {/* Header */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100 flex-shrink-0">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-          style={{ backgroundColor: avatarColor(pilgrim.name) }}>
-          {initials(pilgrim.name)}
-        </div>
+        {pilgrim.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={pilgrim.photoUrl} alt="" className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+        ) : (
+          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+            style={{ backgroundColor: avatarColor(pilgrim.name) }}>
+            {initials(pilgrim.name)}
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <p className="font-bold text-gray-800 text-sm leading-tight truncate">{pilgrim.name}</p>
           <p className="text-gray-400 text-[11px] truncate">{reservation?.offer?.titleFr ?? "Aucune réservation"}</p>
