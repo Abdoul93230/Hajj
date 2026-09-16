@@ -497,13 +497,33 @@ export async function getSmsStatsByTenant(
     orderBy: { name: "asc" },
   });
   const tenantIds = tenants.map((t) => t.id);
+  if (!tenantIds.length) {
+    return {
+      totals: {
+        sent: 0,
+        failed: 0,
+        skipped: 0,
+        segments: 0,
+        lastSentAt: null,
+        tenants: 0,
+        accounts: 0,
+        payments: 0,
+        manual: 0,
+      },
+      today: { sent: 0, failed: 0, skipped: 0, segments: 0, lastSentAt: null },
+      byTenant: [],
+    };
+  }
 
   const base = {
     tenantId: { in: tenantIds },
     ...(start ? { createdAt: { gte: start } } : {}),
   };
 
-  const [grouped, todayTotals, sourceGroups, channelGroups] = await Promise.all([
+  // ⚠️ Prisma/MongoDB : `groupBy` PANIQUE sur un champ nullable (channel: String?).
+  // On ne groupe donc QUE sur des champs non nullables (tenantId, status, source)
+  // et on isole le canal EMAIL par un filtre `where` plutôt que par un groupBy.
+  const [grouped, todayTotals, sourceGroups, emailGroups] = await Promise.all([
     db.smsMessage.groupBy({
       by: ["tenantId", "status"],
       where: base,
@@ -517,8 +537,8 @@ export async function getSmsStatsByTenant(
       _count: { _all: true },
     }),
     db.smsMessage.groupBy({
-      by: ["tenantId", "channel"],
-      where: { ...base, status: "SENT" },
+      by: ["tenantId"],
+      where: { ...base, status: "SENT", channel: "EMAIL" },
       _count: { _all: true },
     }),
   ]);
@@ -563,11 +583,12 @@ export async function getSmsStatsByTenant(
     row.bySource[group.source] = group._count?._all ?? 0;
   }
 
-  for (const group of channelGroups) {
+  for (const group of emailGroups) {
     const row = rows.get(group.tenantId);
     if (!row) continue;
-    if (group.channel === "EMAIL") row.channels.email = group._count?._all ?? 0;
-    else row.channels.sms = group._count?._all ?? 0;
+    const email = group._count?._all ?? 0;
+    row.channels.email = email;
+    row.channels.sms = Math.max(row.sent - email, 0);
   }
 
   for (const item of lastByTenant) {
