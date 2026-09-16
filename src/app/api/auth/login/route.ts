@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { headers, cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/lib/session";
+import { resolveApiTenantSlug } from "@/lib/tenant-slug";
 import type { Permission } from "@/types";
 
 const PLATFORM_SLUG = "__platform__";
@@ -13,8 +15,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email et mot de passe requis" }, { status: 400 });
     }
 
+    // ─ Résolution de l'agence ──────────────────────────────────────────────
+    // Même logique que le middleware et que /api/auth/register : en dev c'est
+    // DEV_DEFAULT_TENANT qui désigne l'agence courante (pas de sous-domaine),
+    // en prod le sous-domaine, et le cookie ne sert que de dernier recours.
+    // → On ne cherche JAMAIS l'utilisateur dans une autre agence : deux agences
+    // peuvent avoir le même email (contrainte tenantId_email), et une recherche
+    // globale ramènerait la première créée — c'était la cause du bug
+    // « inscrit dans Barakah mais connecté sur Zam ».
+    const headersList = await headers();
+    const cookieStore = await cookies();
+
+    let slug = resolveApiTenantSlug({
+      explicitSlug: tenantSlug,
+      headerSlug: headersList.get("x-tenant-slug"),
+      host: headersList.get("host"),
+      cookieSlug: cookieStore.get("zam_dev_tenant")?.value,
+    }) ?? undefined;
+
     let user: Awaited<ReturnType<typeof prisma.user.findUnique>> & { tenant: { slug: string; status: string } } | null = null;
-    let slug = tenantSlug as string | undefined;
 
     if (slug === PLATFORM_SLUG) {
       // Connexion superadmin explicite
@@ -25,7 +44,7 @@ export async function POST(req: Request) {
         include: { tenant: true },
       });
     } else if (slug) {
-      // Slug fourni explicitement → chercher dans ce tenant précis
+      // Agence déterminée → recherche STRICTEMENT dans cette agence
       const tenant = await prisma.tenant.findUnique({ where: { slug } });
       if (tenant) {
         user = await prisma.user.findUnique({
@@ -33,15 +52,9 @@ export async function POST(req: Request) {
           include: { tenant: true },
         });
       }
-      // Si pas trouvé avec ce slug, on tente la recherche par email (cas single-domain)
-      if (!user) {
-        user = await prisma.user.findFirst({
-          where: { email, role: { notIn: ["SUPER_ADMIN"] } },
-          include: { tenant: true },
-        }) as typeof user;
-      }
     } else {
-      // Pas de slug → single-domain : cherche l'utilisateur par email dans toutes les agences
+      // Aucune agence identifiable (prod single-domain sans cookie, hôte nu).
+      // Filet de sécurité hérité : recherche globale, superadmins exclus.
       user = await prisma.user.findFirst({
         where: { email, role: { notIn: ["SUPER_ADMIN"] } },
         include: { tenant: true },

@@ -29,6 +29,17 @@ export function isMailConfigured(): boolean {
 }
 
 /**
+ * En-tête « From » : le nom affiché est celui de l'AGENCE concernée, jamais une
+ * marque en dur. Sinon un pèlerin de Barakah recevrait un email signé « ZAM »
+ * (SMTP_FROM_NAME est le nom de repli de la plateforme, sans agence associée).
+ * L'adresse d'expédition reste l'unique compte SMTP configuré.
+ */
+function fromHeader(displayName?: string | null): string {
+  const name = (displayName ?? "").trim() || SMTP_FROM_NAME;
+  return `"${name}" <${SMTP_USER}>`;
+}
+
+/**
  * Notification générique par email (canal de repli du module messages :
  * les pèlerins de la diaspora, hors Niger, reçoivent le même contenu que les
  * SMS par email — voir src/lib/sms-service.ts).
@@ -50,7 +61,7 @@ export async function sendNotificationEmail(opts: {
   const text = String(opts.text ?? "").trim();
 
   const info = await transporter.sendMail({
-    from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
+    from: fromHeader(opts.tenantName),
     to: opts.to,
     subject: `${opts.subject} — ${opts.tenantName}`,
     text,
@@ -68,7 +79,7 @@ export async function sendNotificationEmail(opts: {
         </div>
         <div style="background-color:#f9fafb;padding:14px 32px;border-top:1px solid #e5e7eb;">
           <p style="color:#9ca3af;font-size:12px;margin:0;text-align:center;">
-            Message envoyé par ${opts.tenantName} — plateforme ZAM Hajj &amp; Oumra
+            Message envoyé par ${opts.tenantName}
           </p>
         </div>
       </div>
@@ -143,7 +154,7 @@ export async function sendOtpEmail({ to, code, userName, tenantName }: SendOtpEm
 </html>`;
 
   await transporter.sendMail({
-    from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
+    from: fromHeader(tenantName),
     to,
     subject,
     text,

@@ -2,28 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
+import { resolveSingleDomainTenant, resolveSpaceFromHost } from "@/lib/tenant-slug";
 
 const intlMiddleware = createIntlMiddleware(routing);
 const PLATFORM_SLUG = "__platform__";
 const COOKIE_NAME = "zam_session";
-
-type Space = "superadmin" | "agency-admin" | "public";
-
-function resolveSpaceFromHost(host: string): { space: Space; tenantSlug: string | null } {
-  const h = host.split(":")[0];
-  const parts = h.split(".");
-
-  if (parts[0] === "superadmin" || parts[0] === "admin") {
-    return { space: "superadmin", tenantSlug: null };
-  }
-  if (parts[0] === "dashboard" && parts.length >= 2) {
-    return { space: "agency-admin", tenantSlug: parts[1] };
-  }
-  if (parts[0] !== "localhost" && parts[0] !== "127" && parts.length >= 2) {
-    return { space: "public", tenantSlug: parts[0] };
-  }
-  return { space: "public", tenantSlug: process.env.DEV_DEFAULT_TENANT ?? "zam" };
-}
 
 async function getSessionPayload(request: NextRequest) {
   try {
@@ -46,18 +29,17 @@ export default async function middleware(request: NextRequest) {
   let { space, tenantSlug } = resolveSpaceFromHost(host);
 
   // Sur single-domain (localhost, Render, Vercel sans subdomain) :
-  // détecter l'espace depuis le pathname et résoudre le tenant depuis le cookie
+  // détecter l'espace depuis le pathname et résoudre le tenant
   if (space === "public") {
     if (pathname.startsWith("/superadmin")) {
       space = "superadmin";
       tenantSlug = null;
     } else if (pathname.startsWith("/agency-admin")) {
       space = "agency-admin";
-      // Cookie posé au login — fonctionne en dev ET en prod single-domain
-      const tenantCookie = request.cookies.get("zam_dev_tenant")?.value;
-      if (tenantCookie) {
-        tenantSlug = tenantCookie;
-      }
+      // Même règle que les routes API (src/lib/tenant-slug.ts) : DEV_DEFAULT_TENANT
+      // fait foi quand il est défini, sinon le cookie posé au login. La page et
+      // l'API doivent désigner le MÊME tenant.
+      tenantSlug = resolveSingleDomainTenant(request.cookies.get("zam_dev_tenant")?.value);
     }
   }
 

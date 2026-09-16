@@ -18,8 +18,6 @@ const RANGES: { key: SmsRange; label: string }[] = [
   { key: "all", label: "Tout" },
 ];
 
-const POLL_MS = 10_000;
-
 export default function SmsMonitorClient({
   initialStats,
   initialRange,
@@ -33,6 +31,10 @@ export default function SmsMonitorClient({
 }) {
   const [range, setRange] = useState<SmsRange>(initialRange);
   const [search, setSearch] = useState("");
+  // Les statistiques viennent du rendu serveur ; on ne recharge que sur action
+  // explicite (changement de filtre / bouton Actualiser) — pas de polling :
+  // interroger le serveur en boucle pour un écran de suivi consommerait des
+  // ressources sans réelle valeur ajoutée.
   const [data, setData] = useState<ApiPayload>({
     ...initialStats,
     credits: null,
@@ -41,9 +43,8 @@ export default function SmsMonitorClient({
     sender,
     updatedAt: new Date().toISOString(),
   });
-  const [live, setLive] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [failures, setFailures] = useState(0);
+  const [loadError, setLoadError] = useState(false);
 
   const load = useCallback(async (nextRange: SmsRange, nextSearch: string) => {
     setLoading(true);
@@ -55,21 +56,13 @@ export default function SmsMonitorClient({
       });
       if (!res.ok) throw new Error("fetch failed");
       setData((await res.json()) as ApiPayload);
-      setFailures(0);
+      setLoadError(false);
     } catch {
-      setFailures((count) => count + 1);
+      setLoadError(true);
     } finally {
       setLoading(false);
     }
   }, []);
-
-  // Temps réel : polling tant que l'utilisateur ne met pas en pause
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (live && failures < 3) void load(range, search);
-    }, POLL_MS);
-    return () => clearInterval(interval);
-  }, [live, failures, range, search, load]);
 
   // Rechargement au changement de filtre (léger debounce sur la recherche)
   useEffect(() => {
@@ -97,17 +90,6 @@ export default function SmsMonitorClient({
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => setLive((value) => !value)}
-            className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-              live
-                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-                : "border-gray-700 bg-gray-800 text-gray-400"
-            }`}
-          >
-            {live ? `● Temps réel (${POLL_MS / 1000} s)` : "○ En pause"}
-          </button>
-          <button
-            type="button"
             onClick={() => void load(range, search)}
             disabled={loading}
             className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-300 hover:text-white disabled:opacity-50"
@@ -122,9 +104,9 @@ export default function SmsMonitorClient({
           L&apos;envoi de SMS n&apos;est pas configuré sur cet environnement.
         </div>
       )}
-      {failures >= 3 && (
+      {loadError && (
         <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-          Actualisation interrompue après plusieurs échecs réseau. Utilisez « Actualiser ».
+          Impossible d&apos;actualiser les statistiques. Vérifiez la connexion puis réessayez.
         </div>
       )}
 
@@ -214,7 +196,6 @@ export default function SmsMonitorClient({
 
         <p className="border-t border-gray-700 px-6 py-3 text-xs text-gray-500">
           Dernière mise à jour : {lastUpdate}
-          {live && " · actualisation automatique"}
         </p>
       </div>
     </div>

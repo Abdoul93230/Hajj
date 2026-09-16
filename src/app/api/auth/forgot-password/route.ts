@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { headers, cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { createHash, randomInt } from "crypto";
 import { sendOtpEmail } from "@/lib/mail";
+import { resolveApiTenantSlug } from "@/lib/tenant-slug";
 import type { SessionPayload } from "@/lib/session";
 import { logAction } from "@/lib/audit";
 
@@ -20,16 +22,48 @@ export async function POST(req: Request) {
     }
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Même convention que le login single-domain : recherche par email
-    // (le middleware n'injecte pas x-tenant-slug sur les routes /api)
-    const user = await prisma.user.findFirst({
-      where: { email: normalizedEmail, role: { notIn: ["SUPER_ADMIN"] } },
-      include: { tenant: true },
+    // ─ Résolution de l'agence ──────────────────────────────────────────────
+    // Même règle que /api/auth/login : en dev DEV_DEFAULT_TENANT désigne
+    // l'agence courante (aucun sous-domaine), en prod le sous-domaine, sinon le
+    // cookie. L'utilisateur est ensuite cherché STRICTEMENT dans cette agence :
+    // un email peut exister dans plusieurs agences, et une recherche globale
+    // ramenait la première créée — d'où un email de réinitialisation signé au
+    // nom d'une autre agence (ex. « Zam » alors que le compte est dans Barakah).
+    const headersList = await headers();
+    const cookieStore = await cookies();
+
+    const slug = resolveApiTenantSlug({
+      headerSlug: headersList.get("x-tenant-slug"),
+      host: headersList.get("host"),
+      cookieSlug: cookieStore.get("zam_dev_tenant")?.value,
     });
 
     // Réponse identique que l'email existe ou non (pas de fuite d'information)
+    const silentSuccess = NextResponse.json({ success: true });
+
+    let user = null;
+    if (slug) {
+      const tenant = await prisma.tenant.findUnique({ where: { slug } });
+      if (!tenant) return silentSuccess;
+      user = await prisma.user.findFirst({
+        where: {
+          email: normalizedEmail,
+          tenantId: tenant.id,
+          role: { notIn: ["SUPER_ADMIN"] },
+        },
+        include: { tenant: true },
+      });
+    } else {
+      // Aucune agence identifiable (prod single-domain sans cookie) : filet de
+      // sécurité hérité, recherche globale hors superadmins.
+      user = await prisma.user.findFirst({
+        where: { email: normalizedEmail, role: { notIn: ["SUPER_ADMIN"] } },
+        include: { tenant: true },
+      });
+    }
+
     if (!user || !user.active) {
-      return NextResponse.json({ success: true });
+      return silentSuccess;
     }
 
     // Cooldown anti-spam : pas plus d'un code par minute

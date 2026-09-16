@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { headers, cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { createHash } from "crypto";
+import { resolveApiTenantSlug } from "@/lib/tenant-slug";
 import { logAction } from "@/lib/audit";
 import type { SessionPayload } from "@/lib/session";
 
@@ -30,10 +32,38 @@ export async function POST(req: Request) {
 
     const normalizedEmail = String(email).trim().toLowerCase();
 
-    const user = await prisma.user.findFirst({
-      where: { email: normalizedEmail, role: { notIn: ["SUPER_ADMIN"] } },
-      include: { tenant: true },
+    // Même règle que /api/auth/forgot-password : l'agence est résolue depuis la
+    // requête (DEV_DEFAULT_TENANT en dev, sous-domaine en prod) et l'utilisateur
+    // est cherché STRICTEMENT dedans. Sinon, avec un email présent dans
+    // plusieurs agences, on réinitialiserait le mot de passe de la mauvaise.
+    const headersList = await headers();
+    const cookieStore = await cookies();
+    const slug = resolveApiTenantSlug({
+      headerSlug: headersList.get("x-tenant-slug"),
+      host: headersList.get("host"),
+      cookieSlug: cookieStore.get("zam_dev_tenant")?.value,
     });
+
+    let user = null;
+    if (slug) {
+      const tenant = await prisma.tenant.findUnique({ where: { slug } });
+      if (!tenant) {
+        return NextResponse.json({ error: "Code invalide ou expiré" }, { status: 400 });
+      }
+      user = await prisma.user.findFirst({
+        where: {
+          email: normalizedEmail,
+          tenantId: tenant.id,
+          role: { notIn: ["SUPER_ADMIN"] },
+        },
+        include: { tenant: true },
+      });
+    } else {
+      user = await prisma.user.findFirst({
+        where: { email: normalizedEmail, role: { notIn: ["SUPER_ADMIN"] } },
+        include: { tenant: true },
+      });
+    }
     if (!user) {
       return NextResponse.json({ error: "Code invalide ou expiré" }, { status: 400 });
     }
