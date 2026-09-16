@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
+import { notifyAccountCreated } from "@/lib/sms-service";
 
 // ─── GET /api/agency-admin/pilgrims ──────────────────────────────────────────
 export async function GET() {
@@ -140,6 +141,14 @@ export async function POST(req: Request) {
         take: 1,
       },
     },
+  });
+
+  // SMS automatiques (non bloquants) : au pèlerin + à l'agence.
+  notifyAccountCreated({
+    tenantId,
+    pilgrim: { id: pilgrim.id, name: pilgrim.name, phone: pilgrim.phone },
+    source: "ADMIN",
+    actor: { id: session.id, name: session.name },
   });
 
   return NextResponse.json({ pilgrim }, { status: 201 });

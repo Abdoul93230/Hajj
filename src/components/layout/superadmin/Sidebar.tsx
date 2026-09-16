@@ -7,6 +7,7 @@ import LogoutButton from "@/components/ui/LogoutButton";
 const NAV = [
   { href: "/superadmin",          label: "Dashboard",   icon: "⚡" },
   { href: "/superadmin/tenants",  label: "Agences",     icon: "🏢" },
+  { href: "/superadmin/messages", label: "SMS",         icon: "💬" },
   { href: "/superadmin/plans",    label: "Plans",       icon: "💳" },
   { href: "/superadmin/audit",    label: "Audit global",icon: "📋" },
   { href: "/superadmin/settings", label: "Paramètres",  icon: "⚙️" },

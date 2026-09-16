@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { headers } from "next/headers";
 import { resolveTenantSlugFromHost } from "@/lib/tenant-slug";
+import { notifyAccountCreated } from "@/lib/sms-service";
 
 export async function POST(req: Request) {
   try {
@@ -57,6 +58,13 @@ export async function POST(req: Request) {
         role: "PILGRIM",
       },
       select: { id: true, name: true, email: true, phone: true, role: true },
+    });
+
+    // SMS automatiques (non bloquants) : au pèlerin + à l'agence.
+    notifyAccountCreated({
+      tenantId: tenant.id,
+      pilgrim: { id: user.id, name: user.name, phone: user.phone },
+      source: "PORTAL",
     });
 
     return NextResponse.json(user, { status: 201 });

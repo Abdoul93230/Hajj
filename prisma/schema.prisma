@@ -40,6 +40,7 @@ model Tenant {
   auditLogs     AuditLog[]
   documents     PilgrimDocument[]
   passwordResetOtps PasswordResetOtp[]
+  smsMessages   SmsMessage[]
 }
 
 // ─── USER ─────────────────────────────────────────────────────────────────────
@@ -310,6 +311,37 @@ enum PilgrimCategory {
   CHILD
   ADULT
   COUPLE
+}
+
+// ─── SMS ──────────────────────────────────────────────────────────────────────
+// Journal des SMS envoyés via LAfricaMobile (expéditeur « SmartLimb »).
+// 1 ligne = 1 SMS pour 1 destinataire. sert à la fois d'historique (page agence)
+// et de compteur (page superadmin, par agrégation : toujours exact).
+//   source : ACCOUNT = création de compte, PAYMENT = versement, MANUAL = manuel
+//   status : SENT | FAILED | SKIPPED (SKIPPED = pas de numéro / SMS désactivé)
+model SmsMessage {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId          String   @db.ObjectId
+  to                String   // numéro tel que saisi
+  toNormalized      String   // numéro normalisé (+227…)
+  recipientName     String?
+  recipientId       String?  @db.ObjectId
+  body              String
+  segments          Int      @default(1) // nb de SMS facturés (160 GSM-7 / 70 UCS-2)
+  source            String   @default("MANUAL")
+  batchId           String? // regroupe un envoi groupé
+  sender            String
+  status            String   @default("SENT")
+  error             String?
+  providerMessageId String?
+  sentById          String?  @db.ObjectId
+  sentByName        String?
+  createdAt         DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, createdAt])
+  @@index([batchId])
 }
 
 enum ReservationStatus {

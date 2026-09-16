@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { computePilgrimStatus } from "@/lib/computePilgrimStatus";
+import { notifyPaymentReceived } from "@/lib/sms-service";
 
 // ─── Helper : recalcule et persiste le pilgrimStatus après tout changement ────
 async function syncPilgrimStatus(pilgrimId: string, tenantId: string) {
@@ -140,6 +141,21 @@ export async function POST(req: Request) {
 
   // Recalcul automatique du statut pèlerin
   if (resolvedPilgrimId) await syncPilgrimStatus(resolvedPilgrimId, tenantId);
+
+  // SMS automatiques (non bloquants) : au pèlerin + à l'agence.
+  if (payment.pilgrim) {
+    notifyPaymentReceived({
+      tenantId,
+      pilgrim: {
+        id: payment.pilgrim.id,
+        name: payment.pilgrim.name,
+        phone: payment.pilgrim.phone,
+      },
+      amount: payment.amount,
+      isRefund: type === "REFUND",
+      actor: { id: session.id, name: session.name },
+    });
+  }
 
   return NextResponse.json({ payment }, { status: 201 });
 }

@@ -34,3 +34,7 @@ next-env.d.ts
 
 # logs serveur dev
 .dev-server*.log
+
+# logs dev temporaires
+dev-*.log
+dev-*.err.log
