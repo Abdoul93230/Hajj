@@ -8,6 +8,7 @@ import {
   buildDocumentPublicId,
   extractCloudinaryPublicId,
 } from "@/lib/cloudinary";
+import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 
 export const runtime = "nodejs";
 
@@ -123,19 +124,4 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ document: doc }, { status: 201 });
-}
-
-async function syncPilgrimFlags(tenantId: string, userId: string) {
-  const docs = await prisma.pilgrimDocument.findMany({
-    where: { tenantId, userId, status: { in: ["RECEIVED", "VALID"] } },
-    select: { type: true },
-  });
-  const types = new Set(docs.map((d) => d.type));
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      hasPassport: types.has("PASSPORT"),
-      hasCni:      types.has("CNI"),
-    },
-  });
 }

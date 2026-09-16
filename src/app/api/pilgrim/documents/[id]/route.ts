@@ -9,23 +9,11 @@ import {
 } from "@/lib/cloudinary";
 import { logAction } from "@/lib/audit";
 import { isAgencyOnlyDocType, AGENCY_ONLY_ERROR } from "@/lib/documents";
+import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
+
+// syncPilgrimFlags est importé de "@/lib/pilgrim-sync" (source unique).
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo (comme l'admin côté upload)
-
-async function syncPilgrimFlags(tenantId: string, userId: string) {
-  const docs = await prisma.pilgrimDocument.findMany({
-    where: { tenantId, userId, status: { in: ["RECEIVED", "VALID"] } },
-    select: { type: true },
-  });
-  const types = new Set(docs.map((d) => d.type));
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      hasPassport: types.has("PASSPORT"),
-      hasCni: types.has("CNI"),
-    },
-  });
-}
 
 // PATCH /api/pilgrim/documents/[id] — multipart : file?, label?, expiresAt?
 // Le pèlerin met à jour SON document tant qu'il n'a pas été vérifié (RECEIVED).
@@ -150,7 +138,7 @@ export async function DELETE(
     if (publicId) await deleteCloudinaryFile(publicId).catch(() => {});
   }
 
-  await syncPilgrimFlags(session.tenantId, session.id);
+  await syncPilgrimFlags(session.tenantId, session.id, doc.fileUrl);
 
   await logAction({
     session,

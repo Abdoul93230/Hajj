@@ -9,6 +9,7 @@ import {
 } from "@/lib/cloudinary";
 import { logAction } from "@/lib/audit";
 import { isAgencyOnlyDocType, AGENCY_ONLY_ERROR } from "@/lib/documents";
+import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 
 export const runtime = "nodejs";
 
@@ -16,20 +17,7 @@ const ALLOWED_TYPES = ["PASSPORT", "CNI", "VISA", "PHOTO", "OTHER"];
 const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo
 type DocType = "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER";
 
-async function syncPilgrimFlags(tenantId: string, userId: string) {
-  const docs = await prisma.pilgrimDocument.findMany({
-    where: { tenantId, userId, status: { in: ["RECEIVED", "VALID"] } },
-    select: { type: true },
-  });
-  const types = new Set(docs.map((d) => d.type));
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      hasPassport: types.has("PASSPORT"),
-      hasCni: types.has("CNI"),
-    },
-  });
-}
+// syncPilgrimFlags est importé de "@/lib/pilgrim-sync" (source unique).
 
 // POST /api/pilgrim/documents/upload — multipart : file, type, label?, expiresAt?
 // Le pèlerin envoie SON document (statut RECEIVED — l'agence valide ensuite).

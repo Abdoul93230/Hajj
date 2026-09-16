@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { deleteCloudinaryFile, extractCloudinaryPublicId } from "@/lib/cloudinary";
+import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 
 // PATCH /api/agency-admin/documents/[id]
 export async function PATCH(
@@ -65,22 +66,7 @@ export async function DELETE(
     if (publicId) await deleteCloudinaryFile(publicId).catch(() => {});
   }
 
-  await syncPilgrimFlags(tenantId, existing.userId);
+  await syncPilgrimFlags(tenantId, existing.userId, existing.fileUrl);
 
   return NextResponse.json({ ok: true });
-}
-
-async function syncPilgrimFlags(tenantId: string, userId: string) {
-  const docs = await prisma.pilgrimDocument.findMany({
-    where: { tenantId, userId, status: { in: ["RECEIVED", "VALID"] } },
-    select: { type: true },
-  });
-  const types = new Set(docs.map((d) => d.type));
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      hasPassport: types.has("PASSPORT"),
-      hasCni:      types.has("CNI"),
-    },
-  });
 }

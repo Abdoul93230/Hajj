@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
+import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 
 // GET /api/agency-admin/documents?userId=xxx
 // Retourne tous les documents d'un pèlerin (ou de toute l'année si pas de userId)
@@ -88,19 +89,4 @@ export async function POST(req: Request) {
   await syncPilgrimFlags(tenantId, userId);
 
   return NextResponse.json({ document: doc }, { status: 201 });
-}
-
-async function syncPilgrimFlags(tenantId: string, userId: string) {
-  const docs = await prisma.pilgrimDocument.findMany({
-    where: { tenantId, userId, status: { in: ["RECEIVED", "VALID"] } },
-    select: { type: true },
-  });
-  const types = new Set(docs.map((d) => d.type));
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      hasPassport: types.has("PASSPORT"),
-      hasCni:      types.has("CNI"),
-    },
-  });
 }
