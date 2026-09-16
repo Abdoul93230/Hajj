@@ -326,6 +326,7 @@ model SmsMessage {
   toNormalized      String   // numéro normalisé (+227…)
   recipientName     String?
   recipientId       String?  @db.ObjectId
+  channel           String   @default("SMS") // SMS (Niger +227) | EMAIL | NONE
   body              String
   segments          Int      @default(1) // nb de SMS facturés (160 GSM-7 / 70 UCS-2)
   source            String   @default("MANUAL")

@@ -135,7 +135,7 @@ export async function POST(req: Request) {
     },
     include: {
       reservation: { include: { offer: true } },
-      pilgrim:     { select: { id: true, name: true, phone: true, photoUrl: true } },
+      pilgrim:     { select: { id: true, name: true, phone: true, email: true, photoUrl: true } },
     },
   });
 
@@ -150,6 +150,7 @@ export async function POST(req: Request) {
         id: payment.pilgrim.id,
         name: payment.pilgrim.name,
         phone: payment.pilgrim.phone,
+        email: payment.pilgrim.email,
       },
       amount: payment.amount,
       isRefund: type === "REFUND",

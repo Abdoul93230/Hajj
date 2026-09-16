@@ -60,10 +60,10 @@ export async function POST(req: Request) {
       select: { id: true, name: true, email: true, phone: true, role: true },
     });
 
-    // SMS automatiques (non bloquants) : au pèlerin + à l'agence.
+    // Notifications automatiques (non bloquantes) : au pèlerin + à l'agence.
     notifyAccountCreated({
       tenantId: tenant.id,
-      pilgrim: { id: user.id, name: user.name, phone: user.phone },
+      pilgrim: { id: user.id, name: user.name, phone: user.phone, email: user.email },
       source: "PORTAL",
     });
 

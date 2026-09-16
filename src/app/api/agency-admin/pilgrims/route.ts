@@ -143,10 +143,10 @@ export async function POST(req: Request) {
     },
   });
 
-  // SMS automatiques (non bloquants) : au pèlerin + à l'agence.
+  // Notifications automatiques (non bloquantes) : au pèlerin + à l'agence.
   notifyAccountCreated({
     tenantId,
-    pilgrim: { id: pilgrim.id, name: pilgrim.name, phone: pilgrim.phone },
+    pilgrim: { id: pilgrim.id, name: pilgrim.name, phone: pilgrim.phone, email: finalEmail },
     source: "ADMIN",
     actor: { id: session.id, name: session.name },
   });

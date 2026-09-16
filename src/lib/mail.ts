@@ -28,6 +28,58 @@ export function isMailConfigured(): boolean {
   return Boolean(SMTP_USER && SMTP_APP_PASSWORD);
 }
 
+/**
+ * Notification générique par email (canal de repli du module messages :
+ * les pèlerins de la diaspora, hors Niger, reçoivent le même contenu que les
+ * SMS par email — voir src/lib/sms-service.ts).
+ */
+export async function sendNotificationEmail(opts: {
+  to: string;
+  userName?: string | null;
+  tenantName: string;
+  subject: string;
+  text: string;
+}): Promise<{ messageId: string }> {
+  if (!isMailConfigured()) {
+    throw new Error("SMTP non configuré (SMTP_USER / SMTP_APP_PASSWORD)");
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(opts.to)) {
+    throw new Error(`Adresse email invalide : ${opts.to}`);
+  }
+
+  const text = String(opts.text ?? "").trim();
+
+  const info = await transporter.sendMail({
+    from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
+    to: opts.to,
+    subject: `${opts.subject} — ${opts.tenantName}`,
+    text,
+    html: `<!DOCTYPE html>
+<html>
+  <body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Arial,Helvetica,sans-serif;">
+    <div style="max-width:520px;margin:0 auto;padding:24px;">
+      <div style="background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb;">
+        <div style="background-color:${BRAND};padding:24px 32px;text-align:center;">
+          <h1 style="color:#ffffff;font-size:18px;margin:0;">${opts.tenantName}</h1>
+        </div>
+        <div style="padding:28px 32px;">
+          ${opts.userName ? `<p style="color:#111827;font-size:14px;margin:0 0 12px;">Bonjour ${opts.userName},</p>` : ""}
+          <p style="color:#374151;font-size:14px;line-height:1.7;margin:0;">${text.replace(/\n/g, "<br/>")}</p>
+        </div>
+        <div style="background-color:#f9fafb;padding:14px 32px;border-top:1px solid #e5e7eb;">
+          <p style="color:#9ca3af;font-size:12px;margin:0;text-align:center;">
+            Message envoyé par ${opts.tenantName} — plateforme ZAM Hajj &amp; Oumra
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>`,
+  });
+
+  return { messageId: String(info?.messageId ?? "") };
+}
+
 type SendOtpEmailParams = {
   to: string;
   code: string; // 6 chiffres en clair — uniquement pour l'email

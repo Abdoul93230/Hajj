@@ -1,4 +1,5 @@
 import "server-only";
+import { normalizeE164, SMS_DIAL } from "@/lib/phone";
 
 /**
  * Transport SMS — LAfricaMobile (https://lamsms.lafricamobile.com)
@@ -72,7 +73,11 @@ export function isSmsConfigured(): boolean {
   return config.enabled && !!config.accountId && !!config.password && isSenderValid(config.sender);
 }
 
-function assertReady(): SmsConfig {
+/**
+ * Vérifie que l'envoi est possible et retourne la configuration validée.
+ * (Identifiants utilisés uniquement côté serveur, jamais exposés.)
+ */
+export function assertReady(): SmsConfig {
   const config = getSmsConfig();
 
   if (!config.enabled) {
@@ -92,34 +97,14 @@ function assertReady(): SmsConfig {
 }
 
 /**
- * Normalise un numéro au format international attendu par LAfricaMobile.
- *   « +227 89 12 34 56 » → "+22789123456"
- *   « 0022789123456 »    → "+22789123456"
- *   « 22789123456 »      → "+22789123456"
- *   « 89123456 »         → "+22789123456"  (préfixe SMS_DEFAULT_COUNTRY)
- *   « 089123456 »        → "+22789123456"  (0 de tête retiré)
- * Retourne null si le numéro est absent ou inexploitable.
+ * Normalise un numéro au format international attendu par LAfricaMobile
+ * (« +22789123456 »). Délègue à `normalizeE164` (src/lib/phone.ts) : la
+ * modération est ainsi IDENTIQUE partout — stockage, affichage et envoi.
  */
 export function normalizePhone(raw?: string | null): string | null {
-  const compact = String(raw ?? "").replace(/[\s.\-()/]/g, "").trim();
-  if (!compact) return null;
-
-  const country = (process.env.SMS_DEFAULT_COUNTRY || "+227").replace(/\D/g, "");
-  let value = compact;
-
-  if (value.startsWith("00")) {
-    value = `+${value.slice(2)}`;
-  } else if (!value.startsWith("+")) {
-    if (!/^\d+$/.test(value)) return null;
-    if (value.startsWith(country) && value.length >= country.length + 7) {
-      value = `+${value}`; // déjà au format international sans le « + »
-    } else {
-      const local = /^\d{9,10}$/.test(value) ? value.replace(/^0/, "") : value;
-      value = `+${country}${local}`;
-    }
-  }
-
-  return /^\+\d{7,15}$/.test(value) ? value : null;
+  return normalizeE164(raw, {
+    defaultDial: process.env.SMS_DEFAULT_COUNTRY?.replace(/\D/g, "") || SMS_DIAL,
+  });
 }
 
 // Comptage de segments + formatage : définis dans `sms-segments.ts` (sans

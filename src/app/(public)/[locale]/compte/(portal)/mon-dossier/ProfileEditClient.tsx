@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Pencil } from "lucide-react";
 import { countryOptions } from "@/lib/countries";
+import PhoneInput from "@/components/ui/PhoneInput";
 
 type Props = {
   initial: {
@@ -97,11 +98,9 @@ export default function ProfileEditClient({ initial }: Props) {
                 <label className="block text-xs font-medium text-gray-600 mb-1">
                   {t("phone")}
                 </label>
-                <input
-                  type="tel"
+                <PhoneInput
                   value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  onChange={(e164) => setForm({ ...form, phone: e164 })}
                 />
               </div>
               <div>
@@ -156,11 +155,9 @@ export default function ProfileEditClient({ initial }: Props) {
                 <label className="block text-xs font-medium text-gray-600 mb-1">
                   {t("emergencyPhone")}
                 </label>
-                <input
-                  type="tel"
+                <PhoneInput
                   value={form.emergencyPhone}
-                  onChange={(e) => setForm({ ...form, emergencyPhone: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  onChange={(e164) => setForm({ ...form, emergencyPhone: e164 })}
                 />
               </div>
 

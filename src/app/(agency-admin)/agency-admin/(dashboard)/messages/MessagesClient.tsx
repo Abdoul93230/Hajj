@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import PhoneInput from "@/components/ui/PhoneInput";
 import {
   MAX_BULK_RECIPIENTS,
   SMS_SOURCE_LABELS,
@@ -8,18 +9,19 @@ import {
   SMS_TEMPLATES,
   SMS_VARIABLES,
   countSmsSegments,
-  formatPhone,
   type SmsSource,
   type SmsStatus,
 } from "@/lib/sms-segments";
+import { formatPhoneDisplay, resolveChannel } from "@/lib/phone";
 
-type Pilgrim = { id: string; name: string; phone: string | null };
+type Pilgrim = { id: string; name: string; phone: string | null; email: string | null };
 type Voyage = { id: string; title: string; departureDate: string | null; pilgrimIds: string[] };
 type Message = {
   id: string;
   to: string;
   toNormalized: string;
   recipientName: string | null;
+  channel: string;
   body: string;
   segments: number;
   source: string;
@@ -43,6 +45,7 @@ type Props = {
   sender: string;
   configured: boolean;
   initialPilgrimId?: string;
+  selectedYear: number;
 };
 
 type Audience = "ALL" | "VOYAGE" | "IDS";
@@ -72,6 +75,7 @@ export default function MessagesClient({
   sender,
   configured,
   initialPilgrimId,
+  selectedYear,
 }: Props) {
   const [tab, setTab] = useState<"send" | "history">("send");
   const [audience, setAudience] = useState<Audience>(initialPilgrimId ? "IDS" : "ALL");
@@ -89,7 +93,9 @@ export default function MessagesClient({
 
   // Destinataires résolus selon le mode choisi
   const recipients = useMemo(() => {
-    if (isFreePhone) return [{ id: "free", name: freeName || "Numéro libre", phone: freePhone }];
+    if (isFreePhone) {
+      return [{ id: "free", name: freeName || "Numéro libre", phone: freePhone, email: null }];
+    }
     if (audience === "VOYAGE") {
       const voyage = voyages.find((v) => v.id === voyageId);
       if (!voyage) return [];
@@ -100,15 +106,31 @@ export default function MessagesClient({
     return pilgrims;
   }, [isFreePhone, audience, voyageId, voyages, pilgrims, selected, freePhone, freeName]);
 
-  const reachable = recipients.filter((r) => (r.phone ?? "").trim());
-  const withoutPhone = recipients.length - reachable.length;
+  // Canaux effectivement utilisables : SMS (Niger) sinon email, sinon rien
+  const channelCounts = useMemo(() => {
+    let sms = 0;
+    let email = 0;
+    let none = 0;
+    for (const recipient of recipients) {
+      const channel = resolveChannel(recipient.phone, recipient.email);
+      if (channel === "SMS") sms += 1;
+      else if (channel === "EMAIL") email += 1;
+      else none += 1;
+    }
+    return { sms, email, none };
+  }, [recipients]);
+
+  const reachableCount = channelCounts.sms + channelCounts.email;
   const segments = countSmsSegments(body);
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     if (!query) return pilgrims;
     return pilgrims.filter(
-      (p) => p.name.toLowerCase().includes(query) || (p.phone ?? "").includes(query)
+      (p) =>
+        p.name.toLowerCase().includes(query) ||
+        (p.phone ?? "").includes(query) ||
+        (p.email ?? "").toLowerCase().includes(query)
     );
   }, [pilgrims, search]);
 
@@ -140,8 +162,16 @@ export default function MessagesClient({
       return;
     }
 
-    const credits = reachable.length * segments;
-    if (!window.confirm(`Envoyer ${reachable.length} SMS (${credits} crédit${credits > 1 ? "s" : ""}) ?`)) {
+    const credits = channelCounts.sms * segments;
+    const label = [
+      channelCounts.sms ? `${channelCounts.sms} SMS (Niger)` : null,
+      channelCounts.email ? `${channelCounts.email} email(s)` : null,
+      channelCounts.none ? `${channelCounts.none} sans canal` : null,
+    ]
+      .filter(Boolean)
+      .join(" + ");
+    const cost = credits > 0 ? ` — ${credits} crédit(s) SMS` : "";
+    if (!window.confirm(`Envoyer à ${recipients.length} destinataires — ${label}${cost} ?`)) {
       return;
     }
 
@@ -153,6 +183,7 @@ export default function MessagesClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           body,
+          year: selectedYear,
           ...(isFreePhone
             ? { phone: freePhone.trim(), name: freeName.trim() }
             : { audience, voyageId: voyageId || null, ids: selected }),
@@ -166,10 +197,15 @@ export default function MessagesClient({
       setFeedback({
         tone: data.failed > 0 ? "error" : "ok",
         text:
-          `${data.sent} SMS envoyé${data.sent > 1 ? "s" : ""}` +
-          (data.skipped ? ` · ${data.skipped} ignoré(s) (sans numéro)` : "") +
-          (data.failed ? ` · ${data.failed} échec(s)` : "") +
-          (data.warning ? ` · ${data.warning}` : ""),
+          [
+            data.sentSms ? `${data.sentSms} SMS envoyé(s) vers le Niger` : null,
+            data.sentEmail ? `${data.sentEmail} email(s) envoyé(s)` : null,
+            data.skipped ? `· ${data.skipped} sans canal` : "",
+            data.failed ? `· ${data.failed} échec(s)` : "",
+            data.warning ? `· ${data.warning}` : "",
+          ]
+            .filter((part): part is string => Boolean(part))
+            .join(" ") || "Aucun envoi — aucun destinataire joignable.",
       });
       await refresh();
     } catch {
@@ -253,15 +289,19 @@ export default function MessagesClient({
             freePhone={freePhone}
             setFreePhone={setFreePhone}
             isFreePhone={isFreePhone}
-            reachableCount={reachable.length}
-            withoutPhone={withoutPhone}
+            reachableCount={reachableCount}
+            smsCount={channelCounts.sms}
+            emailCount={channelCounts.email}
+            noneCount={channelCounts.none}
           />
 
           <MessageComposer
             body={body}
             setBody={setBody}
             segments={segments}
-            recipientCount={reachable.length}
+            recipientCount={reachableCount}
+            smsCount={channelCounts.sms}
+            emailCount={channelCounts.email}
             busy={busy}
             onSend={send}
           />
@@ -294,7 +334,9 @@ function RecipientPicker({
   setFreePhone,
   isFreePhone,
   reachableCount,
-  withoutPhone,
+  smsCount,
+  emailCount,
+  noneCount,
 }: {
   pilgrims: Pilgrim[];
   voyages: Voyage[];
@@ -314,7 +356,9 @@ function RecipientPicker({
   setFreePhone: (value: string) => void;
   isFreePhone: boolean;
   reachableCount: number;
-  withoutPhone: number;
+  smsCount: number;
+  emailCount: number;
+  noneCount: number;
 }) {
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-5">
@@ -395,9 +439,7 @@ function RecipientPicker({
                   onChange={() => togglePilgrim(pilgrim.id)}
                 />
                 <span className="flex-1 text-gray-800">{pilgrim.name}</span>
-                <span className={pilgrim.phone ? "text-gray-500" : "text-amber-600"}>
-                  {pilgrim.phone ? formatPhone(pilgrim.phone) : "sans numéro"}
-                </span>
+                <ChannelBadge phone={pilgrim.phone} email={pilgrim.email} />
               </label>
             ))}
             {!filtered.length && (
@@ -416,18 +458,21 @@ function RecipientPicker({
             placeholder="Nom (facultatif)"
             className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
           />
-          <input
-            value={freePhone}
-            onChange={(event) => setFreePhone(event.target.value)}
-            placeholder="+227 89 12 34 56"
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-          />
+          <PhoneInput value={freePhone} onChange={setFreePhone} />
         </div>
       </div>
 
-      <div className="mt-4 rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700">
-        <strong>{reachableCount}</strong> joignable(s)
-        {withoutPhone > 0 && <> · {withoutPhone} sans numéro (ignorés)</>}
+      <div className="mt-4 space-y-1 rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700">
+        <p>
+          <strong className="text-emerald-700">{smsCount}</strong> par SMS
+          <span className="text-xs text-gray-500"> (Niger)</span> ·{" "}
+          <strong className="text-sky-700">{emailCount}</strong> par email
+          {noneCount > 0 && <> · <strong className="text-amber-600">{noneCount}</strong> sans canal</>}
+        </p>
+        <p className="text-xs text-gray-500">
+          {reachableCount} destinataire(s) joignable(s) sur {smsCount + emailCount + noneCount}.
+          Les numéros hors Niger reçoivent le message par email.
+        </p>
       </div>
     </section>
   );
@@ -440,6 +485,8 @@ function MessageComposer({
   setBody,
   segments,
   recipientCount,
+  smsCount,
+  emailCount,
   busy,
   onSend,
 }: {
@@ -447,6 +494,8 @@ function MessageComposer({
   setBody: (value: string) => void;
   segments: number;
   recipientCount: number;
+  smsCount: number;
+  emailCount: number;
   busy: boolean;
   onSend: () => void;
 }) {
@@ -486,7 +535,18 @@ function MessageComposer({
         <span>
           {body.length} caractère(s) · <strong>{segments}</strong> SMS par destinataire
         </span>
-        <span>Total : {segments * recipientCount} SMS</span>
+        <span className="flex flex-wrap items-center gap-2">
+          {smsCount > 0 && (
+            <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+              {segments * smsCount} SMS
+            </span>
+          )}
+          {emailCount > 0 && (
+            <span className="rounded-full bg-sky-50 px-2 py-0.5 font-medium text-sky-700">
+              {emailCount} email(s)
+            </span>
+          )}
+        </span>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
@@ -520,7 +580,7 @@ function HistoryTable({ messages }: { messages: Message[] }) {
   if (!messages.length) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
-        Aucun SMS envoyé pour le moment.
+        Aucun message envoyé pour le moment.
       </div>
     );
   }
@@ -532,6 +592,7 @@ function HistoryTable({ messages }: { messages: Message[] }) {
           <tr>
             <th className="px-4 py-3">Date</th>
             <th className="px-4 py-3">Destinataire</th>
+            <th className="px-4 py-3">Canal</th>
             <th className="px-4 py-3">Source</th>
             <th className="px-4 py-3">Message</th>
             <th className="px-4 py-3">Statut</th>
@@ -545,7 +606,12 @@ function HistoryTable({ messages }: { messages: Message[] }) {
               </td>
               <td className="px-4 py-3">
                 <div className="text-gray-900">{message.recipientName ?? "-"}</div>
-                <div className="text-xs text-gray-500">{formatPhone(message.toNormalized)}</div>
+                <div className="text-xs text-gray-500">
+                  {formatPhoneDisplay(message.toNormalized) || message.to || "-"}
+                </div>
+              </td>
+              <td className="whitespace-nowrap px-4 py-3">
+                <ChannelTag channel={message.channel} />
               </td>
               <td className="whitespace-nowrap px-4 py-3 text-gray-600">
                 {SMS_SOURCE_LABELS[message.source as SmsSource] ?? message.source}
@@ -575,4 +641,53 @@ function StatusBadge({ status, error }: { status: string; error?: string | null 
       {SMS_STATUS_LABELS[status as SmsStatus] ?? status}
     </span>
   );
+}
+
+// ── Sous-composant : canal réellement utilisé pour un contact ────────────────
+// Règle métier : SMS uniquement vers le Niger (+227), sinon email, sinon rien.
+
+const CHANNEL_STYLES: Record<string, string> = {
+  SMS: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  EMAIL: "bg-sky-50 text-sky-700 border-sky-200",
+  NONE: "bg-gray-100 text-gray-500 border-gray-200",
+};
+
+const CHANNEL_ICONS: Record<string, string> = { SMS: "💬", EMAIL: "✉️", NONE: "—" };
+
+function ChannelTag({ channel }: { channel?: string | null }) {
+  const key = (channel ?? "SMS").toUpperCase();
+  const tone = CHANNEL_STYLES[key] ?? CHANNEL_STYLES.NONE;
+  const labels: Record<string, string> = { SMS: "SMS", EMAIL: "Email", NONE: "Aucun" };
+
+  return (
+    <span className={`rounded-full border px-2 py-1 text-xs font-medium ${tone}`}>
+      {CHANNEL_ICONS[key] ?? "—"} {labels[key] ?? key}
+    </span>
+  );
+}
+
+/** Affiche le canal utilisable + le numéro lisible (ou l'email). */
+function ChannelBadge({ phone, email }: { phone: string | null; email: string | null }) {
+  const channel = resolveChannel(phone, email);
+
+  if (channel === "SMS") {
+    return (
+      <span className="whitespace-nowrap text-xs text-emerald-700" title="SMS (Niger)">
+         {formatPhoneDisplay(phone)}
+      </span>
+    );
+  }
+
+  if (channel === "EMAIL") {
+    return (
+      <span
+        className="max-w-[14rem] truncate whitespace-nowrap text-xs text-sky-700"
+        title={`Email : ${email}${phone ? ` · ${formatPhoneDisplay(phone)} (pas de SMS hors Niger)` : ""}`}
+      >
+        ✉️ {email}
+      </span>
+    );
+  }
+
+  return <span className="whitespace-nowrap text-xs text-amber-600">— aucun contact</span>;
 }

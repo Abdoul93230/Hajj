@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { PILGRIM_COUNTRIES } from "@/lib/countries";
+import PhoneInput from "@/components/ui/PhoneInput";
 import type { SerializedPilgrim, SerializedOffer } from "./PilgrimsClient";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -383,12 +384,11 @@ export default function AddPilgrimModal({
                   <span className="text-red-400">*</span>
                 )}
               </label>
-              <input
-                type="tel"
+              <PhoneInput
                 value={form.phone}
-                onChange={(e) => handleField("phone", e.target.value)}
-                placeholder="+227 90 00 00 00"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                onChange={(e164) => handleField("phone", e164)}
+                countryName={form.country}
+                className="w-full"
               />
             </div>
           </div>
@@ -491,12 +491,11 @@ export default function AddPilgrimModal({
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
                   Téléphone du Contact
                 </label>
-                <input
-                  type="tel"
+                <PhoneInput
                   value={form.emergencyPhone}
-                  onChange={(e) => handleField("emergencyPhone", e.target.value)}
-                  placeholder="+227 90 00 00 00"
-                  className="w-full px-3 py-2 text-sm border border-orange-200 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300/50 focus:border-orange-400 placeholder:text-gray-300 transition"
+                  onChange={(e164) => handleField("emergencyPhone", e164)}
+                  countryName={form.country}
+                  className="w-full"
                 />
               </div>
             </div>

@@ -9,6 +9,8 @@ import {
   sendSms,
   smsErrorMessage,
 } from "@/lib/sms";
+import { isDeliverableEmail, isNigerNumber } from "@/lib/phone";
+import { isMailConfigured, sendNotificationEmail } from "@/lib/mail";
 // Constantes, libellés, modèles et formatage : définis dans `sms-segments.ts`
 // (module sans "server-only", donc utilisable aussi par les composants client).
 import {
@@ -57,6 +59,10 @@ export type SmsBatchResult = {
   batchId: string;
   total: number;
   sent: number;
+  /** Envoyés par SMS (+227 uniquement). */
+  sentSms: number;
+  /** Envoyés par email (diaspora). */
+  sentEmail: number;
   failed: number;
   skipped: number;
   segments: number;
@@ -115,15 +121,20 @@ export async function deliverSms(opts: {
   batchId?: string | null;
   sentById?: string | null;
   sentByName?: string | null;
+  /** Nom de l'agence (objet des emails de repli). */
+  tenantName?: string;
 }): Promise<SmsSendResult> {
   const db = prisma as Db;
   const config = getSmsConfig();
 
   const rawPhone = String(opts.recipient.phone ?? "").trim();
   const target = normalizePhone(rawPhone);
+  const email = String(opts.recipient.email ?? "").trim();
   const content = String(opts.body ?? "").trim();
   const name = opts.recipient.name ?? null;
+  const agencyName = opts.tenantName?.trim() || "Votre agence";
 
+  // Journal commun (le canal et la cible réelle sont ajoutés avant insertion)
   const base = {
     tenantId: opts.tenantId,
     to: rawPhone,
@@ -139,34 +150,68 @@ export async function deliverSms(opts: {
   };
 
   if (!content) {
-    const error = "Message vide";
-    await insertLog(db, { ...base, segments: 0, status: "SKIPPED", error });
-    return { to: rawPhone || null, name, status: "SKIPPED", segments: 0, error };
+    await insertLog(db, { ...base, channel: "NONE", segments: 0, status: "SKIPPED", error: "Message vide" });
+    return { to: rawPhone || null, name, status: "SKIPPED", segments: 0, error: "Message vide" };
   }
 
-  if (!target) {
-    const error = rawPhone ? "Numéro inexploitable" : "Aucun numéro";
-    await insertLog(db, { ...base, segments: 0, status: "SKIPPED", error });
-    return { to: rawPhone || null, name, status: "SKIPPED", segments: 0, error };
+  // ── Canal 1 : SMS — UNIQUEMENT vers le Niger (+227) ────────────────────────
+  if (target && isNigerNumber(target)) {
+    if (!isSmsConfigured()) {
+      const error = "Envoi SMS non configuré";
+      await insertLog(db, { ...base, channel: "SMS", segments: 0, status: "SKIPPED", error });
+      return { to: target, name, status: "SKIPPED", segments: 0, error };
+    }
+    const segments = countSmsSegments(content);
+    try {
+      const { providerMessageId } = await sendSms({ to: target, text: content });
+      await insertLog(db, { ...base, channel: "SMS", segments, status: "SENT", providerMessageId });
+      return { to: target, name, status: "SENT", segments };
+    } catch (err) {
+      const error = smsErrorMessage(err);
+      await insertLog(db, { ...base, channel: "SMS", segments, status: "FAILED", error });
+      return { to: target, name, status: "FAILED", segments, error };
+    }
   }
 
-  if (!isSmsConfigured()) {
-    const error = "Envoi SMS non configuré";
-    await insertLog(db, { ...base, segments: 0, status: "SKIPPED", error });
-    return { to: target, name, status: "SKIPPED", segments: 0, error };
+  // ── Canal 2 : EMAIL — pèlerins hors Niger (diaspora) ───────────────────────
+  if (isDeliverableEmail(email)) {
+    if (!isMailConfigured()) {
+      const error = "SMTP non configuré";
+      await insertLog(db, {
+        ...base, to: email, toNormalized: email, channel: "EMAIL", sender: "SMTP",
+        segments: 0, status: "SKIPPED", error,
+      });
+      return { to: email, name, status: "SKIPPED", segments: 0, error };
+    }
+    try {
+      const { messageId } = await sendNotificationEmail({
+        to: email,
+        userName: name,
+        tenantName: agencyName,
+        subject: "Message de votre agence",
+        text: content,
+      });
+      await insertLog(db, {
+        ...base, to: email, toNormalized: email, channel: "EMAIL", sender: "SMTP",
+        segments: 0, status: "SENT", providerMessageId: messageId || null,
+      });
+      return { to: email, name, status: "SENT", segments: 0 };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : "Erreur email";
+      await insertLog(db, {
+        ...base, to: email, toNormalized: email, channel: "EMAIL", sender: "SMTP",
+        segments: 0, status: "FAILED", error,
+      });
+      return { to: email, name, status: "FAILED", segments: 0, error };
+    }
   }
 
-  const segments = countSmsSegments(content);
-
-  try {
-    const { providerMessageId } = await sendSms({ to: target, text: content });
-    await insertLog(db, { ...base, segments, status: "SENT", providerMessageId });
-    return { to: target, name, status: "SENT", segments };
-  } catch (err) {
-    const error = smsErrorMessage(err);
-    await insertLog(db, { ...base, segments, status: "FAILED", error });
-    return { to: target, name, status: "FAILED", segments, error };
-  }
+  // ── Aucun canal : pas de SMS (hors Niger), pas d'email exploitable ─────────
+  const error = rawPhone
+    ? "Hors Niger : SMS réservé au +227, et aucun email valide"
+    : "Aucun numéro (+227) ni email valide";
+  await insertLog(db, { ...base, channel: "NONE", segments: 0, status: "SKIPPED", error });
+  return { to: rawPhone || null, name, status: "SKIPPED", segments: 0, error };
 }
 
 // Envoi groupé
@@ -186,12 +231,26 @@ export async function sendBulkSms(opts: {
   sentByName?: string | null;
 }): Promise<SmsBatchResult> {
   const batchId = newBatchId();
+
+  // Nom de l'agence une seule fois (objet des emails de repli)
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: opts.tenantId },
+    select: { name: true },
+  });
+  const tenantName = tenant?.name ?? "Votre agence";
+
+  // Déduplication : un même numéro nigérien = un SMS, un même email = un email
   const seen = new Set<string>();
   const unique: SmsRecipient[] = [];
 
   for (const recipient of opts.recipients) {
-    const key =
-      normalizePhone(recipient.phone) ?? `sans-numero:${recipient.userId ?? unique.length}`;
+    const phone = normalizePhone(recipient.phone);
+    const email = String(recipient.email ?? "").trim().toLowerCase();
+    const key = phone && isNigerNumber(phone)
+      ? `sms:${phone}`
+      : isDeliverableEmail(email)
+        ? `email:${email}`
+        : `none:${recipient.userId ?? unique.length}`;
     if (seen.has(key)) continue;
     seen.add(key);
     unique.push(recipient);
@@ -210,6 +269,7 @@ export async function sendBulkSms(opts: {
         batchId,
         sentById: opts.sentById,
         sentByName: opts.sentByName,
+        tenantName,
       })
     );
   }
@@ -218,6 +278,8 @@ export async function sendBulkSms(opts: {
     batchId,
     total: results.length,
     sent: results.filter((r) => r.status === "SENT").length,
+    sentSms: results.filter((r) => r.status === "SENT" && r.to?.startsWith("+")).length,
+    sentEmail: results.filter((r) => r.status === "SENT" && r.to?.includes("@")).length,
     failed: results.filter((r) => r.status === "FAILED").length,
     skipped: results.filter((r) => r.status === "SKIPPED").length,
     segments: results.reduce((sum, r) => sum + r.segments, 0),
@@ -231,7 +293,7 @@ export async function sendBulkSms(opts: {
 
 // Résolution des destinataires
 
-const PILGRIM_SELECT = { id: true, name: true, phone: true } as const;
+const PILGRIM_SELECT = { id: true, name: true, phone: true, email: true } as const;
 
 /**
  * Pèlerins d'une audience :
@@ -241,8 +303,13 @@ const PILGRIM_SELECT = { id: true, name: true, phone: true } as const;
  */
 export async function resolveAudience(
   tenantId: string,
-  filter: { audience: SmsAudience; voyageId?: string | null; ids?: string[] }
+  filter: { audience: SmsAudience; voyageId?: string | null; ids?: string[]; year?: number }
 ): Promise<SmsRecipient[]> {
+  const year = filter.year ?? new Date().getFullYear();
+  const from = new Date(year, 0, 1);
+  const to = new Date(year + 1, 0, 1);
+  const createdThisYear = { createdAt: { gte: from, lt: to } };
+
   if (filter.audience === "IDS") {
     const ids = (filter.ids ?? []).filter(Boolean);
     if (!ids.length) return [];
@@ -250,7 +317,7 @@ export async function resolveAudience(
       where: { tenantId, role: "PILGRIM", id: { in: ids } },
       select: PILGRIM_SELECT,
     });
-    return users.map((u) => ({ userId: u.id, name: u.name, phone: u.phone }));
+    return users.map((u) => ({ userId: u.id, name: u.name, phone: u.phone, email: u.email }));
   }
 
   if (filter.audience === "VOYAGE") {
@@ -260,17 +327,16 @@ export async function resolveAudience(
       select: { user: { select: PILGRIM_SELECT } },
     });
     return reservations
-      .map((r) => r.user)
-      .filter((u): u is { id: string; name: string; phone: string | null } => !!u)
-      .map((u) => ({ userId: u.id, name: u.name, phone: u.phone }));
+      .flatMap((r) => (r.user ? [r.user] : []))
+      .map((u) => ({ userId: u.id, name: u.name, phone: u.phone, email: u.email }));
   }
 
   const users = await prisma.user.findMany({
-    where: { tenantId, role: "PILGRIM", active: true },
+    where: { tenantId, role: "PILGRIM", active: true, ...createdThisYear },
     select: PILGRIM_SELECT,
     orderBy: { name: "asc" },
   });
-  return users.map((u) => ({ userId: u.id, name: u.name, phone: u.phone }));
+  return users.map((u) => ({ userId: u.id, name: u.name, phone: u.phone, email: u.email }));
 }
 
 /**
@@ -279,16 +345,18 @@ export async function resolveAudience(
  */
 export async function resolveAgencyRecipients(tenantId: string): Promise<SmsRecipient[]> {
   const [tenant, admins] = await Promise.all([
-    prisma.tenant.findUnique({ where: { id: tenantId }, select: { name: true, phone: true } }),
+    prisma.tenant.findUnique({ where: { id: tenantId }, select: { name: true, phone: true, email: true } }),
     prisma.user.findMany({
-      where: { tenantId, role: "AGENCY_ADMIN", active: true, phone: { not: null } },
-      select: { id: true, name: true, phone: true },
+      where: { tenantId, role: { in: ["AGENCY_ADMIN", "AGENCY_AGENT"] }, active: true },
+      select: { id: true, name: true, phone: true, email: true },
     }),
   ]);
 
   const list: SmsRecipient[] = [];
-  if (tenant?.phone) list.push({ name: tenant.name, phone: tenant.phone });
-  for (const admin of admins) list.push({ userId: admin.id, name: admin.name, phone: admin.phone });
+  if (tenant) list.push({ name: tenant.name, phone: tenant.phone, email: tenant.email });
+  for (const admin of admins) {
+    list.push({ userId: admin.id, name: admin.name, phone: admin.phone, email: admin.email });
+  }
   return list;
 }
 
@@ -301,6 +369,7 @@ export async function getPilgrimBalance(tenantId: string, pilgrimId: string) {
     select: {
       name: true,
       phone: true,
+      email: true,
       reservations: {
         select: { totalAmount: true, offer: { select: { priceAdult: true, currency: true } } },
         orderBy: { createdAt: "desc" },
@@ -389,6 +458,8 @@ export type TenantSmsStat = {
   tenantSlug: string;
   tenantStatus: string;
   sent: number;
+  /** Répartition du canal parmi les envoyés : SMS (+227) vs email (diaspora). */
+  channels: { sms: number; email: number };
   failed: number;
   skipped: number;
   segments: number;
@@ -432,7 +503,7 @@ export async function getSmsStatsByTenant(
     ...(start ? { createdAt: { gte: start } } : {}),
   };
 
-  const [grouped, todayTotals, sourceGroups] = await Promise.all([
+  const [grouped, todayTotals, sourceGroups, channelGroups] = await Promise.all([
     db.smsMessage.groupBy({
       by: ["tenantId", "status"],
       where: base,
@@ -442,6 +513,11 @@ export async function getSmsStatsByTenant(
     countFor(db, { tenantId: { in: tenantIds }, createdAt: { gte: todayStart } }),
     db.smsMessage.groupBy({
       by: ["tenantId", "source"],
+      where: { ...base, status: "SENT" },
+      _count: { _all: true },
+    }),
+    db.smsMessage.groupBy({
+      by: ["tenantId", "channel"],
       where: { ...base, status: "SENT" },
       _count: { _all: true },
     }),
@@ -461,6 +537,7 @@ export async function getSmsStatsByTenant(
       tenantSlug: tenant.slug,
       tenantStatus: tenant.status,
       sent: 0,
+      channels: { sms: 0, email: 0 },
       failed: 0,
       skipped: 0,
       segments: 0,
@@ -484,6 +561,13 @@ export async function getSmsStatsByTenant(
     const row = rows.get(group.tenantId);
     if (!row) continue;
     row.bySource[group.source] = group._count?._all ?? 0;
+  }
+
+  for (const group of channelGroups) {
+    const row = rows.get(group.tenantId);
+    if (!row) continue;
+    if (group.channel === "EMAIL") row.channels.email = group._count?._all ?? 0;
+    else row.channels.sms = group._count?._all ?? 0;
   }
 
   for (const item of lastByTenant) {
@@ -529,7 +613,7 @@ export async function getSmsStatsByTenant(
  */
 export function notifyAccountCreated(opts: {
   tenantId: string;
-  pilgrim: { id: string; name: string; phone?: string | null };
+  pilgrim: { id: string; name: string; phone?: string | null; email?: string | null };
   source: "ADMIN" | "PORTAL";
   actor?: { id: string; name: string } | null;
 }) {
@@ -541,14 +625,20 @@ export function notifyAccountCreated(opts: {
       });
       const agency = tenant?.name ?? "Votre agence";
 
-      // 1. SMS au pèlerin
+      // 1. Au pèlerin (SMS si +227, sinon email, sinon rien)
       await deliverSms({
         tenantId: opts.tenantId,
-        recipient: { userId: opts.pilgrim.id, name: opts.pilgrim.name, phone: opts.pilgrim.phone },
+        recipient: {
+          userId: opts.pilgrim.id,
+          name: opts.pilgrim.name,
+          phone: opts.pilgrim.phone,
+          email: opts.pilgrim.email,
+        },
         body:
           `${agency} : bienvenue ${opts.pilgrim.name} ! Votre compte pèlerin est créé. ` +
           "Complétez votre dossier pour finaliser votre inscription.",
         source: "ACCOUNT",
+        tenantName: agency,
       });
 
       // 2. SMS à l'agence
@@ -580,7 +670,7 @@ export function notifyAccountCreated(opts: {
  */
 export function notifyPaymentReceived(opts: {
   tenantId: string;
-  pilgrim: { id: string; name: string; phone?: string | null };
+  pilgrim: { id: string; name: string; phone?: string | null; email?: string | null };
   amount: number;
   isRefund?: boolean;
   actor?: { id: string; name: string } | null;
@@ -601,14 +691,20 @@ export function notifyPaymentReceived(opts: {
       const isRefund = opts.isRefund === true;
       const label = isRefund ? "remboursement" : "versement";
 
-      // 1. SMS au pèlerin
+      // 1. Au pèlerin (SMS si +227, sinon email, sinon rien)
       await deliverSms({
         tenantId: opts.tenantId,
-        recipient: { userId: opts.pilgrim.id, name: opts.pilgrim.name, phone: opts.pilgrim.phone },
+        recipient: {
+          userId: opts.pilgrim.id,
+          name: opts.pilgrim.name,
+          phone: opts.pilgrim.phone,
+          email: opts.pilgrim.email,
+        },
         body:
           `${agency} : ${label} de ${amountLabel} enregistre` +
           (balanceLabel ? `. Solde restant : ${balanceLabel}.` : "."),
         source: "PAYMENT",
+        tenantName: agency,
       });
 
       // 2. SMS à l'agence

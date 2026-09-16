@@ -25,6 +25,8 @@ export type SmsRecipient = {
   userId?: string | null;
   name?: string | null;
   phone?: string | null;
+  /** Canal de repli : les non-Niger reçoivent le message par email. */
+  email?: string | null;
 };
 
 export const SMS_STATUS_LABELS: Record<SmsStatus, string> = {
@@ -121,14 +123,11 @@ export function smsLength(text: string): { length: number; gsm: boolean } {
   return { length, gsm: true };
 }
 
-/** Affichage lisible : « +22789123456 » → « +227 89 12 34 56 ». */
-export function formatPhone(phone?: string | null): string {
-  const value = String(phone ?? "");
-  if (!/^\+\d{7,15}$/.test(value)) return value;
-  const digits = value.slice(1);
-  const groups = digits.slice(-8).replace(/(\d{2})(?=\d)/g, "$1 ");
-  return `+${digits.slice(0, -8)} ${groups}`.trim();
-}
+/**
+ * Affichage lisible d'un numéro : « +22790123456 » → « +227 90 12 34 56 ».
+ * Délégué à `phone.ts` : l'espacement suit le découpage du pays (Niger, France…).
+ */
+export { formatPhoneDisplay as formatPhone } from "@/lib/phone";
 
 /** « 1500000 FCFA » — espace simple : reste GSM-7 (1 seul segment). */
 export function formatAmount(amount: number, currency = "FCFA"): string {

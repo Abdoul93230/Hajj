@@ -108,10 +108,15 @@ export async function POST(req: Request) {
     const audience = ["ALL", "VOYAGE", "IDS"].includes(payload.audience)
       ? payload.audience
       : "IDS";
+    // Année de travail : alignée sur le sélecteur de l'application (comme les
+    // autres modules) — « Tous les pèlerins » = pèlerins créés cette année-là.
+    const parsedYear = parseInt(String(payload.year ?? ""), 10);
+    const year = Number.isInteger(parsedYear) ? parsedYear : new Date().getFullYear();
     recipients = await resolveAudience(tenantId, {
       audience,
       voyageId: payload.voyageId ?? null,
       ids: Array.isArray(payload.ids) ? payload.ids : [],
+      year,
     });
   }
 
@@ -154,6 +159,8 @@ export async function POST(req: Request) {
     batchId: result.batchId,
     total: result.total,
     sent: result.sent,
+    sentSms: result.sentSms,
+    sentEmail: result.sentEmail,
     failed: result.failed,
     skipped: result.skipped,
     segments: result.segments,

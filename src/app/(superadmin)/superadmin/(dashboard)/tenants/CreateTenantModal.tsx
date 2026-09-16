@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import PhoneInput from "@/components/ui/PhoneInput";
 
 const COUNTRIES = [
   { code: "NE", label: "Niger" },
@@ -179,12 +180,11 @@ export default function CreateTenantModal({
                 </div>
                 <div>
                   <label className="block text-gray-400 text-xs font-semibold mb-1.5">Téléphone</label>
-                  <input
-                    type="tel"
+                  <PhoneInput
                     value={form.phone}
-                    onChange={(e) => setField("phone", e.target.value)}
-                    placeholder="+227 96 00 00 00"
-                    className="w-full bg-gray-900 border border-gray-600 text-white text-sm rounded-xl px-3 py-2.5 placeholder-gray-600 focus:outline-none focus:border-amber-500"
+                    onChange={(e164) => setField("phone", e164)}
+                    dark
+                    className="w-full"
                   />
                 </div>
               </div>

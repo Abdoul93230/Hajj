@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { MapPin, Phone, Send } from "lucide-react";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
+import PhoneInput from "@/components/ui/PhoneInput";
 
 export default function ContactPage() {
   const t = useTranslations("contact");
@@ -86,11 +87,10 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t("phone")}</label>
-                    <input
-                      type="tel"
+                    <PhoneInput
                       value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      onChange={(e164) => setForm({ ...form, phone: e164 })}
+                      className="w-full"
                     />
                   </div>
                   <div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
@@ -20,17 +21,28 @@ export default async function MessagesPage({
   const sp = await searchParams;
   const initialPilgrimId = typeof sp.pilgrim === "string" ? sp.pilgrim : undefined;
 
+  // ── Année sélectionnée (même mécanique que Pèlerins / Paiements) ──────────
+  const cookieStore = await cookies();
+  const cookieYear = cookieStore.get("zam_selected_year")?.value;
+  const currentYear = new Date().getFullYear();
+  const parsedYear = cookieYear ? parseInt(cookieYear, 10) : NaN;
+  const selectedYear = !isNaN(parsedYear) ? parsedYear : currentYear;
+
+  const from = new Date(selectedYear, 0, 1);
+  const to = new Date(selectedYear + 1, 0, 1);
+  // ─────────────────────────────────────────────────────────────────────────
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = prisma as any;
 
   const [pilgrims, offers, reservations, counters, history] = await Promise.all([
     prisma.user.findMany({
-      where: { tenantId, role: "PILGRIM", active: true },
-      select: { id: true, name: true, phone: true },
+      where: { tenantId, role: "PILGRIM", active: true, createdAt: { gte: from, lt: to } },
+      select: { id: true, name: true, phone: true, email: true },
       orderBy: { name: "asc" },
     }),
     prisma.offer.findMany({
-      where: { tenantId, active: true },
+      where: { tenantId, active: true, createdAt: { gte: from, lt: to } },
       select: { id: true, titleFr: true, departureDate: true },
       orderBy: { departureDate: "desc" },
     }),
@@ -49,6 +61,7 @@ export default async function MessagesPage({
         toNormalized: true,
         recipientName: true,
         recipientId: true,
+        channel: true,
         body: true,
         segments: true,
         source: true,
@@ -93,6 +106,7 @@ export default async function MessagesPage({
       sender={getSmsConfig().sender}
       configured={isSmsConfigured()}
       initialPilgrimId={initialPilgrimId}
+      selectedYear={selectedYear}
     />
   );
 }
