@@ -13,25 +13,14 @@ function formatDate(d: Date) {
   return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]} À ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`;
 }
 
+// Uniquement les pages implémentées — les segments inconnus retombent
+// sur « Tableau de bord » (voir getPageTitle).
 const PAGE_TITLES: Record<string, string> = {
   "":           "Tableau de bord",
   "pilgrims":   "Registre de gestion des Pèlerins",
   "voyages":    "Planification des Voyages & Forfaits",
-  "groups":     "Groupes de Pèlerins",
-  "passports":  "Passeports & Visas",
-  "flights":    "Billets d'avion",
-  "hotels":     "Hôtels & Chambres",
-  "transports": "Transports",
-  "guides":     "Guides & Accompagnateurs",
+  "documents":  "Documents Pèlerins",
   "payments":   "Paiements",
-  "credits":    "Crédits & Soldes",
-  "invoices":   "Factures & Devis",
-  "documents":  "Documents",
-  "planning":   "Planning",
-  "messages":   "Messages",
-  "team":       "Équipe",
-  "portal":     "Portail Public",
-  "settings":   "Paramètres",
 };
 
 function getPageTitle(pathname: string): string {
