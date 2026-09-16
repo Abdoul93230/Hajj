@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { User, Lock, Mail, Eye, EyeOff } from "lucide-react";
+import { User, Lock, Mail, Eye, EyeOff, Phone } from "lucide-react";
 import ForgotPassword from "./ForgotPassword";
 
 type Tab = "login" | "register";
@@ -14,7 +14,7 @@ export default function CompteClient() {
   const [tab, setTab] = useState<Tab>("login");
   const [forgotMode, setForgotMode] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", phone: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -57,7 +57,7 @@ export default function CompteClient() {
       } else {
         setError("");
         setTab("login");
-        setForm({ name: "", email: form.email, password: "" });
+        setForm({ name: "", email: form.email, password: "", phone: "" });
       }
     } finally {
       setLoading(false);
@@ -176,6 +176,22 @@ export default function CompteClient() {
       />
     </div>
   </div>
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {t("phone")}{" "}
+      <span className="text-gray-400 font-normal">{t("phoneOptional")}</span>
+    </label>
+    <div className="relative">
+      <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+      <input
+        type="tel" value={form.phone}
+        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+        className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      />
+    </div>
+    <p className="text-gray-400 text-xs mt-1">{t("phoneHint")}</p>
+  </div>
+
   <div>
     <label className="block text-sm font-medium text-gray-700 mb-1">{t("password")}</label>
     <div className="relative">

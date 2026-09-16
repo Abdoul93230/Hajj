@@ -169,6 +169,8 @@ export default async function MonDossierPage({ params }: Props) {
           <ProfileEditClient
             initial={{
               phone: pilgrim.phone,
+              city: pilgrim.city,
+              country: pilgrim.country,
               address: pilgrim.address,
               emergencyName: pilgrim.emergencyName,
               emergencyPhone: pilgrim.emergencyPhone,

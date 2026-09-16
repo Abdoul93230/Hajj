@@ -2,27 +2,10 @@
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { PILGRIM_COUNTRIES } from "@/lib/countries";
 import type { SerializedPilgrim, SerializedOffer } from "./PilgrimsClient";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-
-const COUNTRIES = [
-  "Niger",
-  "Mali",
-  "Sénégal",
-  "Burkina Faso",
-  "Côte d'Ivoire",
-  "Guinée",
-  "Ghana",
-  "Nigeria",
-  "Cameroun",
-  "France",
-  "Maroc",
-  "Algérie",
-  "Mauritanie",
-  "Bénin",
-  "Togo",
-];
 
 const STATUT_DISPLAY: Record<string, { label: string; color: string }> = {
   NOUVEAU:     { label: "Nouveau",      color: "bg-gray-100 text-gray-500" },
@@ -104,6 +87,19 @@ export default function AddPilgrimModal({
     offerId:     currentOfferId,
   });
 
+  // Champs « recommandés » manquants (jamais bloquants) : ils alimentent le
+  // bandeau « Dossier à compléter » et le suivi dans la liste des pèlerins.
+  const missingFields = useMemo(() => {
+    const missing: string[] = [];
+    if (!form.phone.trim()) missing.push("téléphone");
+    if (!form.city.trim()) missing.push("ville");
+    if (!form.country) missing.push("pays");
+    if (!form.emergencyName.trim() || !form.emergencyPhone.trim()) {
+      missing.push("contact d'urgence");
+    }
+    return missing;
+  }, [form.phone, form.city, form.country, form.emergencyName, form.emergencyPhone]);
+
   // Close on Escape
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -130,24 +126,19 @@ export default function AddPilgrimModal({
     e.preventDefault();
     setError("");
 
+    // ── Champs obligatoires ──────────────────────────────────────────────────
+    // Seul le NOM est indispensable en modification : un pèlerin inscrit seul
+    // sur le portail public n'a que nom + email, et l'agence ne doit pas être
+    // bloquée pour corriger un nom, un statut ou un voyage.
+    // À la CRÉATION on demande en plus le téléphone (c'est la donnée dont
+    // l'agence a besoin pour joindre le pèlerin). Le reste est « recommandé »
+    // → bandeau « Dossier à compléter », jamais bloquant (l'API non plus).
     if (!form.name.trim()) {
       setError("Le nom complet est obligatoire.");
       return;
     }
-    if (!form.phone.trim()) {
-      setError("Le téléphone est obligatoire.");
-      return;
-    }
-    if (!form.city.trim()) {
-      setError("La ville est obligatoire.");
-      return;
-    }
-    if (!form.country) {
-      setError("Le pays est obligatoire.");
-      return;
-    }
-    if (!form.emergencyName.trim() || !form.emergencyPhone.trim()) {
-      setError("Le contact d'urgence (nom et téléphone) est obligatoire.");
+    if (!isEdit && !form.phone.trim()) {
+      setError("Le téléphone est obligatoire à la création du pèlerin.");
       return;
     }
 
@@ -270,6 +261,21 @@ export default function AddPilgrimModal({
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-5">
+          {/* ── Dossier à compléter (informatif, jamais bloquant) ── */}
+          {missingFields.length > 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">
+                Dossier à compléter
+              </p>
+              <p className="text-xs text-amber-800 leading-snug">
+                À renseigner quand vous les avez :{" "}
+                <span className="font-semibold">{missingFields.join(", ")}</span>. Vous pouvez
+                enregistrer dès maintenant — le pèlerin peut aussi les saisir lui-même depuis son
+                portail (« Modifier mes informations »).
+              </p>
+            </div>
+          )}
+
           {/* ── Photo upload ── */}
           <div
             className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center cursor-pointer hover:border-[#0f5132]/40 hover:bg-[#0f5132]/[0.02] transition"
@@ -341,7 +347,7 @@ export default function AddPilgrimModal({
             </div>
             <div className="col-span-2 sm:col-span-1">
               <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
-                Genre <span className="text-red-400">*</span>
+                Genre <span className="text-gray-400 font-normal normal-case tracking-normal">(facultatif)</span>
               </label>
               <select
                 value={form.gender}
@@ -359,7 +365,7 @@ export default function AddPilgrimModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
-                Date de Naissance <span className="text-red-400">*</span>
+                Date de Naissance <span className="text-gray-400 font-normal normal-case tracking-normal">(facultatif)</span>
               </label>
               <input
                 type="date"
@@ -370,7 +376,12 @@ export default function AddPilgrimModal({
             </div>
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
-                Téléphone <span className="text-red-400">*</span>
+                Téléphone{" "}
+                {isEdit ? (
+                  <span className="text-gray-400 font-normal normal-case tracking-normal">(recommandé)</span>
+                ) : (
+                  <span className="text-red-400">*</span>
+                )}
               </label>
               <input
                 type="tel"
@@ -414,7 +425,7 @@ export default function AddPilgrimModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
-                Ville <span className="text-red-400">*</span>
+                Ville <span className="text-gray-400 font-normal normal-case tracking-normal">(recommandé)</span>
               </label>
               <input
                 type="text"
@@ -426,7 +437,7 @@ export default function AddPilgrimModal({
             </div>
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
-                Pays <span className="text-red-400">*</span>
+                Pays <span className="text-gray-400 font-normal normal-case tracking-normal">(recommandé)</span>
               </label>
               <select
                 value={form.country}
@@ -434,7 +445,7 @@ export default function AddPilgrimModal({
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition cursor-pointer"
               >
                 <option value="">Sélectionner</option>
-                {COUNTRIES.map((c) => (
+                {PILGRIM_COUNTRIES.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
@@ -461,12 +472,12 @@ export default function AddPilgrimModal({
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              Contact d&apos;urgence (Obligatoire)
+              Contact d&apos;urgence (recommandé)
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
-                  Nom du Contact <span className="text-red-400">*</span>
+                  Nom du Contact
                 </label>
                 <input
                   type="text"
@@ -478,7 +489,7 @@ export default function AddPilgrimModal({
               </div>
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
-                  Téléphone du Contact <span className="text-red-400">*</span>
+                  Téléphone du Contact
                 </label>
                 <input
                   type="tel"

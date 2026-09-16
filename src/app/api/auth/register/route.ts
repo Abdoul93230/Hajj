@@ -6,7 +6,7 @@ import { resolveTenantSlugFromHost } from "@/lib/tenant-slug";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, phone } = await req.json();
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
     }
@@ -44,8 +44,19 @@ export async function POST(req: Request) {
 
     const hash = await bcrypt.hash(password, 12);
     const user = await prisma.user.create({
-      data: { name, email, password: hash, tenantId: tenant.id, role: "PILGRIM" },
-      select: { id: true, name: true, email: true, role: true },
+      // Volontairement minimal (comme le portail) : nom + email + mot de passe.
+      // `phone` est facultatif mais recommandé — c'est la donnée dont l'agence a
+      // besoin pour joindre le pèlerin. Le reste (ville, pays, contact d'urgence)
+      // se complète ensuite depuis le portail pèlerin ou par l'agence.
+      data: {
+        name,
+        email,
+        password: hash,
+        phone: phone?.trim() || null,
+        tenantId: tenant.id,
+        role: "PILGRIM",
+      },
+      select: { id: true, name: true, email: true, phone: true, role: true },
     });
 
     return NextResponse.json(user, { status: 201 });

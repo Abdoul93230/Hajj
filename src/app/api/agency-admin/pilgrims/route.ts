@@ -80,6 +80,16 @@ export async function POST(req: Request) {
   if (!name) {
     return NextResponse.json({ error: "Le nom complet est requis" }, { status: 400 });
   }
+  // Le téléphone est demandé à la CRÉATION (comme dans la modale pèlerin) :
+  // c'est la donnée dont l'agence a besoin pour joindre le pèlerin.
+  // En modification (PUT) il reste facultatif — un pèlerin inscrit seul sur le
+  // portail public n'a que nom + email, l'agence ne doit pas être bloquée.
+  if (!phone?.trim()) {
+    return NextResponse.json(
+      { error: "Le téléphone est requis à la création du pèlerin" },
+      { status: 400 }
+    );
+  }
 
   // Generate email if not provided
   const finalEmail = email?.trim()

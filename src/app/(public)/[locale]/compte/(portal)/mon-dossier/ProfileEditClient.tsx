@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Pencil } from "lucide-react";
+import { countryOptions } from "@/lib/countries";
 
 type Props = {
   initial: {
     phone: string | null;
+    city: string | null;
+    country: string | null;
     address: string | null;
     emergencyName: string | null;
     emergencyPhone: string | null;
@@ -22,10 +25,15 @@ export default function ProfileEditClient({ initial }: Props) {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [form, setForm] = useState({
     phone: initial.phone ?? "",
+    city: initial.city ?? "",
+    country: initial.country ?? "",
     address: initial.address ?? "",
     emergencyName: initial.emergencyName ?? "",
     emergencyPhone: initial.emergencyPhone ?? "",
   });
+
+  // Même liste de pays que la modale pèlerin de l'espace agence
+  const countries = useMemo(() => countryOptions(initial.country), [initial.country]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -95,6 +103,32 @@ export default function ProfileEditClient({ initial }: Props) {
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  {t("city")}
+                </label>
+                <input
+                  type="text"
+                  value={form.city}
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  {t("country")}
+                </label>
+                <select
+                  value={form.country}
+                  onChange={(e) => setForm({ ...form, country: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white cursor-pointer"
+                >
+                  <option value="">—</option>
+                  {countries.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
