@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TenantInspectClient from "./TenantInspectClient";
-import TenantThemeEditor from "./TenantThemeEditor";
 
 export const metadata: Metadata = { title: "Inspection agence" };
 
@@ -126,7 +126,20 @@ export default async function TenantInspectPage({
   return (
     <div className="space-y-6">
       <TenantInspectClient {...data} />
-      <TenantThemeEditor tenantId={tenant.id} theme={tenant.theme} />
+      <Link
+        href={`/superadmin/tenants/${tenant.id}/personnalisation`}
+        className="block bg-white rounded-2xl border border-gray-200 p-5 hover:border-gray-400 hover:shadow-sm transition"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-bold text-gray-900">🎨 Personnalisation de l&apos;agence</h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Couleurs, logo, contact et textes du portail public — dans des pages dédiées.
+            </p>
+          </div>
+          <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">Ouvrir →</span>
+        </div>
+      </Link>
     </div>
   );
 }
