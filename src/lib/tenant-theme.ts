@@ -98,3 +98,104 @@ export function themeStyleTag(raw: unknown): string {
     .join("");
   return `:root{${body}}`;
 }
+
+// ── Batch 2 : contenus éditoriaux (textes) + branding ──────────────────────
+
+/** Valeur localisée ({fr,en,ar}) ou chaîne simple → texte pour `locale`, fallback fr. */
+export function pickLocalized(value: unknown, locale: string): string | null {
+  if (value == null) return null;
+  if (typeof value === "string") return value.trim() ? value : null;
+  if (typeof value === "object") {
+    const o = value as Record<string, unknown>;
+    for (const l of [locale, "fr", "en", "ar"]) {
+      const v = o[l];
+      if (typeof v === "string" && v.trim()) return v;
+    }
+  }
+  return null;
+}
+
+function str(v: unknown): string | null {
+  return typeof v === "string" && v.trim() ? v.trim() : null;
+}
+
+export type TenantBranding = {
+  tenantName: string;
+  logoUrl: string | null;
+  whatsappNumber: string | null;
+  facebookUrl: string | null;
+  tiktokUrl: string | null;
+  phone: string | null;
+  heroTitle: string | null;
+  heroSubtitle: string | null;
+  footerDescription: string | null;
+  metaDescription: string | null;
+};
+
+/**
+ * Construit l'objet branding (textes résolus pour `locale`) sérialisable
+ * vers le provider client. Source : Tenant.theme = {
+ *   logoUrl, whatsappNumber, phone, facebookUrl, tiktokUrl,
+ *   content: { heroTitle: {fr,en,ar}, heroSubtitle, footerDescription, metaDescription }
+ * }
+ */
+export function readTenantBranding(raw: unknown, locale: string, tenantName: string): TenantBranding {
+  const t = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+  const c = t.content && typeof t.content === "object" ? (t.content as Record<string, unknown>) : {};
+  return {
+    tenantName,
+    logoUrl: str(t.logoUrl),
+    whatsappNumber: str(t.whatsappNumber),
+    facebookUrl: str(t.facebookUrl),
+    tiktokUrl: str(t.tiktokUrl),
+    phone: str(t.phone),
+    heroTitle: pickLocalized(c.heroTitle, locale),
+    heroSubtitle: pickLocalized(c.heroSubtitle, locale),
+    footerDescription: pickLocalized(c.footerDescription, locale),
+    metaDescription: pickLocalized(c.metaDescription, locale),
+  };
+}
+
+/**
+ * Fusionne un patch de thème (éditeur superadmin) dans le thème existant.
+ * - couleurs normalisées (hex invalide → défaut) ;
+ * - valeurs texte vides → null (efface) ;
+ * - content fusionné clé par clé et locale par locale (chaîne vide → retire).
+ */
+export function mergeTenantTheme(
+  existing: unknown,
+  patch: Record<string, unknown>
+): Record<string, unknown> {
+  const base: Record<string, unknown> =
+    existing && typeof existing === "object" ? { ...(existing as Record<string, unknown>) } : {};
+
+  for (const k of ["logoUrl", "whatsappNumber", "phone", "facebookUrl", "tiktokUrl"]) {
+    if (patch[k] !== undefined) {
+      const v = patch[k];
+      base[k] = typeof v === "string" && v.trim() ? v.trim() : null;
+    }
+  }
+  if (typeof patch.primaryColor === "string" && patch.primaryColor.trim()) {
+    base.primaryColor = normalizeHex(patch.primaryColor, DEFAULT_BRAND);
+  }
+  if (typeof patch.accentColor === "string" && patch.accentColor.trim()) {
+    base.accentColor = normalizeHex(patch.accentColor, DEFAULT_ACCENT);
+  }
+
+  const contentPatch =
+    patch.content && typeof patch.content === "object" ? (patch.content as Record<string, unknown>) : {};
+  const content: Record<string, unknown> =
+    base.content && typeof base.content === "object" ? { ...(base.content as Record<string, unknown>) } : {};
+  for (const [key, val] of Object.entries(contentPatch)) {
+    if (val && typeof val === "object" && !Array.isArray(val)) {
+      const prev = content[key] && typeof content[key] === "object" ? { ...(content[key] as Record<string, unknown>) } : {};
+      for (const [loc, v] of Object.entries(val as Record<string, unknown>)) {
+        if (typeof v === "string" && v.trim()) prev[loc] = v.trim();
+        else delete prev[loc];
+      }
+      content[key] = prev;
+    }
+  }
+  base.content = content;
+  return base;
+}

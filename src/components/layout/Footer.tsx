@@ -6,6 +6,8 @@ import { Link } from "@/i18n/navigation";
 import { MapPin, Phone, Mail, Clock, ArrowRight, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
+import { useTenantBranding } from "@/components/tenant/TenantBranding";
+import type { TenantBranding } from "@/lib/tenant-theme";
 
 function IconFacebook({ size = 16 }: { size?: number }) {
   return (
@@ -23,11 +25,19 @@ function IconTikTok({ size = 16 }: { size?: number }) {
   );
 }
 
-const SOCIAL = [
-  { label: "Facebook", href: "https://www.facebook.com/profile.php?id=61582139390008", icon: <IconFacebook size={16} />, hover: "hover:bg-[#1877f2] hover:border-[#1877f2]" },
-  { label: "WhatsApp", href: "https://wa.me/22791882121",                              icon: <IconWhatsApp size={16} />, hover: "hover:bg-[#25d366] hover:border-[#25d366]" },
-  { label: "TikTok",   href: "https://www.tiktok.com/@hajjoumra.zam",                 icon: <IconTikTok size={15} />,   hover: "hover:bg-black hover:border-black" },
-];
+const SOCIAL_DEFAULT = {
+  facebook: "https://www.facebook.com/profile.php?id=61582139390008",
+  whatsapp: "22791882121",
+  tiktok: "https://www.tiktok.com/@hajjoumra.zam",
+};
+
+function buildSocials(b: TenantBranding | null) {
+  return [
+    { label: "Facebook", href: b?.facebookUrl ?? SOCIAL_DEFAULT.facebook, icon: <IconFacebook size={16} />, hover: "hover:bg-[#1877f2] hover:border-[#1877f2]" },
+    { label: "WhatsApp", href: `https://wa.me/${(b?.whatsappNumber ?? SOCIAL_DEFAULT.whatsapp).replace(/\D/g, "")}`, icon: <IconWhatsApp size={16} />, hover: "hover:bg-[#25d366] hover:border-[#25d366]" },
+    { label: "TikTok",   href: b?.tiktokUrl ?? SOCIAL_DEFAULT.tiktok,                  icon: <IconTikTok size={15} />,   hover: "hover:bg-black hover:border-black" },
+  ];
+}
 
 const ACCREDITATIONS = [
   { src: "/images/IATA.webp",      alt: "IATA",              w: 64, h: 32 },
@@ -38,6 +48,10 @@ const ACCREDITATIONS = [
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const branding = useTenantBranding();
+  const brandName = branding?.tenantName ?? "Hajj et Oumra ZAM";
+  const logoSrc = branding?.logoUrl ?? "/image ZAM/logo.png";
+  const SOCIAL = buildSocials(branding);
 
   const tf = useTranslations("footer");
   const ta = useTranslations("about");
@@ -151,21 +165,21 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-[48px] h-[48px] overflow-hidden relative flex-shrink-0">
-                <Image src="/image ZAM/logo.png" alt="Hajj et Oumra ZAM" fill className="object-cover scale-x-[1.5]" />
+                <Image src={logoSrc} alt={brandName} fill className="object-cover scale-x-[1.5]" />
               </div>
               <div>
-                <p className="font-bold text-xl leading-none" style={{ fontFamily: "var(--font-playfair, serif)" }}>Hajj et Oumra ZAM</p>
+                <p className="font-bold text-xl leading-none" style={{ fontFamily: "var(--font-playfair, serif)" }}>{brandName}</p>
                 <p className="text-xs tracking-widest text-amber-400 font-semibold mt-0.5">HADJ &amp; OUMRA</p>
               </div>
             </div>
             <p className="text-white/50 text-sm leading-relaxed mb-6">
-              {tf("brandDesc")}
+              {branding?.footerDescription ?? tf("brandDesc")}
             </p>
 
             <ul className="space-y-2.5 text-sm">
               {[
                 { icon: <MapPin size={13} />, text: ta("address") },
-                { icon: <Phone size={13} />,  text: "+227 96 96 39 61 · +227 96 87 27 87" },
+                { icon: <Phone size={13} />,  text: branding?.phone ?? "+227 96 96 39 61 · +227 96 87 27 87" },
                 { icon: <Mail size={13} />,   text: tf("email") },
                 { icon: <Clock size={13} />,  text: tf("hours") },
               ].map(({ icon, text }) => (

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
+import { useTenantBranding } from "@/components/tenant/TenantBranding";
 import {
   ArrowRight, Check, Plus, AlertTriangle,
   Plane, Building2, Train, Users, ShieldCheck, CreditCard,
@@ -98,6 +99,7 @@ function TestimonialCard({ item, active }: { item: TestimonialItem; active?: boo
 
 export default function HomePage() {
   const t = useTranslations("home");
+  const branding = useTenantBranding();
   const [whyOpen, setWhyOpen] = useState(0);
   const [faqOpen, setFaqOpen] = useState(-1);
   const [testimonialIdx, setTestimonialIdx] = useState(0);
@@ -145,13 +147,19 @@ export default function HomePage() {
               className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight animate-fade-up delay-100"
               style={{ fontFamily: "var(--font-playfair, serif)" }}
             >
-              {t("heroTitle1")}<br />
-              <span className="text-gradient" style={{ WebkitTextFillColor: "transparent", background: "linear-gradient(90deg, #6ee7b7, #fbbf24)", WebkitBackgroundClip: "text" }}>
-                {t("heroTitle2")}
-              </span>
+              {branding?.heroTitle ? (
+                branding.heroTitle
+              ) : (
+                <>
+                  {t("heroTitle1")}<br />
+                  <span className="text-gradient" style={{ WebkitTextFillColor: "transparent", background: "linear-gradient(90deg, #6ee7b7, #fbbf24)", WebkitBackgroundClip: "text" }}>
+                    {t("heroTitle2")}
+                  </span>
+                </>
+              )}
             </h1>
             <p className="text-white/70 text-lg mb-8 max-w-xl leading-relaxed animate-fade-up delay-200">
-              {t("heroSubtitle")}
+              {branding?.heroSubtitle ?? t("heroSubtitle")}
             </p>
             <div className="flex flex-wrap gap-3 mb-10 animate-fade-up delay-300">
               {[
@@ -170,8 +178,8 @@ export default function HomePage() {
               ))}
             </div>
             <div className="flex items-center gap-4 animate-fade-up delay-400">
-              <a href="tel:+22796963961" className="flex items-center gap-2 text-white/70 hover:text-white transition-colors text-sm">
-                <Phone size={14} /> +227 96 96 39 61
+              <a href={`tel:${(branding?.phone ?? "+22796963961").replace(/\s/g, "")}`} className="flex items-center gap-2 text-white/70 hover:text-white transition-colors text-sm">
+                <Phone size={14} /> {branding?.phone ?? "+227 96 96 39 61"}
               </a>
               <span className="text-white/30">|</span>
               <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"

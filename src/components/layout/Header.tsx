@@ -8,6 +8,7 @@ import Image from "next/image";
 import { Menu, X, ShoppingCart, Globe, ChevronDown } from "lucide-react";
 import UserMenu from "./UserMenu";
 import { spaceHomeForRole, spaceLabelForRole, isLocaleAwareSpace } from "@/lib/space";
+import { useTenantBranding } from "@/components/tenant/TenantBranding";
 
 const locales = ["fr", "en", "ar"] as const;
 const localeNames: Record<string, string> = { fr: "FR", en: "EN", ar: "AR" };
@@ -89,6 +90,9 @@ export default function Header({
 
   const tn = useTranslations("nav");
   const th = useTranslations("header");
+  const branding = useTenantBranding();
+  const brandName = branding?.tenantName ?? "Hajj et Oumra ZAM";
+  const logoSrc = branding?.logoUrl ?? "/image ZAM/logo.png";
 
   const NAV: NavItem[] = [
     { label: tn("home"), href: "/" },
@@ -168,8 +172,8 @@ export default function Header({
             <Link href="/" className="flex-shrink-0 flex items-center gap-2">
               <div className="w-[52px] h-[52px] overflow-hidden relative flex-shrink-0">
                 <Image
-                  src="/image ZAM/logo.png"
-                  alt="Hajj et Oumra ZAM"
+                  src={logoSrc}
+                  alt={brandName}
                   fill
                   className="object-cover scale-x-[1.5]"
                 />
@@ -179,7 +183,7 @@ export default function Header({
                   className="font-bold text-xl tracking-tight text-primary"
                   style={{ fontFamily: "var(--font-playfair, serif)" }}
                 >
-                  Hajj et Oumra ZAM
+                  {brandName}
                 </span>
                 <span className="text-xs tracking-widest text-gold-dark font-semibold">
                   {th("logoSubtitle")}

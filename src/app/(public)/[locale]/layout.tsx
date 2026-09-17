@@ -11,7 +11,8 @@ import DirectionSetter from "@/components/ui/DirectionSetter";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
-import { themeStyleTag } from "@/lib/tenant-theme";
+import { readTenantBranding, themeStyleTag } from "@/lib/tenant-theme";
+import { TenantBrandingProvider } from "@/components/tenant/TenantBranding";
 import "../../globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -21,32 +22,53 @@ const playfair = Playfair_Display({
   weight: ["400", "500", "600", "700", "800"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    template: "%s | Hajj et Oumra ZAM",
-    default: "Hajj et Oumra ZAM — Agence Hadj & Oumra",
-  },
-  description:
-    "Hajj et Oumra ZAM, fidèle à ses engagements. Organisation de forfaits Hadj et Oumra adaptés aux besoins des pèlerins depuis Niamey, Niger.",
-  icons: {
-    icon: "/image ZAM/logo.png",
-    shortcut: "/image ZAM/logo.png",
-    apple: "/image ZAM/logo.png",
-  },
-  openGraph: {
-    title: "Hajj et Oumra ZAM — Agence Hadj & Oumra",
-    description: "Organisation de forfaits Hadj et Oumra depuis Niamey, Niger.",
-    images: [{ url: "/image ZAM/logo.png", width: 512, height: 512, alt: "Hajj et Oumra ZAM" }],
-    locale: "fr_FR",
-    type: "website",
-  },
-  twitter: {
-    card: "summary",
-    title: "Hajj et Oumra ZAM",
-    description: "Organisation de forfaits Hadj et Oumra depuis Niamey, Niger.",
-    images: ["/image ZAM/logo.png"],
-  },
-};
+export const dynamic = "force-dynamic";
+
+const FALLBACK_NAME = "Hajj et Oumra ZAM";
+const FALLBACK_DESCRIPTION =
+  "Hajj et Oumra ZAM, fidèle à ses engagements. Organisation de forfaits Hadj et Oumra adaptés aux besoins des pèlerins depuis Niamey, Niger.";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const tenantSlug = (await headers()).get("x-tenant-slug") ?? "";
+  const tenant = tenantSlug
+    ? await prisma.tenant.findUnique({ where: { slug: tenantSlug }, select: { name: true, theme: true } })
+    : null;
+  const name = tenant?.name ?? FALLBACK_NAME;
+  const branding = readTenantBranding(tenant?.theme, locale, name);
+  const logoUrl = branding.logoUrl ?? "/image ZAM/logo.png";
+  const description = branding.metaDescription ?? FALLBACK_DESCRIPTION;
+
+  return {
+    title: {
+      template: `%s | ${name}`,
+      default: `${name} — Agence Hadj & Oumra`,
+    },
+    description,
+    icons: {
+      icon: logoUrl,
+      shortcut: logoUrl,
+      apple: logoUrl,
+    },
+    openGraph: {
+      title: `${name} — Agence Hadj & Oumra`,
+      description,
+      images: [{ url: logoUrl, width: 512, height: 512, alt: name }],
+      locale: "fr_FR",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: name,
+      description,
+      images: [logoUrl],
+    },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -72,8 +94,13 @@ export default async function LocaleLayout({
   // Le slug est posé par le middleware (host en prod, DEV_DEFAULT_TENANT en dev).
   const tenantSlug = (await headers()).get("x-tenant-slug") ?? "";
   const tenantForTheme = tenantSlug
-    ? await prisma.tenant.findUnique({ where: { slug: tenantSlug }, select: { theme: true } })
+    ? await prisma.tenant.findUnique({ where: { slug: tenantSlug }, select: { name: true, theme: true } })
     : null;
+  const branding = readTenantBranding(
+    tenantForTheme?.theme,
+    locale,
+    tenantForTheme?.name ?? FALLBACK_NAME
+  );
 
   // Photo de profil de l'utilisateur connecté (affichée dans le header)
   // 1) user.photoUrl (photo définie par l'agence)
@@ -109,13 +136,15 @@ export default async function LocaleLayout({
     >
       {/* Couleurs de marque du tenant — écrase les défauts :root de globals.css */}
       <style id="tenant-theme" dangerouslySetInnerHTML={{ __html: themeStyleTag(tenantForTheme?.theme) }} />
-      <NextIntlClientProvider messages={messages}>
-        <DirectionSetter />
-        <Header user={session ? { name: session.name, role: session.role, photoUrl } : null} />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <WhatsAppButton />
-      </NextIntlClientProvider>
+      <TenantBrandingProvider value={branding}>
+        <NextIntlClientProvider messages={messages}>
+          <DirectionSetter />
+          <Header user={session ? { name: session.name, role: session.role, photoUrl } : null} />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <WhatsAppButton />
+        </NextIntlClientProvider>
+      </TenantBrandingProvider>
     </div>
   );
 }

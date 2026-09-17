@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import TenantInspectClient from "./TenantInspectClient";
+import TenantThemeEditor from "./TenantThemeEditor";
 
 export const metadata: Metadata = { title: "Inspection agence" };
 
@@ -122,5 +123,10 @@ export default async function TenantInspectPage({
     })),
   };
 
-  return <TenantInspectClient {...data} />;
+  return (
+    <div className="space-y-6">
+      <TenantInspectClient {...data} />
+      <TenantThemeEditor tenantId={tenant.id} theme={tenant.theme} />
+    </div>
+  );
 }
