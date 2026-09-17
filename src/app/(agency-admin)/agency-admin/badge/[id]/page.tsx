@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
+import { themeStyleTag } from "@/lib/tenant-theme";
 import BadgeView from "./BadgeView";
 
 export default async function BadgePage({
@@ -82,5 +83,11 @@ export default async function BadgePage({
     qrDataUrl,
   };
 
-  return <BadgeView {...JSON.parse(JSON.stringify(data))} />;
+  return (
+    <>
+      {/* Couleurs de marque de l'agence (hors layout dashboard) */}
+      <style id="tenant-theme" dangerouslySetInnerHTML={{ __html: themeStyleTag(tenant?.theme) }} />
+      <BadgeView {...JSON.parse(JSON.stringify(data))} />
+    </>
+  );
 }

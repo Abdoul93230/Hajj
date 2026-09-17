@@ -89,7 +89,7 @@ export type SerializedPilgrim = {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const AVATAR_COLORS = [
-  "#0f5132",
+  "var(--brand)",
   "#1e40af",
   "#7c3aed",
   "#c2410c",
@@ -130,7 +130,7 @@ const STATUS_MAP: Record<string, { label: string; className: string }> = {
   EN_COURS:    { label: "En cours",    className: "text-orange-500" },
   COMPLET:     { label: "Complet",     className: "text-blue-600" },
   VISA_DEPOSE: { label: "Visa déposé", className: "text-purple-600 font-semibold" },
-  VISA_OK:     { label: "Visa obtenu", className: "text-[#0f5132] font-semibold" },
+  VISA_OK:     { label: "Visa obtenu", className: "text-primary font-semibold" },
   PARTI:       { label: "En voyage",   className: "text-cyan-600 font-semibold" },
   RETOUR:      { label: "Retour",      className: "text-emerald-600" },
   CANCELLED:   { label: "Annulé",      className: "text-red-400" },
@@ -287,7 +287,7 @@ export default function PilgrimsClient({
             placeholder="Rechercher par nom, ville, téléphone, pays..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
           />
         </div>
 
@@ -295,7 +295,7 @@ export default function PilgrimsClient({
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-600 cursor-pointer transition"
+          className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-600 cursor-pointer transition"
         >
           <option value="ALL">Tous les statuts</option>
           <option value="NOUVEAU">Nouveau</option>
@@ -312,7 +312,7 @@ export default function PilgrimsClient({
         <select
           value={paymentFilter}
           onChange={(e) => setPaymentFilter(e.target.value as "ALL" | PaymentStatus)}
-          className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-600 cursor-pointer transition"
+          className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-600 cursor-pointer transition"
         >
           <option value="ALL">Tous les paiements</option>
           <option value="paid">Payé intégralement</option>
@@ -323,7 +323,7 @@ export default function PilgrimsClient({
         {/* Add button */}
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 bg-[#0f5132] hover:bg-[#0d4429] text-white text-sm font-semibold px-4 py-2 rounded-xl shadow-sm transition active:scale-95"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold px-4 py-2 rounded-xl shadow-sm transition active:scale-95"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -599,7 +599,7 @@ function PilgrimRow({
           <button
             onClick={onEdit}
             title="Modifier"
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-[#0f5132] hover:bg-[#0f5132]/10 transition"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-primary hover:bg-primary/10 transition"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -648,7 +648,7 @@ function DocBadge({ label, active }: { label: string; active: boolean }) {
     <span
       className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
         active
-          ? "bg-[#0f5132] text-white"
+          ? "bg-primary text-white"
           : "bg-gray-100 text-gray-400"
       }`}
     >
@@ -668,8 +668,8 @@ function EmptyState({
 }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm py-20 flex flex-col items-center justify-center gap-4">
-      <div className="w-16 h-16 bg-[#0f5132]/10 rounded-2xl flex items-center justify-center">
-        <svg className="w-8 h-8 text-[#0f5132]/60" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
+        <svg className="w-8 h-8 text-primary/60" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       </div>
@@ -686,7 +686,7 @@ function EmptyState({
       {!hasFilter && (
         <button
           onClick={onAdd}
-          className="flex items-center gap-2 bg-[#0f5132] hover:bg-[#0d4429] text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />

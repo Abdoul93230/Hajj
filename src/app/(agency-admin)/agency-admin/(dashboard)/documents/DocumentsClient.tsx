@@ -167,7 +167,7 @@ export default function DocumentsClient({
                 placeholder="Rechercher..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0f5132]/20 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-gray-300 transition"
               />
             </div>
           </div>
@@ -188,7 +188,7 @@ export default function DocumentsClient({
                     onClick={() => setSelectedId(p.id)}
                     className={`w-full text-left px-4 py-3 border-b border-gray-50 transition ${
                       active
-                        ? "bg-[#0f5132]/[0.06] border-l-2 border-l-[#0f5132]"
+                        ? "bg-primary/[0.06] border-l-2 border-l-primary"
                         : "hover:bg-gray-50/70 border-l-2 border-l-transparent"
                     }`}
                   >
@@ -198,12 +198,12 @@ export default function DocumentsClient({
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={p.photoUrl} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
                       ) : (
-                        <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${active ? "bg-[#0f5132]/20" : "bg-gray-100"}`}>
-                          <span className={`text-[11px] font-bold ${active ? "text-[#0f5132]" : "text-gray-500"}`}>{ini}</span>
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${active ? "bg-primary/20" : "bg-gray-100"}`}>
+                          <span className={`text-[11px] font-bold ${active ? "text-primary" : "text-gray-500"}`}>{ini}</span>
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className={`text-sm font-semibold truncate ${active ? "text-[#0f5132]" : "text-gray-800"}`}>
+                        <p className={`text-sm font-semibold truncate ${active ? "text-primary" : "text-gray-800"}`}>
                           {p.name}
                         </p>
                         <div className="flex items-center gap-1.5 mt-0.5">
@@ -312,8 +312,8 @@ function PilgrimDetail({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={pilgrim.photoUrl} alt="" className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
           ) : (
-            <div className="w-12 h-12 rounded-full bg-[#0f5132]/15 flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-[#0f5132]">{ini}</span>
+            <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
+              <span className="text-sm font-bold text-primary">{ini}</span>
             </div>
           )}
           <div>
@@ -343,7 +343,7 @@ function PilgrimDetail({
           {/* Bouton ajouter */}
           <button
             onClick={onAddDoc}
-            className="flex items-center gap-2 px-4 py-2 bg-[#0f5132] text-white text-sm font-semibold rounded-xl hover:bg-[#0d4429] transition"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-dark transition"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -657,8 +657,8 @@ function AddDocumentModal({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={pilgrim.photoUrl} alt="" className="w-9 h-9 rounded-full object-cover" />
             ) : (
-              <div className="w-9 h-9 rounded-full bg-[#0f5132]/15 flex items-center justify-center">
-                <span className="text-[11px] font-bold text-[#0f5132]">{ini}</span>
+              <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center">
+                <span className="text-[11px] font-bold text-primary">{ini}</span>
               </div>
             )}
             <div>
@@ -678,7 +678,7 @@ function AddDocumentModal({
           {/* Zone upload */}
           <div
             className={`border-2 border-dashed rounded-xl cursor-pointer transition ${
-              file ? "border-[#0f5132]/40 bg-[#0f5132]/[0.02]" : "border-gray-200 hover:border-[#0f5132]/30 hover:bg-gray-50"
+              file ? "border-primary/40 bg-primary/[0.02]" : "border-gray-200 hover:border-primary/30 hover:bg-gray-50"
             }`}
             onClick={() => fileInputRef.current?.click()}
             onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) pickFile(f); }}
@@ -702,8 +702,8 @@ function AddDocumentModal({
                   </div>
                 ) : (
                   <div className="flex items-center gap-3 py-2">
-                    <div className="w-10 h-10 bg-[#0f5132]/10 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-[#0f5132]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                      <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                       </svg>
                     </div>
@@ -718,7 +718,7 @@ function AddDocumentModal({
                     </button>
                   </div>
                 )}
-                <p className="text-center text-[10px] text-[#0f5132] font-medium mt-1">Cliquer pour changer</p>
+                <p className="text-center text-[10px] text-primary font-medium mt-1">Cliquer pour changer</p>
               </div>
             ) : (
               <div className="py-8 flex flex-col items-center gap-3">
@@ -728,7 +728,7 @@ function AddDocumentModal({
                   </svg>
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-semibold text-gray-700"><span className="text-[#0f5132]">Cliquer</span> ou glisser-déposer</p>
+                  <p className="text-sm font-semibold text-gray-700"><span className="text-primary">Cliquer</span> ou glisser-déposer</p>
                   <p className="text-xs text-gray-400 mt-0.5">JPG, PNG, PDF — max 10 Mo</p>
                 </div>
               </div>
@@ -749,7 +749,7 @@ function AddDocumentModal({
               <select
                 value={form.type}
                 onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as DocType }))}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 cursor-pointer transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 cursor-pointer transition"
               >
                 {availableTypes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
@@ -759,7 +759,7 @@ function AddDocumentModal({
               <select
                 value={form.status}
                 onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as DocStatus }))}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 cursor-pointer transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 cursor-pointer transition"
               >
                 {DOC_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
               </select>
@@ -775,7 +775,7 @@ function AddDocumentModal({
                 value={form.label}
                 onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
                 placeholder={selectedTypeMeta.label}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
               />
             </div>
             <div>
@@ -784,7 +784,7 @@ function AddDocumentModal({
                 type="date"
                 value={form.expiresAt}
                 onChange={(e) => setForm((f) => ({ ...f, expiresAt: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition"
               />
             </div>
           </div>
@@ -797,14 +797,14 @@ function AddDocumentModal({
               value={form.notes}
               onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
               placeholder="Ex: N° A1234567"
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
             />
           </div>
 
           {submitting && uploadProgress > 0 && (
             <div>
               <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-[#0f5132] rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                <div className="h-full bg-primary rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
               </div>
               <p className="text-[10px] text-gray-400 mt-1 text-center">Upload en cours…</p>
             </div>
@@ -829,7 +829,7 @@ function AddDocumentModal({
               f?.requestSubmit();
             }}
             disabled={submitting || !file}
-            className="flex-1 py-2.5 text-sm font-semibold text-white bg-[#0f5132] hover:bg-[#0d4429] rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex-1 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {submitting ? (
               <>

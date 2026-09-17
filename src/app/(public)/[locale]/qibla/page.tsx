@@ -66,13 +66,13 @@ export default function QiblaPage() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
           {state === "idle" && (
             <div>
-              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Compass size={40} className="text-[#0f5132]" />
+              <div className="w-20 h-20 bg-cream rounded-full flex items-center justify-center mx-auto mb-6">
+                <Compass size={40} className="text-primary" />
               </div>
               <p className="text-gray-600 mb-6">{t("idleDesc")}</p>
               <button
                 onClick={locate}
-                className="bg-[#0f5132] text-white font-semibold px-8 py-3 rounded-lg hover:bg-[#0f5132] transition-colors"
+                className="bg-primary text-white font-semibold px-8 py-3 rounded-lg hover:bg-primary transition-colors"
               >
                 {t("locateBtn")}
               </button>
@@ -81,8 +81,8 @@ export default function QiblaPage() {
 
           {state === "loading" && (
             <div>
-              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-                <Compass size={40} className="text-[#0f5132]" />
+              <div className="w-20 h-20 bg-cream rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                <Compass size={40} className="text-primary" />
               </div>
               <p className="text-gray-600">{t("loadingDesc")}</p>
             </div>
@@ -91,9 +91,9 @@ export default function QiblaPage() {
           {state === "done" && qibla !== null && (
             <div>
               <div className="relative w-48 h-48 mx-auto mb-8">
-                <div className="w-full h-full rounded-full bg-emerald-50 border-4 border-emerald-200 flex items-center justify-center">
+                <div className="w-full h-full rounded-full bg-cream border-4 border-cream-dark flex items-center justify-center">
                   <div
-                    className="absolute w-1 h-20 bg-[#0f5132] rounded-full origin-bottom transition-transform duration-1000"
+                    className="absolute w-1 h-20 bg-primary rounded-full origin-bottom transition-transform duration-1000"
                     style={{
                       transformOrigin: "bottom center",
                       bottom: "50%",
@@ -101,7 +101,7 @@ export default function QiblaPage() {
                       transform: `rotate(${qibla}deg)`,
                     }}
                   />
-                  <div className="w-4 h-4 rounded-full bg-[#0f5132] z-10" />
+                  <div className="w-4 h-4 rounded-full bg-primary z-10" />
                 </div>
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 text-xs font-bold text-gray-500">{t("compassN")}</div>
                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs font-bold text-gray-500">{t("compassS")}</div>
@@ -110,7 +110,7 @@ export default function QiblaPage() {
               </div>
 
               <div className="space-y-2 mb-6">
-                <p className="text-4xl font-bold text-[#0f5132]">{Math.round(qibla)}°</p>
+                <p className="text-4xl font-bold text-primary">{Math.round(qibla)}°</p>
                 <p className="text-gray-600">{t("directionLabel")}</p>
                 {distance && (
                   <p className="text-sm text-gray-500">
@@ -121,7 +121,7 @@ export default function QiblaPage() {
 
               <button
                 onClick={locate}
-                className="text-sm text-[#0f5132] font-medium hover:underline"
+                className="text-sm text-primary font-medium hover:underline"
               >
                 {t("recalculate")}
               </button>
@@ -130,10 +130,10 @@ export default function QiblaPage() {
 
           {state === "error" && (
             <div>
-              <p className="text-amber-600 mb-4">{errorMsg}</p>
+              <p className="text-gold mb-4">{errorMsg}</p>
               <button
                 onClick={() => setState("idle")}
-                className="bg-[#0f5132] text-white font-semibold px-6 py-2 rounded-lg hover:bg-[#0f5132] transition-colors"
+                className="bg-primary text-white font-semibold px-6 py-2 rounded-lg hover:bg-primary transition-colors"
               >
                 {t("retry")}
               </button>

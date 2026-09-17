@@ -25,7 +25,7 @@ export default function PortalNav() {
             href={href}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition ${
               active
-                ? "bg-[#0f5132] text-white shadow"
+                ? "bg-primary text-white shadow"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >

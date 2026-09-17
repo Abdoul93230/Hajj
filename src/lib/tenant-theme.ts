@@ -1,0 +1,100 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Thème de marque par tenant (batch 1 — COULEURS uniquement).
+//
+// Principe : les couleurs de l'UI ne sont PAS codées en dur. Les utilitaires
+// Tailwind (bg-primary, text-gold, bg-cream…) sont mappés dans globals.css sur
+// des variables CSS runtime (--brand, --accent…). Ce module :
+//   1. lit Tenant.theme (JSON) en tolérant l'absence/invalidité des valeurs ;
+//   2. calcule les déclinaisons (dark/light/deep/cream) à partir de la couleur
+//      de base — pas besoin de demander 9 couleurs à l'agence ;
+//   3. produit le bloc <style> injecté par les layouts (public + admin agence).
+//
+// Les textes/contenus (hero, à-propos…) seront thémés dans un batch ultérieur.
+// Les couleurs sémantiques (vert=payé, rouge=rejeté, orange=partiel) restent
+// volontairement globales : un thème change l'identité, pas la sémantique.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const DEFAULT_BRAND = "#0f5132"; // vert ZAM
+export const DEFAULT_ACCENT = "#b8860b"; // or ZAM
+
+const HEX_RE = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+
+/** Normalise une couleur saisie (#abc, #AABBCC, invalide…) en #rrggbb, sinon fallback. */
+export function normalizeHex(input: unknown, fallback: string): string {
+  if (typeof input !== "string") return fallback;
+  const v = input.trim();
+  if (!HEX_RE.test(v)) return fallback;
+  const h = v.slice(1).toLowerCase();
+  return h.length === 3
+    ? "#" + h.split("").map((c) => c + c).join("")
+    : "#" + h;
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.slice(1);
+  return [
+    parseInt(h.slice(0, 2), 16),
+    parseInt(h.slice(2, 4), 16),
+    parseInt(h.slice(4, 6), 16),
+  ];
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+  const c = (n: number) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, "0");
+  return `#${c(r)}${c(g)}${c(b)}`;
+}
+
+/**
+ * Éclaircit (> 0) ou assombrit (< 0) une couleur. amount ∈ [-1, 1].
+ * shade("#0f5132", -0.25) ≈ #0a3d26 (le --brand-dark historique).
+ */
+export function shade(hex: string, amount: number): string {
+  const [r, g, b] = hexToRgb(hex);
+  const target = amount < 0 ? 0 : 255;
+  const p = Math.min(1, Math.abs(amount));
+  const mix = (c: number) => (target - c) * p + c;
+  return rgbToHex(mix(r), mix(g), mix(b));
+}
+
+/** Couleur de texte lisible posée sur un fond `hex` (blanc ou presque-noir). */
+export function readableOn(hex: string): "#ffffff" | "#101828" {
+  const [r, g, b] = hexToRgb(hex);
+  // Luminance perçue (formule empirique suffisante pour l'UI)
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.62 ? "#101828" : "#ffffff";
+}
+
+/** Lit Tenant.theme et retourne les 2 couleurs de marque validées. */
+export function readTenantThemeColors(raw: unknown): { brand: string; accent: string } {
+  const t = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+  return {
+    brand: normalizeHex(t.primaryColor, DEFAULT_BRAND),
+    // le seed historique utilisait "secondaryColor" ; "accentColor" est accepté aussi
+    accent: normalizeHex(t.accentColor ?? t.secondaryColor, DEFAULT_ACCENT),
+  };
+}
+
+/** Variables CSS runtime dérivées du thème du tenant. */
+export function tenantThemeVars(raw: unknown): Record<string, string> {
+  const { brand, accent } = readTenantThemeColors(raw);
+  return {
+    "--brand": brand,
+    "--brand-dark": shade(brand, -0.25),
+    "--brand-light": shade(brand, 0.18),
+    "--brand-deep": shade(brand, -0.62), // fonds très sombres (footer, sidebar)
+    "--on-brand": readableOn(brand),
+    "--accent": accent,
+    "--accent-dark": shade(accent, -0.2),
+    "--accent-light": shade(accent, 0.25),
+    "--cream": shade(brand, 0.92), // teintes très pâles de la marque (fonds de cartes)
+    "--cream-dark": shade(brand, 0.84),
+  };
+}
+
+/** Bloc CSS `:root{…}` à injecter dans le layout du tenant. */
+export function themeStyleTag(raw: unknown): string {
+  const body = Object.entries(tenantThemeVars(raw))
+    .map(([k, v]) => `${k}:${v};`)
+    .join("");
+  return `:root{${body}}`;
+}

@@ -154,7 +154,7 @@ export default function CreateVoyageModal({
         {/* ── Header ── */}
         <div className="sticky top-0 z-10 bg-white flex items-center justify-between px-6 py-4 border-b border-gray-100 rounded-t-2xl">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#0f5132]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-primary" />
             <h3 className="font-bold text-gray-800 text-base">
               {isEdit ? "Modifier le Voyage" : "Créer un nouveau Voyage"}
             </h3>
@@ -187,7 +187,7 @@ export default function CreateVoyageModal({
                 value={form.titleFr}
                 onChange={(e) => handleField("titleFr", e.target.value)}
                 placeholder="Ex: Hajj Standard Confort 2026"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
               />
             </div>
 
@@ -201,7 +201,7 @@ export default function CreateVoyageModal({
                   value={form.type}
                   onChange={(e) => handleField("type", e.target.value)}
                   disabled={!isEdit && lockType}
-                  className={`w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition ${
+                  className={`w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition ${
                     !isEdit && lockType ? "bg-gray-50 text-gray-400 cursor-not-allowed" : "cursor-pointer"
                   }`}
                 >
@@ -221,8 +221,8 @@ export default function CreateVoyageModal({
                   <div
                     className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition ${
                       form.provisional
-                        ? "bg-[#0f5132] border-[#0f5132]"
-                        : "border-gray-300 group-hover:border-[#0f5132]/50"
+                        ? "bg-primary border-primary"
+                        : "border-gray-300 group-hover:border-primary/50"
                     }`}
                     onClick={() => handleField("provisional", !form.provisional)}
                   >
@@ -295,7 +295,7 @@ export default function CreateVoyageModal({
                   type="date"
                   value={form.departureDate}
                   onChange={(e) => handleField("departureDate", e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition"
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition"
                 />
               </div>
               <div>
@@ -306,12 +306,12 @@ export default function CreateVoyageModal({
                   type="date"
                   value={form.returnDate}
                   onChange={(e) => handleField("returnDate", e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition"
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition"
                 />
               </div>
             </div>
             {duration !== null && (
-              <p className="text-[#0f5132] text-sm font-semibold">
+              <p className="text-primary text-sm font-semibold">
                 Durée : {duration} jour{duration > 1 ? "s" : ""}
               </p>
             )}
@@ -332,7 +332,7 @@ export default function CreateVoyageModal({
                 value={form.maxCapacity}
                 onChange={(e) => handleField("maxCapacity", e.target.value)}
                 placeholder="Ex: 100"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
               />
             </div>
           </section>
@@ -351,7 +351,7 @@ export default function CreateVoyageModal({
                 onChange={(e) => handleField("descFr", e.target.value)}
                 placeholder="Décrivez le programme, les services inclus, les hébergements..."
                 rows={3}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 resize-none transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 resize-none transition"
               />
             </div>
           </section>
@@ -375,7 +375,7 @@ export default function CreateVoyageModal({
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 py-2.5 px-4 text-sm font-semibold text-white bg-[#0f5132] hover:bg-[#0d4429] rounded-xl transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="flex-1 py-2.5 px-4 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {submitting ? (
                 <>
@@ -422,7 +422,7 @@ function PriceField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-3 py-2 pr-14 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+          className="w-full px-3 py-2 pr-14 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
         />
         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 pointer-events-none">
           FCFA

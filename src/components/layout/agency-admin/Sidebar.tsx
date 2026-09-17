@@ -40,18 +40,18 @@ export default function AgencyAdminSidebar({
   }
 
   return (
-    <aside className="w-64 min-w-[256px] bg-[#0f2419] flex flex-col h-screen sticky top-0">
+    <aside className="w-64 min-w-[256px] bg-brand-deep flex flex-col h-screen sticky top-0">
       {/* ── Logo ── */}
       <div className="px-5 py-5 border-b border-white/10 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#d4af37] flex items-center justify-center flex-shrink-0">
-            <span className="text-[#0f2419] font-black text-sm leading-none">
+          <div className="w-10 h-10 rounded-xl bg-gold-light flex items-center justify-center flex-shrink-0">
+            <span className="text-brand-deep font-black text-sm leading-none">
               {tenantSlug.slice(0, 2).toUpperCase()}
             </span>
           </div>
           <div className="min-w-0">
             <p className="text-white font-bold text-sm leading-tight truncate">{tenantName}</p>
-            <p className="text-[#d4af37] text-[9px] font-bold uppercase tracking-widest mt-0.5">
+            <p className="text-gold-light text-[9px] font-bold uppercase tracking-widest mt-0.5">
               Agence Partenaire
             </p>
           </div>
@@ -68,14 +68,14 @@ export default function AgencyAdminSidebar({
               href={`${base}${item.href}`}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all group ${
                 active
-                  ? "bg-[#d4af37]/15 text-[#d4af37]"
+                  ? "bg-gold-light/15 text-gold-light"
                   : "text-white/55 hover:text-white hover:bg-white/5"
               }`}
             >
               <item.Icon active={active} />
               <span className="truncate">{item.label}</span>
               {active && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#d4af37] flex-shrink-0" />
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-gold-light flex-shrink-0" />
               )}
             </Link>
           );
@@ -111,7 +111,7 @@ function NavIcon({ active, d, d2 }: { active: boolean; d: string; d2?: string })
   return (
     <svg
       className={`w-[15px] h-[15px] flex-shrink-0 transition-colors ${
-        active ? "text-[#d4af37]" : "text-white/40 group-hover:text-white/70"
+        active ? "text-gold-light" : "text-white/40 group-hover:text-white/70"
       }`}
       fill="none"
       stroke="currentColor"

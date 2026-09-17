@@ -21,7 +21,7 @@ export default function SuperAdminSidebar({ user }: { user: { name: string; emai
       {/* Header */}
       <div className="p-6 border-b border-gray-800">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-gray-900 font-bold text-sm">
+          <div className="w-8 h-8 rounded-lg bg-gold-light flex items-center justify-center text-gray-900 font-bold text-sm">
             SA
           </div>
           <div>
@@ -41,7 +41,7 @@ export default function SuperAdminSidebar({ user }: { user: { name: string; emai
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                 active
-                  ? "bg-amber-500/10 text-amber-400 font-medium"
+                  ? "bg-gold-light/10 text-amber-400 font-medium"
                   : "text-gray-400 hover:text-white hover:bg-gray-800"
               }`}
             >

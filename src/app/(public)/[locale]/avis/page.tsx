@@ -69,13 +69,13 @@ export default function AvisPage() {
 
         <div className="text-center">
           {submitted ? (
-            <p className="text-[#0f5132] font-semibold">{t("thankYouDetail")}</p>
+            <p className="text-primary font-semibold">{t("thankYouDetail")}</p>
           ) : showForm ? (
             <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm max-w-lg mx-auto text-left space-y-4">
               <h3 className="font-bold text-gray-900">{t("leaveBtn")}</h3>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t("yourName")}</label>
-                <input required type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                <input required type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-light" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t("ratingLabel")}</label>
@@ -89,14 +89,14 @@ export default function AvisPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t("commentLabel")}</label>
-                <textarea required rows={4} value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none" />
+                <textarea required rows={4} value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-light resize-none" />
               </div>
-              <button type="submit" className="w-full bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0f5132] transition-colors">
+              <button type="submit" className="w-full bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary transition-colors">
                 {t("submitBtn")}
               </button>
             </form>
           ) : (
-            <button onClick={() => setShowForm(true)} className="bg-[#0f5132] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#0f5132] transition-colors">
+            <button onClick={() => setShowForm(true)} className="bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-primary transition-colors">
               {t("leaveBtn")}
             </button>
           )}

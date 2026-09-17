@@ -168,7 +168,7 @@ export default function ProgramModal({
               type="button"
               onClick={applyTemplate}
               title="Pré-remplir avec le contenu de référence Hajj / Oumra"
-              className="flex items-center gap-1.5 text-xs font-semibold text-[#0f5132] border border-[#0f5132]/30 hover:bg-emerald-50 px-3 py-2 rounded-lg transition"
+              className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 hover:bg-emerald-50 px-3 py-2 rounded-lg transition"
             >
               <Wand2 size={14} /> Modèle standard
             </button>
@@ -191,7 +191,7 @@ export default function ProgramModal({
             <button
               type="button"
               onClick={() => setFlights((p) => [...p, { airline: "" }])}
-              className="flex items-center gap-1 text-xs font-semibold text-[#0f5132] hover:underline"
+              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
             >
               <Plus size={13} /> Ajouter un vol
             </button>
@@ -242,7 +242,7 @@ export default function ProgramModal({
             <button
               type="button"
               onClick={() => setHotels((p) => [...p, { name: "" }])}
-              className="flex items-center gap-1 text-xs font-semibold text-[#0f5132] hover:underline"
+              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
             >
               <Plus size={13} /> Ajouter un hôtel
             </button>
@@ -281,7 +281,7 @@ export default function ProgramModal({
             <button
               type="button"
               onClick={() => setProgram((p) => [...p, { day: String(p.length + 1), title: "" }])}
-              className="flex items-center gap-1 text-xs font-semibold text-[#0f5132] hover:underline"
+              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
             >
               <Plus size={13} /> Ajouter un jour
             </button>
@@ -348,7 +348,7 @@ export default function ProgramModal({
             <button
               type="button"
               onClick={() => setDocuments((p) => [...p, { icon: "", title: "", content: "" }])}
-              className="flex items-center gap-1 text-xs font-semibold text-[#0f5132] hover:underline"
+              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
             >
               <Plus size={13} /> Ajouter un document
             </button>
@@ -385,7 +385,7 @@ export default function ProgramModal({
             <button
               type="button"
               onClick={() => setHighlights((p) => [...p, { icon: "", label: "", value: "" }])}
-              className="flex items-center gap-1 text-xs font-semibold text-[#0f5132] hover:underline"
+              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
             >
               <Plus size={13} /> Ajouter un point fort
             </button>
@@ -419,7 +419,7 @@ export default function ProgramModal({
           <button
             onClick={save}
             disabled={saving}
-            className="flex-[2] bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0d4429] transition-colors disabled:opacity-50 text-sm"
+            className="flex-[2] bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm"
           >
             {saving ? "Enregistrement..." : "Enregistrer le programme"}
           </button>

@@ -25,7 +25,7 @@ const TYPES = ["PASSPORT", "CNI", "PHOTO", "OTHER"].filter(
 );
 
 const STATUS_BADGE: Record<string, string> = {
-  RECEIVED: "bg-amber-100 text-amber-700",
+  RECEIVED: "bg-amber-100 text-gold-dark",
   VALID: "bg-green-100 text-green-700",
   EXPIRED: "bg-gray-100 text-gray-500",
   REJECTED: "bg-red-100 text-red-600",
@@ -34,7 +34,7 @@ const STATUS_BADGE: Record<string, string> = {
 const TYPE_COLOR: Record<string, string> = {
   PASSPORT: "bg-blue-100 text-blue-700",
   CNI: "bg-violet-100 text-violet-700",
-  VISA: "bg-amber-100 text-amber-700",
+  VISA: "bg-amber-100 text-gold-dark",
   PHOTO: "bg-pink-100 text-pink-700",
   OTHER: "bg-gray-100 text-gray-600",
 };
@@ -197,7 +197,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
             className={`text-sm rounded-lg px-4 py-2.5 ${
               msg.ok
                 ? "bg-green-50 border border-green-100 text-green-700"
-                : "bg-amber-50 border border-amber-200 text-amber-700"
+                : "bg-amber-50 border border-amber-200 text-gold-dark"
             }`}
           >
             {msg.text}
@@ -210,7 +210,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
             >
               {availableTypes.map((tp) => (
                 <option key={tp} value={tp}>
@@ -225,7 +225,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
               type="date"
               value={expiresAt}
               onChange={(e) => setExpiresAt(e.target.value)}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
             />
           </div>
         </div>
@@ -236,7 +236,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
           />
         </div>
 
@@ -247,14 +247,14 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
             required
             accept="image/*,.pdf"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#0f5132]/10 file:text-[#0f5132] file:font-semibold file:cursor-pointer"
+            className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary/10 file:text-primary file:font-semibold file:cursor-pointer"
           />
         </div>
 
         <button
           type="submit"
           disabled={uploading || !file}
-          className="w-full bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0d4429] transition-colors disabled:opacity-50 text-sm flex items-center justify-center gap-2"
+          className="w-full bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm flex items-center justify-center gap-2"
         >
           <Upload size={15} />
           {uploading ? t("uploading") : t("send")}
@@ -361,7 +361,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                             onClick={() => openEdit(doc)}
                             disabled={doc.status !== "RECEIVED"}
                             title={doc.status !== "RECEIVED" ? t("cannotDelete") : t("edit")}
-                            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#0f5132] hover:bg-[#0f5132]/10 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-primary hover:bg-primary/10 transition disabled:opacity-30 disabled:cursor-not-allowed"
                           >
                             <Pencil size={15} />
                           </button>
@@ -370,7 +370,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                           <button
                             onClick={() => setViewing(doc)}
                             title={t("download")}
-                            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#0f5132] hover:bg-[#0f5132]/10 transition"
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-primary hover:bg-primary/10 transition"
                           >
                             <Download size={15} />
                           </button>
@@ -446,7 +446,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                   type="text"
                   value={editLabel}
                   onChange={(e) => setEditLabel(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
                 />
               </div>
 
@@ -456,7 +456,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                   type="date"
                   value={editExpiresAt}
                   onChange={(e) => setEditExpiresAt(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
                 />
               </div>
 
@@ -466,7 +466,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                   type="file"
                   accept="image/*,.pdf"
                   onChange={(e) => setEditFile(e.target.files?.[0] ?? null)}
-                  className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#0f5132]/10 file:text-[#0f5132] file:font-semibold file:cursor-pointer"
+                  className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary/10 file:text-primary file:font-semibold file:cursor-pointer"
                 />
                 {editFile && <p className="text-[10px] text-gray-400 mt-1">{editFile.name}</p>}
               </div>
@@ -474,7 +474,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0d4429] transition-colors disabled:opacity-50 text-sm"
+                className="w-full bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm"
               >
                 {saving ? t("saving") : t("save")}
               </button>

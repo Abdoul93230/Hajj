@@ -67,7 +67,7 @@ export default function AgencyLoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-[#0f5132] hover:bg-[#0d4429] text-white font-semibold rounded-lg py-2.5 text-sm transition disabled:opacity-50"
+        className="w-full bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg py-2.5 text-sm transition disabled:opacity-50"
       >
         {loading ? "Connexion…" : "Se connecter"}
       </button>

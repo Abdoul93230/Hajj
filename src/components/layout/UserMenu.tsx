@@ -42,10 +42,10 @@ export default function UserMenu({ user }: Props) {
               <img
                 src={user.photoUrl}
                 alt={user.name}
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-[#0f5132]/20 group-hover:ring-[#0f5132]/60 transition-all"
+                className="w-8 h-8 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary/60 transition-all"
               />
             ) : (
-              <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] text-[11px] font-bold flex items-center justify-center ring-2 ring-[#0f5132]/10 group-hover:ring-[#0f5132]/50 transition-all">
+              <span className="w-8 h-8 rounded-full bg-primary/10 text-primary text-[11px] font-bold flex items-center justify-center ring-2 ring-primary/10 group-hover:ring-primary/50 transition-all">
                 {initials}
               </span>
             )}
@@ -57,10 +57,10 @@ export default function UserMenu({ user }: Props) {
               <img
                 src={user.photoUrl}
                 alt={user.name}
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-[#0f5132]/20 group-hover:ring-[#0f5132]/60 transition-all"
+                className="w-8 h-8 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary/60 transition-all"
               />
             ) : (
-              <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] text-[11px] font-bold flex items-center justify-center ring-2 ring-[#0f5132]/10 group-hover:ring-[#0f5132]/50 transition-all">
+              <span className="w-8 h-8 rounded-full bg-primary/10 text-primary text-[11px] font-bold flex items-center justify-center ring-2 ring-primary/10 group-hover:ring-primary/50 transition-all">
                 {initials}
               </span>
             )}
@@ -69,7 +69,7 @@ export default function UserMenu({ user }: Props) {
         <button
           onClick={handleLogout}
           title="Déconnexion"
-          className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-amber-500 hover:bg-amber-50 transition-colors flex-shrink-0"
+          className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gold-light hover:bg-amber-50 transition-colors flex-shrink-0"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-7.5A2.25 2.25 0 003.75 5.25v13.5A2.25 2.25 0 006 21h7.5a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
@@ -82,7 +82,7 @@ export default function UserMenu({ user }: Props) {
   return (
     <Link
       href="/compte"
-      className="hidden sm:block text-sm font-semibold border border-[#0f5132] text-[#0f5132] px-3 py-1.5 rounded-full hover:bg-[#0f5132] hover:text-white transition-colors"
+      className="hidden sm:block text-sm font-semibold border border-primary text-primary px-3 py-1.5 rounded-full hover:bg-primary hover:text-white transition-colors"
     >
       Espace pèlerin
     </Link>

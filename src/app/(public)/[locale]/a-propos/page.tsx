@@ -27,7 +27,7 @@ export default function AboutPage() {
 
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <Award size={20} className="text-[#0f5132] mt-0.5 flex-shrink-0" />
+                <Award size={20} className="text-primary mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-gray-900">{t("accreditation")}</p>
                   <p className="text-sm text-gray-500">{t("group")}</p>
@@ -35,12 +35,12 @@ export default function AboutPage() {
               </div>
 
               <div className="flex items-start gap-3">
-                <MapPin size={20} className="text-[#0f5132] mt-0.5 flex-shrink-0" />
+                <MapPin size={20} className="text-primary mt-0.5 flex-shrink-0" />
                 <p className="text-gray-600 text-sm">{t("address")}</p>
               </div>
 
               <div className="flex items-center gap-3">
-                <Phone size={20} className="text-[#0f5132] flex-shrink-0" />
+                <Phone size={20} className="text-primary flex-shrink-0" />
                 <div className="text-sm text-gray-600">
                   <p>{t("phone1")}</p>
                   <p>{t("phone2")}</p>
@@ -59,9 +59,9 @@ export default function AboutPage() {
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="bg-emerald-50 rounded-2xl p-6 text-center border border-emerald-100"
+                className="bg-cream rounded-2xl p-6 text-center border border-cream"
               >
-                <p className="text-3xl font-bold text-[#0f5132] mb-1">{stat.value}</p>
+                <p className="text-3xl font-bold text-primary mb-1">{stat.value}</p>
                 <p className="text-sm text-gray-600">{stat.label}</p>
               </div>
             ))}

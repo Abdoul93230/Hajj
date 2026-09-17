@@ -60,7 +60,7 @@ export default async function MonProgrammePage({ params }: Props) {
               className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
             >
               {/* ── En-tête voyage ── */}
-              <div className="bg-[#06251a] text-white p-6">
+              <div className="bg-brand-deep text-white p-6">
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div>
                     <h2 className="text-lg font-bold">{r.offer.titleFr}</h2>
@@ -78,17 +78,17 @@ export default async function MonProgrammePage({ params }: Props) {
                     </p>
                   </div>
                   {daysToDeparture !== null && daysToDeparture > 0 && (
-                    <span className="bg-amber-400 text-[#06251a] text-sm font-black px-4 py-2 rounded-xl">
+                    <span className="bg-amber-400 text-brand-deep text-sm font-black px-4 py-2 rounded-xl">
                       {t("program.countdown", { days: daysToDeparture })}
                     </span>
                   )}
                   {isOngoing && (
-                    <span className="bg-cyan-400 text-[#06251a] text-sm font-black px-4 py-2 rounded-xl">
+                    <span className="bg-cyan-400 text-brand-deep text-sm font-black px-4 py-2 rounded-xl">
                       ✈ {t("program.departed")}
                     </span>
                   )}
                   {isFinished && (
-                    <span className="bg-emerald-400 text-[#06251a] text-sm font-black px-4 py-2 rounded-xl">
+                    <span className="bg-primary-light text-brand-deep text-sm font-black px-4 py-2 rounded-xl">
                       ✓ {t("program.finished")}
                     </span>
                   )}
@@ -117,7 +117,7 @@ export default async function MonProgrammePage({ params }: Props) {
                           <div className="flex items-center justify-between gap-3 flex-wrap">
                             <span className="font-semibold text-gray-800">
                               {f.direction ? (
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-[#0f5132] bg-[#0f5132]/10 rounded px-1.5 py-0.5 mr-2">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 rounded px-1.5 py-0.5 mr-2">
                                   {f.direction}
                                 </span>
                               ) : null}
@@ -191,7 +191,7 @@ export default async function MonProgrammePage({ params }: Props) {
                       {data.program!.map((d, i) => (
                         <div key={i} className="flex gap-3">
                           <div className="flex-shrink-0 w-14 text-center">
-                            <div className="bg-[#0f5132]/10 text-[#0f5132] rounded-lg py-1.5 px-1">
+                            <div className="bg-primary/10 text-primary rounded-lg py-1.5 px-1">
                               <p className="text-[9px] font-semibold uppercase leading-none">
                                 {t("program.day")}
                               </p>
@@ -288,13 +288,13 @@ export default async function MonProgrammePage({ params }: Props) {
 
                 {/* ── Contacts ── */}
                 {agencyPhone && (
-                  <div className="rounded-xl bg-[#0f5132]/5 px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
+                  <div className="rounded-xl bg-primary/5 px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                       {t("program.contacts")} — {tenant?.name}
                     </span>
                     <a
                       href={`tel:${agencyPhone.replace(/\s+/g, "")}`}
-                      className="bg-[#0f5132] hover:bg-[#0d4429] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
+                      className="bg-primary hover:bg-primary-dark text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
                     >
                       📞 {t("program.callAgency")}
                     </a>

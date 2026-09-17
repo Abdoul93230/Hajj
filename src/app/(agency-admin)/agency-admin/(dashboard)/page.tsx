@@ -115,12 +115,12 @@ export default async function AgencyDashboard() {
     <div className="space-y-6 w-full">
 
       {/* ── Banner ── */}
-      <div className="relative bg-[#0f2419] rounded-2xl px-8 py-7 overflow-hidden">
+      <div className="relative bg-brand-deep rounded-2xl px-8 py-7 overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none"
           style={{ backgroundImage: "radial-gradient(circle at 80% 50%, #d4af37 0%, transparent 60%)" }} />
         <div className="relative z-10 flex items-start justify-between gap-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 bg-white/10 text-[#d4af37] text-xs font-semibold px-3 py-1 rounded-full mb-3">
+            <span className="inline-flex items-center gap-1.5 bg-white/10 text-gold-light text-xs font-semibold px-3 py-1 rounded-full mb-3">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
@@ -130,16 +130,16 @@ export default async function AgencyDashboard() {
               Qu&apos;Allah facilite les démarches de vos futurs pèlerins&nbsp;!
             </p>
             <p className="text-white/60 text-sm mt-2 max-w-2xl">
-              Bienvenue dans <span className="text-[#d4af37] font-semibold">{tenant?.name ?? "ZAM Hajj & Oumra"}</span>.
+              Bienvenue dans <span className="text-gold-light font-semibold">{tenant?.name ?? "ZAM Hajj & Oumra"}</span>.
               Suivez les dossiers, réservations et la situation financière de votre agence.
             </p>
           </div>
           <div className="flex-shrink-0">
-            <div className="bg-[#d4af37]/15 border border-[#d4af37]/30 rounded-xl px-4 py-3 text-center">
-              <p className="text-[#d4af37]/70 text-[9px] font-bold uppercase tracking-widest">Saison</p>
-              <p className="text-[#d4af37] text-2xl font-black leading-tight">{selectedYear}</p>
+            <div className="bg-gold-light/15 border border-gold-light/30 rounded-xl px-4 py-3 text-center">
+              <p className="text-gold-light/70 text-[9px] font-bold uppercase tracking-widest">Saison</p>
+              <p className="text-gold-light text-2xl font-black leading-tight">{selectedYear}</p>
               {isCurrentYear && (
-                <p className="text-[#d4af37]/60 text-[9px] font-semibold uppercase tracking-wide mt-0.5">En cours</p>
+                <p className="text-gold-light/60 text-[9px] font-semibold uppercase tracking-wide mt-0.5">En cours</p>
               )}
             </div>
           </div>
@@ -197,8 +197,8 @@ export default async function AgencyDashboard() {
             value={fmtAmount(stats.totalIn, stats.currency)}
             sub={`Remboursements : ${fmtAmount(stats.totalRefund, stats.currency)}`}
             net={`Net encaissé : ${fmtAmount(stats.netIn, stats.currency)}`}
-            bg="bg-[#0f5132]"
-            accent="#d4af37"
+            bg="bg-primary"
+            accent="var(--accent-light)"
             href="/agency-admin/payments"
           />
           <FinanceCard

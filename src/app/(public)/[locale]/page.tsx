@@ -58,11 +58,11 @@ function StatCard({ value, label, Icon }: { value: string; label: string; Icon: 
   const suffix = value.replace(/[0-9]/g, "");
   const { count, ref } = useCounter(numericVal);
   return (
-    <div className="card-lift bg-white rounded-2xl p-6 text-center border border-emerald-100 shadow-sm">
-      <div className="w-12 h-12 bg-[#0f5132] rounded-xl flex items-center justify-center mx-auto mb-3">
+    <div className="card-lift bg-white rounded-2xl p-6 text-center border border-cream shadow-sm">
+      <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-3">
         <Icon size={22} className="text-white" strokeWidth={1.8} />
       </div>
-      <p className="text-3xl font-black text-[#0f5132] mb-1">
+      <p className="text-3xl font-black text-primary mb-1">
         <span ref={ref}>{count}</span>{suffix}
       </p>
       <p className="text-xs text-gray-500 font-medium">{label}</p>
@@ -75,7 +75,7 @@ function TestimonialCard({ item, active }: { item: TestimonialItem; active?: boo
   const colors = ["#065f46", "#b45309", "#1e40af", "#6d28d9", "#be185d"];
   const colorIdx = ["A", "I", "F", "O", "M"].indexOf(item.initial);
   return (
-    <div className={`card-lift bg-white rounded-2xl p-6 shadow-sm border flex flex-col gap-3 transition-all duration-300 ${active ? "border-emerald-300 shadow-emerald-100 shadow-lg scale-105" : "border-gray-100"}`}>
+    <div className={`card-lift bg-white rounded-2xl p-6 shadow-sm border flex flex-col gap-3 transition-all duration-300 ${active ? "border-cream-dark shadow-cream shadow-lg scale-105" : "border-gray-100"}`}>
       <div className="flex gap-0.5 mb-1">
         {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={14} className="text-orange-400 fill-orange-400" />)}
       </div>
@@ -126,12 +126,12 @@ export default function HomePage() {
   return (
     <>
       {/* ═══════════════ HERO ═══════════════════════════ */}
-      <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#062b1a]">
+      <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-brand-deep">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/hero-bg.jpg')" }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#062b1a]/70 via-[#062b1a]/50 to-[#062b1a]/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-deep/70 via-brand-deep/50 to-brand-deep/90" />
         <div className="absolute top-1/4 right-10 w-72 h-72 rounded-full border border-white/10 animate-rotate-slow" />
         <div className="absolute top-1/4 right-10 w-48 h-48 rounded-full border border-white/10" style={{ animation: "rotateSlow 14s linear infinite reverse" }} />
-        <div className="absolute bottom-32 left-8 w-32 h-32 rounded-full bg-emerald-500/10 animate-float" />
+        <div className="absolute bottom-32 left-8 w-32 h-32 rounded-full bg-primary-light/10 animate-float" />
         <div className="absolute top-16 left-1/3 w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
         <div className="absolute top-1/3 right-1/4 w-1.5 h-1.5 rounded-full bg-white/60 animate-pulse delay-300" />
 
@@ -162,7 +162,7 @@ export default function HomePage() {
                 <Link key={cta.label} href={cta.href}
                   className={`font-bold text-sm px-7 py-3.5 rounded-full tracking-wide transition-all hover:scale-105 active:scale-95 ${
                     cta.primary
-                      ? "bg-amber-600 text-white shadow-lg shadow-amber-600/30 hover:bg-amber-500"
+                      ? "bg-gold text-white shadow-lg shadow-gold/30 hover:bg-gold-light"
                       : "glass text-white hover:bg-white/20"
                   }`}>
                   {cta.label}
@@ -175,7 +175,7 @@ export default function HomePage() {
               </a>
               <span className="text-white/30">|</span>
               <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors text-sm font-medium">
+                className="flex items-center gap-2 text-primary-light hover:text-cream-dark transition-colors text-sm font-medium">
                 <IconWhatsApp size={16} />
                 {t("whatsappAvailable")}
               </a>
@@ -191,7 +191,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ TICKER ═══════════════════════ */}
-      <div className="bg-amber-600 py-2.5 overflow-hidden">
+      <div className="bg-gold py-2.5 overflow-hidden">
         <div className="flex animate-ticker whitespace-nowrap">
           {[...Array(2)].map((_, k) => (
             <span key={k} className="flex items-center">
@@ -234,7 +234,7 @@ export default function HomePage() {
               return (
                 <div key={i} className={`reveal delay-${i * 100 > 500 ? 500 : i * 100}`}>
                   <div className="card-lift flex flex-col items-center text-center gap-3 bg-white rounded-2xl p-5 border border-gray-100 shadow-sm group">
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-[#0f5132] shadow-lg shadow-[#0f5132]/20 group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-primary shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform duration-300">
                       <Icon size={26} strokeWidth={1.8} className="text-white" />
                     </div>
                     <p className="text-xs font-semibold text-gray-700 leading-tight">{label}</p>
@@ -247,7 +247,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ URGENCY BANNER ══════════════ */}
-      <div className="relative bg-gradient-to-r from-[#0f5132] via-[#0f5132] to-[#0a3d26] animate-gradient-shift py-4 px-4 overflow-hidden">
+      <div className="relative bg-gradient-to-r from-primary via-primary to-primary-dark animate-gradient-shift py-4 px-4 overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "repeating-linear-gradient(45deg, white 0, white 1px, transparent 0, transparent 50%)", backgroundSize: "20px 20px" }} />
         <div className="relative max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 text-white text-center">
           <div className="flex items-center gap-2">
@@ -255,7 +255,7 @@ export default function HomePage() {
             <p className="text-sm font-semibold">🕌 {t("urgencyText")}</p>
           </div>
           <Link href="/offres#hajj-2027"
-            className="flex-shrink-0 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-5 py-2 rounded-full transition-all hover:scale-105 shadow-lg">
+            className="flex-shrink-0 bg-gold hover:bg-gold-light text-white text-xs font-bold px-5 py-2 rounded-full transition-all hover:scale-105 shadow-lg">
             {t("urgencyCta")}
           </Link>
         </div>
@@ -267,7 +267,7 @@ export default function HomePage() {
           <div className="reveal-left relative">
             <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-2xl">
               <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/560922223_122098605927071313_4417420479539281621_n.jpg')" }} />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a3d26]/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/60 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 glass rounded-xl p-3 text-white text-sm font-medium">
                 <div className="flex items-center gap-2">
                   <Heart size={14} className="text-orange-400 fill-orange-400" />
@@ -275,7 +275,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="absolute -top-4 -right-4 bg-amber-600 text-white rounded-2xl px-4 py-2 shadow-xl text-sm font-bold animate-float">
+            <div className="absolute -top-4 -right-4 bg-gold text-white rounded-2xl px-4 py-2 shadow-xl text-sm font-bold animate-float">
               {t("founderBadge")}
             </div>
           </div>
@@ -298,7 +298,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 reveal">
             <p className="section-label mb-2">{t("oumraAgencyLabel")}</p>
-            <h2 className="text-6xl md:text-8xl font-black text-[#0f5132]" style={{ fontFamily: "var(--font-playfair, serif)" }}>
+            <h2 className="text-6xl md:text-8xl font-black text-primary" style={{ fontFamily: "var(--font-playfair, serif)" }}>
               OUMRA
             </h2>
           </div>
@@ -307,24 +307,24 @@ export default function HomePage() {
             {oumraSlots.map((slot, i) => (
               <Link key={slot.title} href={slot.href}
                 className={`reveal delay-${i * 200} card-lift rounded-2xl border p-6 group transition-all ${
-                  slot.dates ? "bg-white border-emerald-200 hover:border-emerald-400" : "bg-white border-gray-200"
+                  slot.dates ? "bg-white border-cream-dark hover:border-primary-light" : "bg-white border-gray-200"
                 }`}>
                 <div className="flex items-start justify-between mb-4">
                   <span className={`text-xs font-bold px-3 py-1 rounded-full ${
-                    slot.dates ? "bg-emerald-100 text-[#0f5132]" : "bg-gray-100 text-gray-500"
+                    slot.dates ? "bg-cream text-primary" : "bg-gray-100 text-gray-500"
                   }`}>
                     {slot.badge}
                   </span>
-                  <Calendar size={16} className="text-gray-300 group-hover:text-emerald-500 transition-colors" />
+                  <Calendar size={16} className="text-gray-300 group-hover:text-primary-light transition-colors" />
                 </div>
-                <p className="text-xs font-bold tracking-widest mb-2 uppercase text-[#0f5132]">{slot.title}</p>
+                <p className="text-xs font-bold tracking-widest mb-2 uppercase text-primary">{slot.title}</p>
                 {slot.dates ? (
                   <>
                     <div className="flex items-center gap-1 text-sm text-gray-600 mb-1">
                       <Clock size={13} className="text-orange-500" /> {slot.dates}
                     </div>
-                    <p className="text-base font-bold text-[#0f5132]">{t("oumraFrom")} {slot.price}</p>
-                    <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-[#0f5132] group-hover:gap-2 transition-all">
+                    <p className="text-base font-bold text-primary">{t("oumraFrom")} {slot.price}</p>
+                    <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-primary group-hover:gap-2 transition-all">
                       {t("oumraDetails")} <ArrowRight size={13} />
                     </div>
                   </>
@@ -345,8 +345,8 @@ export default function HomePage() {
               <ul className="space-y-2.5 mb-8">
                 {oumraRamadanFeatures.map((f, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700">
-                    <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check size={12} className="text-[#0f5132]" strokeWidth={2.5} />
+                    <div className="w-5 h-5 rounded-full bg-cream flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check size={12} className="text-primary" strokeWidth={2.5} />
                     </div>
                     {f}
                   </li>
@@ -366,7 +366,7 @@ export default function HomePage() {
       {/* ═══════════════ HADJ 2027 ════════════════════ */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: "url('/images/tawaf.jpg')" }} />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#062b1a] via-[#0a3d26] to-[#0a3d26]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-deep via-primary-dark to-primary-dark" />
         <div className="absolute top-12 right-12 w-64 h-64 rounded-full border border-white/5 animate-rotate-slow" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -400,7 +400,7 @@ export default function HomePage() {
             <div className="reveal-right">
               <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-2xl border border-white/10">
                 <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url('/images/tawaf.jpg')" }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#062b1a]/70 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/70 to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5 glass rounded-xl p-4">
                   <p className="text-white font-bold text-sm mb-1">🕋 {t("hajjCardTitle")}</p>
                   <p className="text-white/70 text-xs">{t("hajjCardPrice")}</p>
@@ -417,10 +417,10 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
             <div className="reveal-left">
               <p className="section-label mb-2">{t("makkahLabel")}</p>
-              <h2 className="text-4xl md:text-5xl font-black mb-4 text-[#0f5132]" style={{ fontFamily: "var(--font-playfair, serif)" }}>
+              <h2 className="text-4xl md:text-5xl font-black mb-4 text-primary" style={{ fontFamily: "var(--font-playfair, serif)" }}>
                 {t("makkahTitle")}
               </h2>
-              <div className="w-16 h-1 bg-amber-600 rounded-full mb-5" />
+              <div className="w-16 h-1 bg-gold rounded-full mb-5" />
               <p className="text-gray-600 leading-relaxed mb-4">{t("makkahText1")}</p>
               <p className="text-gray-600 leading-relaxed">{t("makkahText2")}</p>
             </div>
@@ -438,7 +438,7 @@ export default function HomePage() {
               <h2 className="text-4xl md:text-5xl font-black mb-4 text-gray-900" style={{ fontFamily: "var(--font-playfair, serif)" }}>
                 {t("madineTitle")}
               </h2>
-              <div className="w-16 h-1 bg-emerald-500 rounded-full mb-5" />
+              <div className="w-16 h-1 bg-primary-light rounded-full mb-5" />
               <p className="text-gray-600 leading-relaxed">{t("madineText")}</p>
             </div>
           </div>
@@ -463,12 +463,12 @@ export default function HomePage() {
                   className="w-full flex items-center justify-between px-6 py-4 text-left group"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-full bg-emerald-50 text-[#0f5132] text-xs font-bold flex items-center justify-center flex-shrink-0">
+                    <span className="w-7 h-7 rounded-full bg-cream text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span className="text-sm font-semibold text-gray-900 group-hover:text-[#0f5132] transition-colors">{item.title}</span>
+                    <span className="text-sm font-semibold text-gray-900 group-hover:text-primary transition-colors">{item.title}</span>
                   </div>
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${whyOpen === i ? "bg-[#0f5132] rotate-45" : "bg-gray-100"}`}>
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${whyOpen === i ? "bg-primary rotate-45" : "bg-gray-100"}`}>
                     <Plus size={14} className={whyOpen === i ? "text-white" : "text-gray-500"} />
                   </div>
                 </button>
@@ -493,7 +493,7 @@ export default function HomePage() {
             </h2>
             <div className="flex justify-center mt-5">
               <div className="inline-flex items-center gap-2.5 bg-gray-50 border border-gray-200 rounded-full px-5 py-2.5 shadow-sm">
-                <span className="font-black text-emerald-600 text-base">G</span>
+                <span className="font-black text-primary text-base">G</span>
                 <span className="font-bold text-gray-900">4,9</span>
                 <div className="flex gap-0.5">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={13} className="text-orange-400 fill-orange-400" />)}</div>
                 <span className="text-xs text-gray-400">{t("testimonialsRating")}</span>
@@ -510,17 +510,17 @@ export default function HomePage() {
           <div className="flex justify-center gap-2 mb-6">
             {testimonials.map((_, i) => (
               <button key={i} onClick={() => setTestimonialIdx(i)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === testimonialIdx ? "bg-[#0f5132] w-6" : "bg-gray-200"}`} />
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${i === testimonialIdx ? "bg-primary w-6" : "bg-gray-200"}`} />
             ))}
           </div>
 
           <div className="flex justify-center gap-3">
             <button onClick={() => setTestimonialIdx((i) => (i - 1 + testimonials.length) % testimonials.length)}
-              className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:border-emerald-500 hover:text-[#0f5132] transition-colors">
+              className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:border-primary-light hover:text-primary transition-colors">
               <ChevronLeft size={18} />
             </button>
             <button onClick={() => setTestimonialIdx((i) => (i + 1) % testimonials.length)}
-              className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:border-emerald-500 hover:text-[#0f5132] transition-colors">
+              className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:border-primary-light hover:text-primary transition-colors">
               <ChevronRight size={18} />
             </button>
           </div>
@@ -541,8 +541,8 @@ export default function HomePage() {
               <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                 <button onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}
                   className="w-full flex items-center justify-between px-6 py-4 text-left group">
-                  <span className="text-sm font-semibold text-gray-900 group-hover:text-[#0f5132] transition-colors pr-4">{item.q}</span>
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${faqOpen === i ? "bg-[#0f5132] rotate-45" : "bg-gray-100"}`}>
+                  <span className="text-sm font-semibold text-gray-900 group-hover:text-primary transition-colors pr-4">{item.q}</span>
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${faqOpen === i ? "bg-primary rotate-45" : "bg-gray-100"}`}>
                     <Plus size={14} className={faqOpen === i ? "text-white" : "text-gray-500"} />
                   </div>
                 </button>
@@ -559,7 +559,7 @@ export default function HomePage() {
 
       {/* ═══════════════ CTA FINAL ════════════════════ */}
       <section className="relative py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a3d26] via-[#0f5132] to-[#062b1a] animate-gradient-shift" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-dark via-primary to-brand-deep animate-gradient-shift" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, #fbbf24 0%, transparent 50%), radial-gradient(circle at 80% 20%, #6ee7b7 0%, transparent 40%)" }} />
         <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full border border-white/10 animate-rotate-slow" />
         <div className="absolute -top-8 right-20 w-40 h-40 rounded-full border border-white/10 animate-float" />
@@ -579,7 +579,7 @@ export default function HomePage() {
               <IconWhatsApp size={18} /> {t("ctaWhatsapp")}
             </a>
             <Link href="/contact"
-              className="px-8 py-3.5 rounded-full border-2 border-white/30 text-white font-semibold hover:bg-white hover:text-[#0f5132] transition-all hover:scale-105 text-sm">
+              className="px-8 py-3.5 rounded-full border-2 border-white/30 text-white font-semibold hover:bg-white hover:text-primary transition-all hover:scale-105 text-sm">
               {t("ctaContact")}
             </Link>
             <a href="tel:+22796963961"

@@ -10,6 +10,8 @@ import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import DirectionSetter from "@/components/ui/DirectionSetter";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import { headers } from "next/headers";
+import { themeStyleTag } from "@/lib/tenant-theme";
 import "../../globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -66,6 +68,13 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const session = await getSession();
 
+  // ── Thème du tenant (couleurs de marque) ───────────────────────────────────
+  // Le slug est posé par le middleware (host en prod, DEV_DEFAULT_TENANT en dev).
+  const tenantSlug = (await headers()).get("x-tenant-slug") ?? "";
+  const tenantForTheme = tenantSlug
+    ? await prisma.tenant.findUnique({ where: { slug: tenantSlug }, select: { theme: true } })
+    : null;
+
   // Photo de profil de l'utilisateur connecté (affichée dans le header)
   // 1) user.photoUrl (photo définie par l'agence)
   // 2) fallback : photo de pèlerin — son document PHOTO en attente ou validé
@@ -98,6 +107,8 @@ export default async function LocaleLayout({
       className={`${inter.variable} ${playfair.variable} min-h-screen flex flex-col`}
       style={{ fontFamily: "var(--font-inter), Arial, sans-serif", backgroundColor: "#f8fafc", color: "#111827" }}
     >
+      {/* Couleurs de marque du tenant — écrase les défauts :root de globals.css */}
+      <style id="tenant-theme" dangerouslySetInnerHTML={{ __html: themeStyleTag(tenantForTheme?.theme) }} />
       <NextIntlClientProvider messages={messages}>
         <DirectionSetter />
         <Header user={session ? { name: session.name, role: session.role, photoUrl } : null} />

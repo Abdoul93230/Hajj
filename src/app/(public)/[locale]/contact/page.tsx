@@ -54,9 +54,9 @@ export default function ContactPage() {
           {/* Contact form */}
           <div className="lg:col-span-3">
             {sent ? (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 text-center">
-                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Send size={28} className="text-[#0f5132]" />
+              <div className="bg-cream border border-cream-dark rounded-2xl p-8 text-center">
+                <div className="w-16 h-16 bg-cream rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Send size={28} className="text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{t("success")}</h3>
                 <p className="text-gray-600">{t("successSub")}</p>
@@ -71,7 +71,7 @@ export default function ContactPage() {
                       type="text"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -80,7 +80,7 @@ export default function ContactPage() {
                       type="email"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -100,7 +100,7 @@ export default function ContactPage() {
                       type="text"
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -111,14 +111,14 @@ export default function ContactPage() {
                     rows={5}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent resize-none"
                   />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-[#0f5132] text-white font-semibold py-3 rounded-lg hover:bg-[#0f5132] transition-colors disabled:opacity-50"
+                    className="flex-1 bg-primary text-white font-semibold py-3 rounded-lg hover:bg-primary transition-colors disabled:opacity-50"
                   >
                     {loading ? t("sending") : t("sendEmail")}
                   </button>
@@ -141,11 +141,11 @@ export default function ContactPage() {
               <h3 className="font-bold text-gray-900 mb-4">{t("infoTitle")}</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <MapPin size={18} className="text-[#0f5132] mt-0.5 flex-shrink-0" />
+                  <MapPin size={18} className="text-primary mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-gray-600">{ta("address")}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Phone size={18} className="text-[#0f5132] flex-shrink-0" />
+                  <Phone size={18} className="text-primary flex-shrink-0" />
                   <div className="text-sm text-gray-600">
                     <p>{ta("phone1")}</p>
                     <p>{ta("phone2")}</p>

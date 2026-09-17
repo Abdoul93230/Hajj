@@ -234,10 +234,10 @@ export default function CoranPage() {
   if (view === "home") return (
     <>
       {/* Hero */}
-      <section className="relative bg-[#06251a] py-20 overflow-hidden">
+      <section className="relative bg-brand-deep py-20 overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center opacity-15"
           style={{ backgroundImage: "url('/images/quran.jpg')" }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#06251a]/70 to-[#06251a]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-deep/70 to-brand-deep" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
           <p className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-4">{t("toolsLabel")}</p>
           <h1 className="text-5xl md:text-7xl font-black text-white mb-3"
@@ -246,7 +246,7 @@ export default function CoranPage() {
           <p className="text-white/50 text-base mb-8 max-w-lg mx-auto">{t("heroDesc")}</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <button onClick={() => loadSurah(1)}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-bold px-8 py-3.5 rounded-full transition-all hover:scale-105">
+              className="inline-flex items-center gap-2 bg-gold-light hover:bg-amber-400 text-white font-bold px-8 py-3.5 rounded-full transition-all hover:scale-105">
               <BookOpen size={18} /> {t("browseSurahs")}
             </button>
             <button
@@ -264,16 +264,16 @@ export default function CoranPage() {
       {/* Featured */}
       <section className="bg-white py-14 px-4">
         <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-bold tracking-widest text-amber-600 uppercase mb-2">{t("popularLabel")}</p>
+          <p className="text-xs font-bold tracking-widest text-gold uppercase mb-2">{t("popularLabel")}</p>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{t("popularTitle")}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {SURAHS.filter(s => FEATURED.includes(s.n)).map(s => (
               <button key={s.n} onClick={() => loadSurah(s.n)}
-                className="card-lift bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center hover:bg-[#0f5132] group transition-all">
-                <p className="text-2xl font-black text-[#0f5132] group-hover:text-white mb-1">{s.n}</p>
+                className="card-lift bg-cream border border-cream rounded-2xl p-4 text-center hover:bg-primary group transition-all">
+                <p className="text-2xl font-black text-primary group-hover:text-white mb-1">{s.n}</p>
                 <p className="text-sm font-bold text-gray-900 group-hover:text-white">{s.fr}</p>
                 <p className="text-xs text-gray-400 group-hover:text-white/70 mt-0.5" dir="rtl">{s.ar}</p>
-                <p className="text-xs text-gray-400 group-hover:text-emerald-200 mt-1">{s.ayahs} {t("verses")}</p>
+                <p className="text-xs text-gray-400 group-hover:text-cream-dark mt-1">{s.ayahs} {t("verses")}</p>
               </button>
             ))}
           </div>
@@ -288,12 +288,12 @@ export default function CoranPage() {
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input type="text" placeholder={t("searchPlaceholder")} value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent" />
             </div>
             <div className="flex gap-2">
               {(["all", "M", "Me"] as const).map(f => (
                 <button key={f} onClick={() => setFilterType(f)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterType === f ? "bg-[#0f5132] text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-300"}`}>
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterType === f ? "bg-primary text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-cream-dark"}`}>
                   {f === "all" ? t("filterAll") : f === "M" ? t("filterMakki") : t("filterMadani")}
                 </button>
               ))}
@@ -303,15 +303,15 @@ export default function CoranPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             {filtered.map(s => (
               <button key={s.n} onClick={() => loadSurah(s.n)}
-                className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 hover:border-emerald-300 hover:bg-emerald-50 transition-all text-left group">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-[#0f5132] font-black text-sm flex-shrink-0 group-hover:bg-[#0f5132] group-hover:text-white transition-all">
+                className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 hover:border-cream-dark hover:bg-cream transition-all text-left group">
+                <div className="w-10 h-10 rounded-xl bg-cream border border-cream flex items-center justify-center text-primary font-black text-sm flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all">
                   {s.n}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-gray-900 text-sm">{s.fr}</p>
                   <p className="text-xs text-gray-400">{s.ayahs} {t("verses")} · {s.type === "M" ? t("makki") : t("madani")}</p>
                 </div>
-                <p className="text-base text-[#0a3d26] flex-shrink-0" dir="rtl">{s.ar}</p>
+                <p className="text-base text-primary-dark flex-shrink-0" dir="rtl">{s.ar}</p>
               </button>
             ))}
           </div>
@@ -332,7 +332,7 @@ export default function CoranPage() {
       <div className="sticky top-[72px] z-40 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
           <button onClick={() => setView("home")}
-            className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#0f5132] transition-colors flex-shrink-0">
+            className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-primary transition-colors flex-shrink-0">
             <ChevronLeft size={16} /> {t("back")}
           </button>
           <div className="flex-1 text-center">
@@ -343,22 +343,22 @@ export default function CoranPage() {
             <div className="hidden sm:flex items-center gap-1 bg-gray-100 rounded-lg p-1">
               {(["sm","md","lg"] as const).map(s => (
                 <button key={s} onClick={() => setFontSize(s)}
-                  className={`px-2 py-0.5 rounded text-xs font-bold transition-all ${fontSize === s ? "bg-white shadow text-[#0f5132]" : "text-gray-500"}`}>
+                  className={`px-2 py-0.5 rounded text-xs font-bold transition-all ${fontSize === s ? "bg-white shadow text-primary" : "text-gray-500"}`}>
                   {s === "sm" ? "A" : s === "md" ? "A+" : "A++"}
                 </button>
               ))}
             </div>
             <button onClick={() => setShowTranslation(v => !v)}
-              className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-[#0f5132] bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">
+              className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-primary bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">
               {showTranslation ? <Eye size={13} /> : <EyeOff size={13} />}
               <span className="hidden sm:inline">{t("translationToggle")}</span>
             </button>
             <button onClick={() => selected > 1 && loadSurah(selected - 1)} disabled={selected <= 1}
-              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-[#0f5132] disabled:opacity-30 transition-colors">
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-primary disabled:opacity-30 transition-colors">
               <ChevronLeft size={16} />
             </button>
             <button onClick={() => selected < 114 && loadSurah(selected + 1)} disabled={selected >= 114}
-              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-[#0f5132] disabled:opacity-30 transition-colors">
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-primary disabled:opacity-30 transition-colors">
               <ChevronRight size={16} />
             </button>
           </div>
@@ -369,17 +369,17 @@ export default function CoranPage() {
       <div className="max-w-3xl mx-auto px-4 py-10">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
-            <div className="w-10 h-10 border-2 border-[#0f5132] border-t-transparent rounded-full animate-spin" />
+            <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="text-gray-400 text-sm">{t("loading")}</p>
           </div>
         ) : (
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
 
             {/* Surah header */}
-            <div className="bg-gradient-to-br from-[#062b1a] to-[#0a3d26] px-8 py-8 text-center">
+            <div className="bg-gradient-to-br from-brand-deep to-primary-dark px-8 py-8 text-center">
               <p className="text-white/60 text-xs tracking-widest uppercase mb-2">{t("surahNumber")} {selected}</p>
               <p className="text-white text-4xl mb-2" dir="rtl">{currentSurah.ar}</p>
-              <p className="text-emerald-200 font-bold text-lg">{currentSurah.fr}</p>
+              <p className="text-cream-dark font-bold text-lg">{currentSurah.fr}</p>
               <p className="text-white/50 text-xs mt-1">
                 {currentSurah.ayahs} {t("verses")} · {currentSurah.type === "M" ? t("makki") : t("madani")}
               </p>
@@ -391,7 +391,7 @@ export default function CoranPage() {
 
             <div className="p-6 md:p-8 space-y-5">
               {selected !== 1 && selected !== 9 && (
-                <div className="text-center text-2xl text-[#0a3d26] py-4 border-b border-gray-100" dir="rtl">
+                <div className="text-center text-2xl text-primary-dark py-4 border-b border-gray-100" dir="rtl">
                   بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
                 </div>
               )}
@@ -402,7 +402,7 @@ export default function CoranPage() {
                   <div
                     key={ayah.numberInSurah}
                     ref={el => { ayahRefs.current[idx] = el; }}
-                    className={`group rounded-xl transition-colors ${isActive ? "bg-emerald-50 -mx-3 px-3 py-3" : "border-b border-gray-50 last:border-0 pb-5 last:pb-0"}`}
+                    className={`group rounded-xl transition-colors ${isActive ? "bg-cream -mx-3 px-3 py-3" : "border-b border-gray-50 last:border-0 pb-5 last:pb-0"}`}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <button
@@ -413,8 +413,8 @@ export default function CoranPage() {
                         }
                         className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
                           isActive
-                            ? "bg-[#0f5132] text-white"
-                            : "bg-gray-100 text-gray-400 opacity-0 group-hover:opacity-100 hover:bg-emerald-100 hover:text-[#0f5132]"
+                            ? "bg-primary text-white"
+                            : "bg-gray-100 text-gray-400 opacity-0 group-hover:opacity-100 hover:bg-cream hover:text-primary"
                         }`}
                         title={t("listenVerse")}
                       >
@@ -425,17 +425,17 @@ export default function CoranPage() {
                           : <Play  size={12} fill="currentColor" />
                         }
                       </button>
-                      <span className={`w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold transition-all ${isActive ? "border-emerald-500 bg-[#0f5132] text-white" : "border-emerald-200 bg-emerald-50 text-[#0f5132]"}`}>
+                      <span className={`w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold transition-all ${isActive ? "border-primary-light bg-primary text-white" : "border-cream-dark bg-cream text-primary"}`}>
                         {ayah.numberInSurah}
                       </span>
                     </div>
 
-                    <p className={`text-right leading-loose mb-3 ${arabicFontSize} ${isActive ? "text-[#062b1a]" : "text-gray-900"}`} dir="rtl">
+                    <p className={`text-right leading-loose mb-3 ${arabicFontSize} ${isActive ? "text-brand-deep" : "text-gray-900"}`} dir="rtl">
                       {ayah.text}
                     </p>
 
                     {showTranslation && ayah.translation && (
-                      <p className={`leading-relaxed border-l-2 border-emerald-200 pl-3 ${transFontSize} ${isActive ? "text-[#0a3d26]" : "text-gray-500"}`}>
+                      <p className={`leading-relaxed border-l-2 border-cream-dark pl-3 ${transFontSize} ${isActive ? "text-primary-dark" : "text-gray-500"}`}>
                         {ayah.translation}
                       </p>
                     )}
@@ -447,13 +447,13 @@ export default function CoranPage() {
             {/* Navigation bottom */}
             <div className="border-t border-gray-100 px-6 py-4 flex items-center justify-between bg-gray-50">
               <button onClick={() => selected > 1 && loadSurah(selected - 1)} disabled={selected <= 1}
-                className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-[#0f5132] disabled:opacity-30 transition-colors">
+                className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-primary disabled:opacity-30 transition-colors">
                 <ChevronLeft size={16} />
                 {selected > 1 ? SURAHS[selected - 2].fr : ""}
               </button>
               <p className="text-xs text-gray-400">{selected} / 114</p>
               <button onClick={() => selected < 114 && loadSurah(selected + 1)} disabled={selected >= 114}
-                className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-[#0f5132] disabled:opacity-30 transition-colors">
+                className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-primary disabled:opacity-30 transition-colors">
                 {selected < 114 ? SURAHS[selected].fr : ""}
                 <ChevronRight size={16} />
               </button>
@@ -462,7 +462,7 @@ export default function CoranPage() {
         )}
 
         <div className="text-center mt-6">
-          <button onClick={() => setView("home")} className="text-sm text-[#0f5132] hover:underline flex items-center gap-1 mx-auto">
+          <button onClick={() => setView("home")} className="text-sm text-primary hover:underline flex items-center gap-1 mx-auto">
             <ChevronLeft size={14} /> {t("backToList")}
           </button>
         </div>
@@ -470,24 +470,24 @@ export default function CoranPage() {
 
       {/* Mini-player */}
       {(isPlaying || playingIdx !== null) && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#06251a]/97 backdrop-blur-md border-t border-[#0a3d26]/40 shadow-2xl">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-brand-deep/97 backdrop-blur-md border-t border-primary-dark/40 shadow-2xl">
           {playingIdx !== null && ayahs.length > 0 && (
-            <div className="h-0.5 bg-[#062b1a]/60">
+            <div className="h-0.5 bg-brand-deep/60">
               <div
-                className="h-full bg-gradient-to-r from-emerald-400 to-amber-400 transition-all duration-500"
+                className="h-full bg-gradient-to-r from-primary-light to-amber-400 transition-all duration-500"
                 style={{ width: `${((playingIdx + 1) / ayahs.length) * 100}%` }}
               />
             </div>
           )}
 
           <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-4">
-            <div className="w-11 h-11 rounded-xl bg-[#0f5132]/60 border border-[#0f5132]/40 flex items-center justify-center flex-shrink-0">
-              <Volume2 size={18} className="text-emerald-300" />
+            <div className="w-11 h-11 rounded-xl bg-primary/60 border border-primary/40 flex items-center justify-center flex-shrink-0">
+              <Volume2 size={18} className="text-cream-dark" />
             </div>
 
             <div className="flex-1 min-w-0">
               <p className="text-white font-semibold text-sm truncate">{currentSurah.fr}</p>
-              <p className="text-emerald-400 text-xs">
+              <p className="text-primary-light text-xs">
                 {playingAyah
                   ? `${t("verseLabel")} ${playingAyah.numberInSurah} / ${currentSurah.ayahs}`
                   : t("recitation")}
@@ -502,7 +502,7 @@ export default function CoranPage() {
               </button>
 
               <button onClick={togglePlayPause}
-                className="w-12 h-12 rounded-full bg-[#0f5132] hover:bg-emerald-500 flex items-center justify-center text-white transition-all hover:scale-105 shadow-lg shadow-[#062b1a]/50">
+                className="w-12 h-12 rounded-full bg-primary hover:bg-primary-light flex items-center justify-center text-white transition-all hover:scale-105 shadow-lg shadow-brand-deep/50">
                 {audioLoading
                   ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   : isPlaying

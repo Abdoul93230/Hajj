@@ -96,9 +96,9 @@ export default async function OffresPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative bg-[#06251a] py-24 overflow-hidden">
+      <section className="relative bg-brand-deep py-24 overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: "url('/images/kaaba.jpg')" }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#06251a]/80 to-[#06251a]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-deep/80 to-brand-deep" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="section-label text-amber-400 mb-3">{t("heroLabel2")}</p>
           <h1 className="text-4xl md:text-6xl font-black text-white mb-4" style={{ fontFamily: "var(--font-playfair, serif)" }}>
@@ -147,7 +147,7 @@ export default async function OffresPage() {
 
                           {/* Header band */}
                           <div className={`px-6 py-4 flex items-center justify-between gap-3 ${
-                            offer.type === "HAJJ" ? "bg-amber-700" : "bg-[#0f5132]"
+                            offer.type === "HAJJ" ? "bg-gold-dark" : "bg-primary"
                           } text-white`}>
                             <div className="flex items-center gap-3 min-w-0">
                               <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full tracking-wider flex-shrink-0">
@@ -183,7 +183,7 @@ export default async function OffresPage() {
                                   <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-600">
                                     {offer.departureDate && (
                                       <span className="flex items-center gap-1.5">
-                                        <Calendar size={14} className="text-[#0f5132]" />
+                                        <Calendar size={14} className="text-primary" />
                                         {t("departure")} : <strong className="text-gray-900">
                                           {new Date(offer.departureDate).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                                         </strong>
@@ -191,7 +191,7 @@ export default async function OffresPage() {
                                     )}
                                     {offer.returnDate && (
                                       <span className="flex items-center gap-1.5">
-                                        <Calendar size={14} className="text-[#0f5132]" />
+                                        <Calendar size={14} className="text-primary" />
                                         {t("return")} : <strong className="text-gray-900">
                                           {new Date(offer.returnDate).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                                         </strong>
@@ -199,7 +199,7 @@ export default async function OffresPage() {
                                     )}
                                     {offer.durationDays && (
                                       <span className="flex items-center gap-1.5">
-                                        <Clock size={14} className="text-[#0f5132]" />
+                                        <Clock size={14} className="text-primary" />
                                         {offer.durationDays} {t("nights")}
                                       </span>
                                     )}
@@ -214,7 +214,7 @@ export default async function OffresPage() {
                                 <div className="md:min-w-[200px] flex flex-col items-center md:items-end gap-4">
                                   <div className="text-center md:text-right">
                                     <p className="text-xs text-gray-400 mb-1">{t("fromLabel")}</p>
-                                    <p className="text-3xl font-black text-[#0f5132]">
+                                    <p className="text-3xl font-black text-primary">
                                       {offer.priceAdult.toLocaleString("fr-FR")}
                                     </p>
                                     <p className="text-sm text-gray-500">{offer.currency} {t("perPerson")}</p>
@@ -222,13 +222,13 @@ export default async function OffresPage() {
                                   <div className="flex flex-col gap-2 w-full md:w-auto">
                                     <Link href={`/offres/${offer.slug}` as `/offres/${string}`}
                                       className={`flex items-center justify-center gap-2 font-bold text-sm px-6 py-3 rounded-xl text-white transition-all hover:scale-105 ${
-                                        offer.type === "HAJJ" ? "bg-amber-600 hover:bg-amber-500" : "bg-[#0f5132] hover:bg-[#157347]"
+                                        offer.type === "HAJJ" ? "bg-gold hover:bg-gold-light" : "bg-primary hover:bg-primary-light"
                                       }`}>
                                       {t("details")} <ArrowRight size={14} />
                                     </Link>
                                     {available && (
                                       <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-                                        className="flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl border-2 border-[#0f5132] text-[#0f5132] hover:bg-emerald-50 transition-all">
+                                        className="flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl border-2 border-primary text-primary hover:bg-cream transition-all">
                                         <Users size={14} /> {t("bookBtn")}
                                       </a>
                                     )}

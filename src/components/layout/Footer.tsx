@@ -67,7 +67,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#062b1a] text-white">
+    <footer className="bg-brand-deep text-white">
 
       {/* ── CTA NEWSLETTER BAND ────────────────────── */}
       <div className="relative overflow-hidden border-b border-white/5">
@@ -88,7 +88,7 @@ export default function Footer() {
               <div className="flex flex-wrap gap-4 text-xs text-white/60">
                 {[tf("trustNoSpam"), tf("trustEasyUnsub"), tf("trustExclusive")].map((label) => (
                   <span key={label} className="flex items-center gap-1.5">
-                    <CheckCircle size={12} className="text-emerald-400" />
+                    <CheckCircle size={12} className="text-primary-light" />
                     {label}
                   </span>
                 ))}
@@ -97,8 +97,8 @@ export default function Footer() {
 
             <div>
               {subscribed ? (
-                <div className="flex items-center gap-3 bg-emerald-700/30 border border-emerald-600/40 rounded-2xl px-6 py-5">
-                  <CheckCircle size={22} className="text-emerald-400 flex-shrink-0" />
+                <div className="flex items-center gap-3 bg-primary/30 border border-primary/40 rounded-2xl px-6 py-5">
+                  <CheckCircle size={22} className="text-primary-light flex-shrink-0" />
                   <div>
                     <p className="font-semibold text-white">{tf("subscribeSuccess")}</p>
                     <p className="text-white/50 text-sm">{tf("subscribeSuccessDesc")}</p>
@@ -117,7 +117,7 @@ export default function Footer() {
                     />
                   </div>
                   <button type="submit"
-                    className="flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold px-5 py-3 rounded-xl transition-all hover:scale-105 flex-shrink-0">
+                    className="flex items-center gap-2 bg-gold hover:bg-gold-light text-white text-sm font-semibold px-5 py-3 rounded-xl transition-all hover:scale-105 flex-shrink-0">
                     {tf("newsletterCta")} <ArrowRight size={14} />
                   </button>
                 </form>
@@ -181,7 +181,7 @@ export default function Footer() {
               <div className="flex gap-3 flex-wrap items-center">
                 {ACCREDITATIONS.map(({ src, alt, w, h }) => (
                   <div key={alt}
-                    className="bg-white rounded-lg px-3 py-2 flex items-center justify-center hover:shadow-lg hover:shadow-emerald-900/40 transition-all">
+                    className="bg-white rounded-lg px-3 py-2 flex items-center justify-center hover:shadow-lg hover:shadow-primary-dark/40 transition-all">
                     <Image src={src} alt={alt} width={w} height={h} className="object-contain max-h-8 w-auto" />
                   </div>
                 ))}
@@ -217,7 +217,7 @@ export default function Footer() {
                     <span className="flex items-center gap-2">
                       {l.label}
                       {l.badge && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-700/60 text-emerald-300 leading-none">
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/60 text-cream-dark leading-none">
                           {l.badge}
                         </span>
                       )}

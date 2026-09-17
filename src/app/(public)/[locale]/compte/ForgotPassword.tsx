@@ -80,12 +80,12 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
   }
 
   const inputCls =
-    "w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500";
+    "w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light";
 
   return (
     <div className="p-6">
       {error && (
-        <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg px-4 py-3 mb-4">
+        <div className="bg-amber-50 border border-amber-200 text-gold-dark text-sm rounded-lg px-4 py-3 mb-4">
           {error}
         </div>
       )}
@@ -101,8 +101,8 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
           </button>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Lock size={20} className="text-[#0f5132]" />
+            <div className="w-12 h-12 bg-cream rounded-full flex items-center justify-center mx-auto mb-3">
+              <Lock size={20} className="text-primary" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">{t("forgotTitle")}</h2>
             <p className="text-sm text-gray-500 mt-1">{t("forgotDesc")}</p>
@@ -122,7 +122,7 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
 
           <button
             type="submit" disabled={loading}
-            className="w-full bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0f5132] transition-colors disabled:opacity-50"
+            className="w-full bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary transition-colors disabled:opacity-50"
           >
             {loading ? t("sendingCode") : t("sendCode")}
           </button>
@@ -141,8 +141,8 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
           </button>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <ShieldCheck size={20} className="text-[#0f5132]" />
+            <div className="w-12 h-12 bg-cream rounded-full flex items-center justify-center mx-auto mb-3">
+              <ShieldCheck size={20} className="text-primary" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">{t("forgotTitle")}</h2>
             <p className="text-sm text-gray-500 mt-1">
@@ -157,7 +157,7 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
               maxLength={6} value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
               placeholder="••••••"
-              className="w-full text-center tracking-[0.5em] text-lg font-semibold py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full text-center tracking-[0.5em] text-lg font-semibold py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-light"
             />
             <p className="text-xs text-gray-400 mt-1">{t("otpHint")}</p>
           </div>
@@ -169,7 +169,7 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
               <input
                 required type={showPwd ? "text" : "password"} value={pwd} minLength={6}
                 onChange={(e) => setPwd(e.target.value)}
-                className="w-full pl-9 pr-9 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-9 pr-9 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
               />
               <button
                 type="button" onClick={() => setShowPwd(!showPwd)}
@@ -189,14 +189,14 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
               <input
                 required type={showPwd ? "text" : "password"} value={pwd2} minLength={6}
                 onChange={(e) => setPwd2(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
               />
             </div>
           </div>
 
           <button
             type="submit" disabled={loading || code.length !== 6}
-            className="w-full bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0f5132] transition-colors disabled:opacity-50"
+            className="w-full bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary transition-colors disabled:opacity-50"
           >
             {loading ? t("resetting") : t("resetPassword")}
           </button>
@@ -204,7 +204,7 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
           <button
             type="button" disabled={cooldown > 0 || loading}
             onClick={requestCode}
-            className="w-full text-center text-sm font-medium text-[#0f5132] hover:underline disabled:text-gray-400 disabled:no-underline"
+            className="w-full text-center text-sm font-medium text-primary hover:underline disabled:text-gray-400 disabled:no-underline"
           >
             {cooldown > 0 ? t("resendIn", { seconds: cooldown }) : t("resendCode")}
           </button>
@@ -214,14 +214,14 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
       {/* ÉTAPE 3 — succès */}
       {step === "done" && (
         <div className="text-center space-y-4 py-2">
-          <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
-            <CheckCircle2 size={28} className="text-[#0f5132]" />
+          <div className="w-14 h-14 bg-cream rounded-full flex items-center justify-center mx-auto">
+            <CheckCircle2 size={28} className="text-primary" />
           </div>
           <h2 className="text-lg font-bold text-gray-900">{t("resetSuccess")}</h2>
           <p className="text-sm text-gray-500">{t("resetSuccessDesc")}</p>
           <button
             type="button" onClick={onBack}
-            className="w-full bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0f5132] transition-colors"
+            className="w-full bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary transition-colors"
           >
             {t("backToLogin")}
           </button>

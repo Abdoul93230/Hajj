@@ -245,14 +245,14 @@ export default function VoyagesClient({ offers, selectedYear }: VoyagesClientPro
             placeholder="Rechercher par nom de voyage..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
           />
         </div>
 
         {/* Create button */}
         <button
           onClick={() => openCreate()}
-          className="flex items-center gap-2 bg-[#0f5132] hover:bg-[#0d4429] text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm transition active:scale-95"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm transition active:scale-95"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -307,11 +307,11 @@ export default function VoyagesClient({ offers, selectedYear }: VoyagesClientPro
           {/* ─── Section OMRA : plusieurs départs, libre ─── */}
           <section>
             <div className="flex items-center gap-2.5 mb-3">
-              <span className="w-9 h-9 rounded-xl bg-[#0f5132]/10 flex items-center justify-center text-base">🕌</span>
+              <span className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-base">🕌</span>
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-base font-bold text-gray-800">Omra {selectedYear}</h2>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0f5132]/10 text-[#0f5132]">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                     {umrahOffers.length} départ{umrahOffers.length > 1 ? "s" : ""}
                   </span>
                 </div>
@@ -339,14 +339,14 @@ export default function VoyagesClient({ offers, selectedYear }: VoyagesClientPro
                 <button
                   key={p.label}
                   onClick={() => openCreate({ defaultType: "UMRAH", defaultTitle: `${p.label} ${selectedYear}` })}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-[#0f5132]/40 hover:shadow-md transition p-4 text-left group"
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-primary/40 hover:shadow-md transition p-4 text-left group"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-lg group-hover:scale-110 transition-transform">{p.emoji}</span>
                     <p className="text-sm font-semibold text-gray-700">{p.label} {selectedYear}</p>
                   </div>
                   <p className="text-[11px] text-gray-400">{p.desc}</p>
-                  <p className="text-[11px] font-semibold text-[#0f5132] mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <p className="text-[11px] font-semibold text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     + Créer ce voyage
                   </p>
                 </button>
@@ -355,7 +355,7 @@ export default function VoyagesClient({ offers, selectedYear }: VoyagesClientPro
 
             <button
               onClick={() => openCreate({ defaultType: "UMRAH" })}
-              className="mt-3 text-sm font-semibold text-[#0f5132] hover:underline"
+              className="mt-3 text-sm font-semibold text-primary hover:underline"
             >
               + Créer un voyage Omra librement (autre période)
             </button>
@@ -450,7 +450,7 @@ function VoyageRowWithPanel({
   onPilgrimChanged: () => void;
 }) {
   const isHajj = offer.type === "HAJJ";
-  const badgeClass = isHajj ? "bg-[#0f5132]/10 text-[#0f5132]" : "bg-amber-50 text-amber-700";
+  const badgeClass = isHajj ? "bg-primary/10 text-primary" : "bg-amber-50 text-amber-700";
   const badgeLabel = isHajj ? "Hajj" : "Umrah";
   const hasDates = !!offer.departureDate && !!offer.returnDate;
   const durationDays = hasDates ? getDurationDays(offer.departureDate!, offer.returnDate!) : null;
@@ -462,8 +462,8 @@ function VoyageRowWithPanel({
         {/* NOM DU VOYAGE */}
         <td className="px-5 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#0f5132]/10 flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#0f5132" strokeWidth={2}>
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={2}>
                 <circle cx="12" cy="12" r="9" />
                 <circle cx="12" cy="12" r="3" />
               </svg>
@@ -509,7 +509,7 @@ function VoyageRowWithPanel({
             <div className="min-w-[140px]">
               <div className="h-1 rounded-full bg-gray-100 overflow-hidden mb-1.5">
                 <div
-                  className="h-full rounded-full bg-[#0f5132] transition-all"
+                  className="h-full rounded-full bg-primary transition-all"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -542,8 +542,8 @@ function VoyageRowWithPanel({
               title="Gérer les pèlerins"
               className={`p-1.5 rounded transition flex items-center gap-1 text-xs font-medium ${
                 expanded
-                  ? "bg-[#0f5132]/10 text-[#0f5132]"
-                  : "hover:bg-gray-100 text-gray-400 hover:text-[#0f5132]"
+                  ? "bg-primary/10 text-primary"
+                  : "hover:bg-gray-100 text-gray-400 hover:text-primary"
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -554,7 +554,7 @@ function VoyageRowWithPanel({
             <button
               onClick={onEdit}
               title="Modifier"
-              className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-[#0f5132] transition"
+              className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-primary transition"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -563,7 +563,7 @@ function VoyageRowWithPanel({
             <button
               onClick={onProgram}
               title="Programme du voyage"
-              className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-[#0f5132] transition"
+              className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-primary transition"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
@@ -585,7 +585,7 @@ function VoyageRowWithPanel({
       {/* ── Panel pèlerins ── */}
       {expanded && (
         <tr>
-          <td colSpan={5} className="px-0 py-0 bg-[#0f5132]/[0.02] border-b border-[#0f5132]/10">
+          <td colSpan={5} className="px-0 py-0 bg-primary/[0.02] border-b border-primary/10">
             <PilgrimsPanel
               offer={offer}
               onChanged={onPilgrimChanged}
@@ -692,7 +692,7 @@ function PilgrimsPanel({
       {/* Header du panel */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-[#0f5132]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           <span className="text-sm font-semibold text-gray-700">
@@ -705,7 +705,7 @@ function PilgrimsPanel({
         <button
           onClick={() => { setShowPicker((p) => !p); setPickerSearch(""); }}
           disabled={offer.maxCapacity > 0 && enrolled.length >= offer.maxCapacity}
-          className="flex items-center gap-1.5 text-xs font-semibold bg-[#0f5132] text-white px-3 py-1.5 rounded-lg hover:bg-[#0d4429] transition disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex items-center gap-1.5 text-xs font-semibold bg-primary text-white px-3 py-1.5 rounded-lg hover:bg-primary-dark transition disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -746,7 +746,7 @@ function PilgrimsPanel({
 
           {/* Picker d'ajout */}
           {showPicker && (
-            <div className="border border-[#0f5132]/20 rounded-xl bg-white p-4 mt-2">
+            <div className="border border-primary/20 rounded-xl bg-white p-4 mt-2">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
                   Pèlerins disponibles ({available.length})
@@ -767,7 +767,7 @@ function PilgrimsPanel({
                     placeholder="Rechercher un pèlerin..."
                     value={pickerSearch}
                     onChange={(e) => setPickerSearch(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
                   />
                   {filteredAvailable.length === 0 ? (
                     <p className="text-gray-400 text-sm italic">Aucun résultat.</p>
@@ -821,8 +821,8 @@ function PilgrimCard({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={pilgrim.photoUrl} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
       ) : (
-        <div className="w-8 h-8 rounded-full bg-[#0f5132]/15 flex items-center justify-center flex-shrink-0">
-          <span className="text-[10px] font-bold text-[#0f5132]">{initials}</span>
+        <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
+          <span className="text-[10px] font-bold text-primary">{initials}</span>
         </div>
       )}
       <div className="flex-1 min-w-0">
@@ -836,7 +836,7 @@ function PilgrimCard({
         disabled={loading}
         className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition ${
           action === "add"
-            ? "bg-[#0f5132]/10 hover:bg-[#0f5132] text-[#0f5132] hover:text-white"
+            ? "bg-primary/10 hover:bg-primary text-primary hover:text-white"
             : "bg-red-50 hover:bg-red-500 text-red-400 hover:text-white"
         } disabled:opacity-40`}
         title={action === "add" ? "Inscrire" : "Retirer"}
@@ -870,8 +870,8 @@ function EmptyState({
 }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm py-20 flex flex-col items-center justify-center gap-4">
-      <div className="w-16 h-16 bg-[#0f5132]/10 rounded-2xl flex items-center justify-center">
-        <svg className="w-8 h-8 text-[#0f5132]/60" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
+        <svg className="w-8 h-8 text-primary/60" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
         </svg>
       </div>
@@ -888,7 +888,7 @@ function EmptyState({
       {!hasFilter && (
         <button
           onClick={onAdd}
-          className="flex items-center gap-2 bg-[#0f5132] hover:bg-[#0d4429] text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />

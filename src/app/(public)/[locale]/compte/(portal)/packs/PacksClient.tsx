@@ -105,7 +105,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
             list.length > 0 ? (
               <div key={key}>
                 <div className="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
-                  <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] flex items-center justify-center">
+                  <span className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                     {key === "HAJJ" ? <Landmark size={16} /> : <MoonStar size={16} />}
                   </span>
                   <h2 className="text-xl font-bold text-gray-900">{label}</h2>
@@ -119,12 +119,12 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
               <div
                 key={o.id}
                 className={`bg-white rounded-2xl border shadow-sm p-5 flex flex-col ${
-                  booked ? "border-[#0f5132]/40" : "border-gray-100"
+                  booked ? "border-primary/40" : "border-gray-100"
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0f5132]/10 text-[#0f5132]">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                       <Plane size={10} /> {o.type}
                     </span>
                     {o.provisional && (
@@ -133,7 +133,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                       </span>
                     )}
                     {booked && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0f5132] text-white">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary text-white">
                         ✓ {t("booked")}
                       </span>
                     )}
@@ -197,10 +197,10 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                     onClick={() => { setBooking(o); setCategory("ADULT"); setMsg(null); }}
                     className={`w-full py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 ${
                       booked
-                        ? "bg-[#0f5132]/10 text-[#0f5132] cursor-default"
+                        ? "bg-primary/10 text-primary cursor-default"
                         : full || closed
                           ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                          : "bg-[#0f5132] hover:bg-[#0d4429] text-white shadow-sm"
+                          : "bg-primary hover:bg-primary-dark text-white shadow-sm"
                     }`}
                   >
                     {booked ? <Check size={15} /> : null}
@@ -241,7 +241,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                 className={`text-sm rounded-lg px-4 py-2.5 mt-4 ${
                   msg.ok
                     ? "bg-green-50 border border-green-100 text-green-700"
-                    : "bg-amber-50 border border-amber-200 text-amber-700"
+                    : "bg-amber-50 border border-amber-200 text-gold-dark"
                 }`}
               >
                 {msg.text}
@@ -257,12 +257,12 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                   onClick={() => setCategory(cat)}
                   className={`rounded-xl border px-3 py-2.5 text-left transition ${
                     category === cat
-                      ? "border-[#0f5132] bg-[#0f5132]/5"
+                      ? "border-primary bg-primary/5"
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
                   <p className="text-xs font-semibold text-gray-700">{t(`category.${cat}`)}</p>
-                  <p className="text-sm font-bold text-[#0f5132]">
+                  <p className="text-sm font-bold text-primary">
                     {fmtMoney(priceOf(booking, cat), booking.currency)}
                   </p>
                 </button>
@@ -275,7 +275,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
               />
             </div>
 
@@ -291,7 +291,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                 type="button"
                 onClick={handleBook}
                 disabled={loading}
-                className="flex-[2] bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0d4429] transition-colors disabled:opacity-50 text-sm"
+                className="flex-[2] bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm"
               >
                 {loading ? t("modal.booking") : t("modal.confirm")}
               </button>

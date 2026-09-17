@@ -246,7 +246,7 @@ export default function AddPilgrimModal({
         {/* ── Header ── */}
         <div className="sticky top-0 z-10 bg-white flex items-center justify-between px-6 py-4 border-b border-gray-100 rounded-t-2xl">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#0f5132]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-primary" />
             <h3 className="font-bold text-gray-800 text-base">
               {isEdit ? "Modifier le Pèlerin" : "Enregistrer un nouveau Pèlerin"}
             </h3>
@@ -279,7 +279,7 @@ export default function AddPilgrimModal({
 
           {/* ── Photo upload ── */}
           <div
-            className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center cursor-pointer hover:border-[#0f5132]/40 hover:bg-[#0f5132]/[0.02] transition"
+            className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center cursor-pointer hover:border-primary/40 hover:bg-primary/[0.02] transition"
             onClick={() => fileInputRef.current?.click()}
           >
             {photoPreview ? (
@@ -288,9 +288,9 @@ export default function AddPilgrimModal({
                 <img
                   src={photoPreview}
                   alt="Photo"
-                  className="w-20 h-20 rounded-full object-cover mx-auto border-2 border-[#0f5132]/20"
+                  className="w-20 h-20 rounded-full object-cover mx-auto border-2 border-primary/20"
                 />
-                <p className="text-[#0f5132] text-xs font-medium">Changer la photo</p>
+                <p className="text-primary text-xs font-medium">Changer la photo</p>
               </div>
             ) : (
               <>
@@ -309,7 +309,7 @@ export default function AddPilgrimModal({
                 </p>
                 <button
                   type="button"
-                  className="text-xs font-semibold text-[#0f5132] bg-[#0f5132]/10 px-3 py-1.5 rounded-lg hover:bg-[#0f5132]/20 transition"
+                  className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-lg hover:bg-primary/20 transition"
                   onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
                 >
                   Choisir un fichier
@@ -343,7 +343,7 @@ export default function AddPilgrimModal({
                 value={form.name}
                 onChange={(e) => handleField("name", e.target.value)}
                 placeholder="Ex: El Hadji Abdoulaye Sall"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
               />
             </div>
             <div className="col-span-2 sm:col-span-1">
@@ -353,7 +353,7 @@ export default function AddPilgrimModal({
               <select
                 value={form.gender}
                 onChange={(e) => handleField("gender", e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition cursor-pointer"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition cursor-pointer"
               >
                 <option value="">Sélectionner</option>
                 <option value="M">Masculin</option>
@@ -372,7 +372,7 @@ export default function AddPilgrimModal({
                 type="date"
                 value={form.birthDate}
                 onChange={(e) => handleField("birthDate", e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition"
               />
             </div>
             <div>
@@ -404,7 +404,7 @@ export default function AddPilgrimModal({
                 value={form.email}
                 onChange={(e) => handleField("email", e.target.value)}
                 placeholder="email@exemple.com"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
               />
             </div>
             <div>
@@ -416,7 +416,7 @@ export default function AddPilgrimModal({
                 value={form.profession}
                 onChange={(e) => handleField("profession", e.target.value)}
                 placeholder="Ex: Commerçant"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
               />
             </div>
           </div>
@@ -432,7 +432,7 @@ export default function AddPilgrimModal({
                 value={form.city}
                 onChange={(e) => handleField("city", e.target.value)}
                 placeholder="Ex: Niamey"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
               />
             </div>
             <div>
@@ -442,7 +442,7 @@ export default function AddPilgrimModal({
               <select
                 value={form.country}
                 onChange={(e) => handleField("country", e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition cursor-pointer"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition cursor-pointer"
               >
                 <option value="">Sélectionner</option>
                 {PILGRIM_COUNTRIES.map((c) => (
@@ -462,7 +462,7 @@ export default function AddPilgrimModal({
               onChange={(e) => handleField("address", e.target.value)}
               placeholder="Quartier, rue, BP..."
               rows={2}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 resize-none transition"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 resize-none transition"
             />
           </div>
 
@@ -503,8 +503,8 @@ export default function AddPilgrimModal({
 
           {/* ── VOYAGE ASSIGNÉ ── */}
           {offers.length > 0 && (
-            <div className="rounded-xl border border-[#0f5132]/20 bg-[#0f5132]/[0.03] p-4">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#0f5132] mb-2.5 flex items-center gap-1.5">
+            <div className="rounded-xl border border-primary/20 bg-primary/[0.03] p-4">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-primary mb-2.5 flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3" />
                 </svg>
@@ -513,7 +513,7 @@ export default function AddPilgrimModal({
               <select
                 value={form.offerId}
                 onChange={(e) => handleField("offerId", e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-[#0f5132]/20 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] text-gray-700 transition cursor-pointer"
+                className="w-full px-3 py-2 text-sm border border-primary/20 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition cursor-pointer"
               >
                 <option value="">— Aucun voyage —</option>
                 {offers.map((o) => (
@@ -523,7 +523,7 @@ export default function AddPilgrimModal({
                 ))}
               </select>
               {form.offerId && (
-                <p className="text-[11px] text-[#0f5132]/60 mt-1.5 flex items-center gap-1">
+                <p className="text-[11px] text-primary/60 mt-1.5 flex items-center gap-1">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -542,7 +542,7 @@ export default function AddPilgrimModal({
                 {isEdit && (
                   <Link
                     href="/agency-admin/documents"
-                    className="text-[#0f5132] underline underline-offset-2 font-normal normal-case tracking-normal"
+                    className="text-primary underline underline-offset-2 font-normal normal-case tracking-normal"
                     style={{ fontSize: "10px" }}
                   >
                     (gérer →)
@@ -556,7 +556,7 @@ export default function AddPilgrimModal({
                 ].map(({ flag, label, short }) => (
                   <div key={short} className="flex items-center gap-2.5">
                     <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${
-                      flag ? "bg-[#0f5132] border-[#0f5132]" : "border-gray-200 bg-gray-50"
+                      flag ? "bg-primary border-primary" : "border-gray-200 bg-gray-50"
                     }`}>
                       {flag && (
                         <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
@@ -619,7 +619,7 @@ export default function AddPilgrimModal({
             <button
               type="submit"
               disabled={submitting || uploading}
-              className="flex-1 py-2.5 px-4 text-sm font-semibold text-white bg-[#0f5132] hover:bg-[#0d4429] rounded-xl transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="flex-1 py-2.5 px-4 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {(submitting || uploading) && (
                 <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">

@@ -96,7 +96,7 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
           {grouped.HAJJ.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
-                <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] flex items-center justify-center">
+                <span className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                   <Landmark size={16} />
                 </span>
                 <h2 className="text-xl font-bold text-gray-900">{t("sections.hajj")}</h2>
@@ -111,7 +111,7 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
                       {t("departure")} : {fmtDate(o.departureDate) ?? "—"} · {t("return")} : {fmtDate(o.returnDate) ?? "—"}
                     </div>
                     <div className="mt-4">
-                      <p className="text-xs text-gray-500">{t("from")} <span className="text-lg font-black text-[#0f5132]">{fmtMoney(o.priceAdult, o.currency)}</span></p>
+                      <p className="text-xs text-gray-500">{t("from")} <span className="text-lg font-black text-primary">{fmtMoney(o.priceAdult, o.currency)}</span></p>
                     </div>
                     <div className="mt-2 text-xs text-gray-500">
                       <Users size={12} className="text-gray-400 inline mr-1" />
@@ -126,9 +126,9 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
                     <div className="mt-auto pt-4">
                       <button type="button" disabled={o.alreadyBooked || isFull(o) || o.bookingClosed} onClick={() => { setBooking(o); setMsg(null); }}
                         className={`w-full py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 ${
-                          o.alreadyBooked ? "bg-[#0f5132]/10 text-[#0f5132] cursor-default"
+                          o.alreadyBooked ? "bg-primary/10 text-primary cursor-default"
                           : isFull(o) || o.bookingClosed ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                          : "bg-[#0f5132] hover:bg-[#0d4429] text-white shadow-sm"
+                          : "bg-primary hover:bg-primary-dark text-white shadow-sm"
                         }`}>
                         {o.alreadyBooked ? <Check size={15} /> : null}
                         {o.alreadyBooked ? t("booked") : isFull(o) ? t("full") : o.bookingClosed ? t("closed") : t("book")}
@@ -143,7 +143,7 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
           {grouped.OMRAH.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
-                <span className="w-8 h-8 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center">
+                <span className="w-8 h-8 rounded-full bg-amber-50 text-gold-dark flex items-center justify-center">
                   <Plane size={16} />
                 </span>
                 <h2 className="text-xl font-bold text-gray-900">{t("sections.umrah")}</h2>
@@ -158,7 +158,7 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
                       {t("departure")} : {fmtDate(o.departureDate) ?? "—"} · {t("return")} : {fmtDate(o.returnDate) ?? "—"}
                     </div>
                     <div className="mt-4">
-                      <p className="text-xs text-gray-500">{t("from")} <span className="text-lg font-black text-[#0f5132]">{fmtMoney(o.priceAdult, o.currency)}</span></p>
+                      <p className="text-xs text-gray-500">{t("from")} <span className="text-lg font-black text-primary">{fmtMoney(o.priceAdult, o.currency)}</span></p>
                     </div>
                     <div className="mt-2 text-xs text-gray-500">
                       <Users size={12} className="text-gray-400 inline mr-1" />
@@ -173,9 +173,9 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
                     <div className="mt-auto pt-4">
                       <button type="button" disabled={o.alreadyBooked || isFull(o) || o.bookingClosed} onClick={() => { setBooking(o); setMsg(null); }}
                         className={`w-full py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 ${
-                          o.alreadyBooked ? "bg-[#0f5132]/10 text-[#0f5132] cursor-default"
+                          o.alreadyBooked ? "bg-primary/10 text-primary cursor-default"
                           : isFull(o) || o.bookingClosed ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                          : "bg-[#0f5132] hover:bg-[#0d4429] text-white shadow-sm"
+                          : "bg-primary hover:bg-primary-dark text-white shadow-sm"
                         }`}>
                         {o.alreadyBooked ? <Check size={15} /> : null}
                         {o.alreadyBooked ? t("booked") : isFull(o) ? t("full") : o.bookingClosed ? t("closed") : t("book")}
@@ -201,7 +201,7 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
               <div>
                 <h2 className="text-lg font-bold text-gray-900">{t("modal.title")}</h2>
                 <p className="text-sm text-gray-500">{booking.titleFr}</p>
-                <p className="mt-2 text-sm font-black text-[#0f5132]">
+                <p className="mt-2 text-sm font-black text-primary">
                   {t("from")} {fmtMoney(booking.priceAdult, booking.currency)}
                 </p>
               </div>
@@ -215,7 +215,7 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
                 className={`text-sm rounded-lg px-4 py-2.5 mt-4 ${
                   msg.ok
                     ? "bg-green-50 border border-green-100 text-green-700"
-                    : "bg-amber-50 border border-amber-200 text-amber-700"
+                    : "bg-amber-50 border border-amber-200 text-gold-dark"
                 }`}
               >
                 {msg.text}
@@ -228,7 +228,7 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
               />
             </div>
 
@@ -244,7 +244,7 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
                 type="button"
                 onClick={handleBook}
                 disabled={loading}
-                className="flex-[2] bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0d4429] transition-colors disabled:opacity-50 text-sm"
+                className="flex-[2] bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm"
               >
                 {loading ? t("modal.booking") : t("modal.confirm")}
               </button>

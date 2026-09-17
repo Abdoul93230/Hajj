@@ -66,13 +66,13 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
-  const accent = isHajj ? "bg-amber-700" : "bg-[#0f5132]";
-  const btn = isHajj ? "bg-amber-600 hover:bg-amber-500" : "bg-[#0f5132] hover:bg-[#157347]";
+  const accent = isHajj ? "bg-gold-dark" : "bg-primary";
+  const btn = isHajj ? "bg-gold hover:bg-gold-light" : "bg-primary hover:bg-primary-light";
 
   return (
     <>
       {/* HERO */}
-      <section className="relative min-h-[45vh] flex items-end overflow-hidden bg-[#06251a]">
+      <section className="relative min-h-[45vh] flex items-end overflow-hidden bg-brand-deep">
         <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: "url('/images/kaaba.jpg')" }} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
@@ -98,7 +98,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
           {/* Quick stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-[#0f5132]/10 text-[#0f5132] flex items-center justify-center">
+              <span className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                 <Calendar size={18} />
               </span>
               <div>
@@ -109,7 +109,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
               </div>
             </div>
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-[#0f5132]/10 text-[#0f5132] flex items-center justify-center">
+              <span className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                 <Calendar size={18} />
               </span>
               <div>
@@ -120,7 +120,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
               </div>
             </div>
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-[#0f5132]/10 text-[#0f5132] flex items-center justify-center">
+              <span className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                 <Clock size={18} />
               </span>
               <div>
@@ -143,12 +143,12 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
               ].filter((p) => p.value !== null && p.value !== undefined) as { label: string; value: number; highlight?: boolean }[]).map((p) => (
                 <div key={p.label}
                   className={`rounded-2xl p-5 text-center border shadow-sm ${
-                    p.highlight ? "bg-[#0f5132] text-white border-[#0f5132]" : "bg-white border-gray-100"
+                    p.highlight ? "bg-primary text-white border-primary" : "bg-white border-gray-100"
                   }`}>
                   <p className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${p.highlight ? "text-white/70" : "text-gray-400"}`}>
                     {p.label}
                   </p>
-                  <p className={`text-xl font-black ${p.highlight ? "text-white" : "text-[#0f5132]"}`}>
+                  <p className={`text-xl font-black ${p.highlight ? "text-white" : "text-primary"}`}>
                     {p.value.toLocaleString("fr-FR")}
                   </p>
                   <p className={`text-[10px] mt-0.5 ${p.highlight ? "text-white/60" : "text-gray-400"}`}>
@@ -186,7 +186,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
                     <div className="flex items-center justify-between gap-3 flex-wrap">
                       <span className="text-sm font-bold text-gray-900">
                         {f.direction && (
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#0f5132] bg-[#0f5132]/10 rounded px-1.5 py-0.5 mr-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 rounded px-1.5 py-0.5 mr-2">
                             {f.direction}
                           </span>
                         )}
@@ -257,7 +257,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
               <ol className="space-y-3">
                 {pd.program!.map((step, i) => (
                   <li key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex gap-4">
-                    <span className="w-8 h-8 rounded-full bg-[#0f5132]/10 text-[#0f5132] text-sm font-bold flex items-center justify-center flex-shrink-0">
+                    <span className="w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center flex-shrink-0">
                       {step.day ?? i + 1}
                     </span>
                     <div>
@@ -317,7 +317,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mt-3">
+              <p className="text-xs text-gold-dark bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mt-3">
                 {t("docWarning")}
               </p>
             </div>
@@ -327,7 +327,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <p className="text-xs text-gray-400">{t("fromLabel")}</p>
-              <p className="text-3xl font-black text-[#0f5132]">
+              <p className="text-3xl font-black text-primary">
                 {offer.priceAdult.toLocaleString("fr-FR")}{" "}
                 <span className="text-sm font-medium text-gray-400">{offer.currency} {t("perPerson")}</span>
               </p>
@@ -344,7 +344,7 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
                 </a>
               )}
               <Link href="/compte/voyages"
-                className="flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl border-2 border-[#0f5132] text-[#0f5132] hover:bg-emerald-50 transition-all">
+                className="flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl border-2 border-primary text-primary hover:bg-cream transition-all">
                 {t("details")} <ArrowRight size={14} />
               </Link>
             </div>

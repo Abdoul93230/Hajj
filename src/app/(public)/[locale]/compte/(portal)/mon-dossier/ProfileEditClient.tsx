@@ -65,7 +65,7 @@ export default function ProfileEditClient({ initial }: Props) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1.5 text-xs font-semibold text-[#0f5132] hover:underline"
+        className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
       >
         <Pencil size={13} /> {t("edit")}
       </button>
@@ -86,7 +86,7 @@ export default function ProfileEditClient({ initial }: Props) {
                 className={`text-sm rounded-lg px-4 py-2.5 mb-4 ${
                   msg.ok
                     ? "bg-green-50 border border-green-100 text-green-700"
-                    : "bg-amber-50 border border-amber-200 text-amber-700"
+                    : "bg-amber-50 border border-amber-200 text-gold-dark"
                 }`}
               >
                 {msg.text}
@@ -111,7 +111,7 @@ export default function ProfileEditClient({ initial }: Props) {
                   type="text"
                   value={form.city}
                   onChange={(e) => setForm({ ...form, city: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
                 />
               </div>
               <div>
@@ -121,7 +121,7 @@ export default function ProfileEditClient({ initial }: Props) {
                 <select
                   value={form.country}
                   onChange={(e) => setForm({ ...form, country: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white cursor-pointer"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light bg-white cursor-pointer"
                 >
                   <option value="">—</option>
                   {countries.map((c) => (
@@ -137,7 +137,7 @@ export default function ProfileEditClient({ initial }: Props) {
                   type="text"
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
                 />
               </div>
               <div>
@@ -148,7 +148,7 @@ export default function ProfileEditClient({ initial }: Props) {
                   type="text"
                   value={form.emergencyName}
                   onChange={(e) => setForm({ ...form, emergencyName: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
                 />
               </div>
               <div>
@@ -172,7 +172,7 @@ export default function ProfileEditClient({ initial }: Props) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-[2] bg-[#0f5132] text-white font-semibold py-2.5 rounded-lg hover:bg-[#0d4429] transition-colors disabled:opacity-50 text-sm"
+                  className="flex-[2] bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm"
                 >
                   {loading ? t("saving") : t("save")}
                 </button>

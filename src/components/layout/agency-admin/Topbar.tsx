@@ -84,7 +84,7 @@ export default function AgencyAdminTopbar({
 
       {/* User */}
       <div className="flex items-center gap-2.5 pl-4 border-l border-gray-100 flex-shrink-0">
-        <div className="w-8 h-8 rounded-full bg-[#0f5132] flex items-center justify-center text-white text-xs font-bold">
+        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
           {initials}
         </div>
         <div className="text-right hidden sm:block">

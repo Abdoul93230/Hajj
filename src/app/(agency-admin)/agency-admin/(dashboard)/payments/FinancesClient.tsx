@@ -119,7 +119,7 @@ const PILGRIM_STATUS_COLORS: Record<string, string> = {
   REGISTERED:  "text-blue-600",
 };
 
-const AVATAR_COLORS = ["#0f5132","#1e40af","#7c3aed","#c2410c","#be185d","#0e7490"];
+const AVATAR_COLORS = ["var(--brand)","#1e40af","#7c3aed","#c2410c","#be185d","#0e7490"];
 function avatarColor(name: string) {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
@@ -258,7 +258,7 @@ export default function FinancesClient({ payments, pilgrims, offers, selectedYea
             </h1>
             <p className="text-gray-400 text-sm mt-0.5">
               Suivi des versements par pèlerin
-              <span className="ml-2 text-[11px] font-bold bg-[#0f5132]/10 text-[#0f5132] px-2 py-0.5 rounded-full">
+              <span className="ml-2 text-[11px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                 {selectedYear}
               </span>
             </p>
@@ -280,17 +280,17 @@ export default function FinancesClient({ payments, pilgrims, offers, selectedYea
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input type="text" placeholder="Rechercher un pèlerin…" value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 focus:border-[#0f5132] placeholder:text-gray-300 transition" />
+              className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition" />
           </div>
 
           <select value={offerFilter} onChange={e => setOfferFilter(e.target.value)}
-            className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 text-gray-600 cursor-pointer transition">
+            className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-gray-600 cursor-pointer transition">
             <option value="ALL">Toutes les offres</option>
             {offers.map(o => <option key={o.id} value={o.id}>{o.titleFr}</option>)}
           </select>
 
           <select value={payStatusFilter} onChange={e => setPayStatusFilter(e.target.value)}
-            className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 text-gray-600 cursor-pointer transition">
+            className="py-2 px-3 text-sm border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 text-gray-600 cursor-pointer transition">
             <option value="ALL">Tous statuts</option>
             <option value="paid">Soldé</option>
             <option value="partial">Partiel</option>
@@ -359,7 +359,7 @@ function PilgrimPayCard({ summary, selected, onClick }: {
 
   return (
     <button onClick={onClick}
-      className={`text-left w-full rounded-2xl border border-gray-100 border-l-4 p-4 shadow-sm transition-all hover:shadow-md active:scale-[.99] ${PAY_CARD[payStatus]} ${selected ? "ring-2 ring-[#0f5132]/40 shadow-md" : ""}`}>
+      className={`text-left w-full rounded-2xl border border-gray-100 border-l-4 p-4 shadow-sm transition-all hover:shadow-md active:scale-[.99] ${PAY_CARD[payStatus]} ${selected ? "ring-2 ring-primary/40 shadow-md" : ""}`}>
 
       {/* Avatar + name */}
       <div className="flex items-center gap-3 mb-3">
@@ -556,7 +556,7 @@ function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRe
             className={`w-full flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl transition shadow-sm ${
               payStatus === "paid"
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-[#0f5132] hover:bg-[#0d4429] active:scale-95 text-white"
+                : "bg-primary hover:bg-primary-dark active:scale-95 text-white"
             }`}>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -585,7 +585,7 @@ function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRe
             Historique · {payments.length} versement{payments.length > 1 ? "s" : ""}
           </p>
           <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
-            className="text-[11px] py-1 px-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-[#0f5132]/30 text-gray-500 cursor-pointer">
+            className="text-[11px] py-1 px-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-primary/30 text-gray-500 cursor-pointer">
             <option value="ALL">Tous types</option>
             {(["DEPOSIT","INSTALLMENT","FINAL","REFUND"] as PType[]).map(t =>
               <option key={t} value={t}>{TYPE_LABEL[t]}</option>)}
@@ -692,7 +692,7 @@ function PaymentItem({ payment: p, currency, onEdit, onDelete }: {
           </svg>
         </a>
         <button onClick={onEdit} title="Modifier"
-          className="w-7 h-7 rounded-lg flex items-center justify-center text-[#0f5132] hover:bg-[#0f5132]/10 transition">
+          className="w-7 h-7 rounded-lg flex items-center justify-center text-primary hover:bg-primary/10 transition">
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
@@ -813,7 +813,7 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
               <label className="block text-xs font-semibold text-gray-500 mb-1.5">Montant</label>
               <input type="number" min={1} step="any" value={amount} onChange={e => setAmount(e.target.value)}
                 placeholder="Ex : 500 000" autoFocus
-                className={`w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-2 ${isRefund ? "border-red-200 focus:ring-red-200 focus:border-red-400" : "border-gray-200 focus:ring-[#0f5132]/30 focus:border-[#0f5132]"}`} />
+                className={`w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-2 ${isRefund ? "border-red-200 focus:ring-red-200 focus:border-red-400" : "border-gray-200 focus:ring-primary/30 focus:border-primary"}`} />
               {/* Raccourcis montant */}
               <div className="flex gap-1 mt-1.5 flex-wrap">
                 {!isRefund && remainingAmount > 0 && (
@@ -851,7 +851,7 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1.5">Type</label>
               <select value={type} onChange={e => setType(e.target.value as PType)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 bg-white">
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 bg-white">
                 {(["DEPOSIT","INSTALLMENT","FINAL","REFUND"] as PType[]).map(t =>
                   <option key={t} value={t}>{TYPE_LABEL[t]}</option>)}
               </select>
@@ -864,7 +864,7 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
             <div className="grid grid-cols-5 gap-1.5">
               {(["CASH","BANK_TRANSFER","MOBILE_MONEY","CHECK","OTHER"] as PMethod[]).map(m => (
                 <button key={m} type="button" onClick={() => setMethod(m)}
-                  className={`py-2 px-1 text-[10px] font-semibold rounded-xl border transition text-center ${method === m ? "bg-[#0f5132] text-white border-[#0f5132]" : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"}`}>
+                  className={`py-2 px-1 text-[10px] font-semibold rounded-xl border transition text-center ${method === m ? "bg-primary text-white border-primary" : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"}`}>
                   {METHOD_LABEL[m]}
                 </button>
               ))}
@@ -876,7 +876,7 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1.5">Date</label>
               <input type="date" value={paidAt} onChange={e => setPaidAt(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30" />
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1.5">Référence / Reçu</label>
@@ -887,7 +887,7 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
                 </div>
               ) : (
                 // Création : générée automatiquement par l'API
-                <div className="w-full px-3 py-2 text-sm bg-[#0f5132]/5 border border-[#0f5132]/20 rounded-xl text-[#0f5132] flex items-center gap-2">
+                <div className="w-full px-3 py-2 text-sm bg-primary/5 border border-primary/20 rounded-xl text-primary flex items-center gap-2">
                   <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
@@ -902,7 +902,7 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
             <label className="block text-xs font-semibold text-gray-500 mb-1.5">Notes (optionnel)</label>
             <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2}
               placeholder="Remarques…"
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5132]/30 resize-none" />
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />
           </div>
 
           {err && <p className="text-red-500 text-xs bg-red-50 px-3 py-2 rounded-lg">{err}</p>}
@@ -913,7 +913,7 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
               Annuler
             </button>
             <button type="submit" disabled={saving}
-              className={`flex-1 py-2.5 px-4 text-sm font-semibold text-white rounded-xl transition disabled:opacity-60 ${isRefund ? "bg-red-600 hover:bg-red-700" : "bg-[#0f5132] hover:bg-[#0d4429]"}`}>
+              className={`flex-1 py-2.5 px-4 text-sm font-semibold text-white rounded-xl transition disabled:opacity-60 ${isRefund ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-primary-dark"}`}>
               {saving ? "Enregistrement..." : isEdit ? "Modifier" : isRefund ? "Rembourser" : "Enregistrer"}
             </button>
           </div>
@@ -947,8 +947,8 @@ function StatCard({ title, value, sub, accent, bg, icon }: { title: string; valu
 function EmptyState({ year }: { year: number }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm py-20 flex flex-col items-center gap-4">
-      <div className="w-16 h-16 bg-[#0f5132]/10 rounded-2xl flex items-center justify-center">
-        <svg className="w-8 h-8 text-[#0f5132]/60" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
+        <svg className="w-8 h-8 text-primary/60" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       </div>

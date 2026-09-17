@@ -3,6 +3,7 @@ import { headers, cookies } from "next/headers";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
+import { themeStyleTag } from "@/lib/tenant-theme";
 import AgencyAdminSidebar from "@/components/layout/agency-admin/Sidebar";
 import AgencyAdminTopbar from "@/components/layout/agency-admin/Topbar";
 
@@ -40,6 +41,8 @@ export default async function AgencyAdminLayout({ children }: { children: React.
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
+      {/* Couleurs de marque du tenant de l'agence connectée */}
+      <style id="tenant-theme" dangerouslySetInnerHTML={{ __html: themeStyleTag(tenant?.theme) }} />
       <AgencyAdminSidebar
         user={{ name: session.name, email: session.email, role: session.role }}
         tenantName={tenantName}

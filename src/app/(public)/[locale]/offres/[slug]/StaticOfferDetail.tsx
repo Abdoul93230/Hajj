@@ -51,19 +51,19 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
   ];
 
   const accentClass =
-    offer.badgeColor === "amber"  ? "bg-amber-700"  :
+    offer.badgeColor === "amber"  ? "bg-gold-dark"  :
     offer.badgeColor === "purple" ? "bg-purple-800" :
-    "bg-[#0f5132]";
+    "bg-primary";
 
   const accentText =
-    offer.badgeColor === "amber"  ? "text-amber-600"  :
+    offer.badgeColor === "amber"  ? "text-gold"  :
     offer.badgeColor === "purple" ? "text-purple-700" :
-    "text-[#0f5132]";
+    "text-primary";
 
   const btnClass =
-    offer.badgeColor === "amber"  ? "bg-amber-600 hover:bg-amber-500"   :
+    offer.badgeColor === "amber"  ? "bg-gold hover:bg-gold-light"   :
     offer.badgeColor === "purple" ? "bg-purple-700 hover:bg-purple-600" :
-    "bg-[#0f5132] hover:bg-[#157347]";
+    "bg-primary hover:bg-primary-light";
 
   return (
     <>
@@ -106,7 +106,7 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
           </div>
           <div className="flex gap-2">
             <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-2 border-2 border-[#0f5132] text-[#0f5132] text-sm font-semibold px-4 py-2 rounded-full hover:bg-emerald-50 transition-all">
+              className="hidden sm:flex items-center gap-2 border-2 border-primary text-primary text-sm font-semibold px-4 py-2 rounded-full hover:bg-cream transition-all">
               <IconWhatsApp size={16} /> WhatsApp
             </a>
             <a href="tel:+22791882121"
@@ -125,7 +125,7 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`flex-shrink-0 px-5 py-4 text-sm font-semibold border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? `border-[#0f5132] ${accentText}`
+                    ? `border-primary ${accentText}`
                     : "border-transparent text-gray-500 hover:text-gray-900"
                 }`}>
                 {tab.label}
@@ -168,15 +168,15 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                       <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <span className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
-                          <Check size={13} className="text-[#0f5132]" strokeWidth={2.5} />
+                        <span className="w-6 h-6 rounded-full bg-cream flex items-center justify-center">
+                          <Check size={13} className="text-primary" strokeWidth={2.5} />
                         </span>
                         {t("includedTitle")}
                       </h3>
                       <ul className="space-y-2">
                         {included.map((item) => (
                           <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
-                            <Check size={13} className="text-[#0f5132] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <Check size={13} className="text-primary flex-shrink-0 mt-0.5" strokeWidth={2.5} />
                             {item}
                           </li>
                         ))}
@@ -185,7 +185,7 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                     <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                       <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <span className="w-6 h-6 rounded-full bg-amber-50 flex items-center justify-center">
-                          <X size={13} className="text-amber-500" strokeWidth={2.5} />
+                          <X size={13} className="text-gold-light" strokeWidth={2.5} />
                         </span>
                         {t("notIncludedTitle")}
                       </h3>
@@ -288,7 +288,7 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                   </div>
                   <div className="divide-y divide-gray-50">
                     {pricing.map((p) => (
-                      <div key={p.label} className={`flex items-center justify-between px-6 py-4 ${p.highlight ? "bg-emerald-50/50" : ""}`}>
+                      <div key={p.label} className={`flex items-center justify-between px-6 py-4 ${p.highlight ? "bg-cream/50" : ""}`}>
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
                             <Users size={16} className="text-gray-400" />
@@ -297,7 +297,7 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                             <p className="font-semibold text-gray-900 text-sm">{p.label}</p>
                             <p className="text-xs text-gray-400">{p.sublabel}</p>
                           </div>
-                          {p.highlight && <span className="text-xs bg-emerald-100 text-[#0f5132] font-bold px-2 py-0.5 rounded-full">{t("popular")}</span>}
+                          {p.highlight && <span className="text-xs bg-cream text-primary font-bold px-2 py-0.5 rounded-full">{t("popular")}</span>}
                         </div>
                         <div className="text-right">
                           {p.price ? (
@@ -404,7 +404,7 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                       {t("confirmBtn")} <ArrowRight size={14} />
                     </a>
                     <a href="tel:+22791882121"
-                      className="flex items-center justify-center gap-2 w-full border-2 border-gray-200 text-gray-700 font-semibold text-sm py-3 rounded-xl hover:border-emerald-300 transition-all">
+                      className="flex items-center justify-center gap-2 w-full border-2 border-gray-200 text-gray-700 font-semibold text-sm py-3 rounded-xl hover:border-cream-dark transition-all">
                       <Phone size={14} /> {t("callBtn")}
                     </a>
                   </div>
@@ -418,22 +418,22 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                 <div className="space-y-3">
                   {OFFERS.filter((o) => o.slug !== offer.slug).map((o) => (
                     <Link key={o.slug} href={`/offres/${o.slug}` as `/offres/${string}`}
-                      className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all group">
+                      className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-cream-dark hover:bg-cream/50 transition-all group">
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 group-hover:text-[#0f5132] transition-colors">{offersData[o.slug]?.title ?? o.title}</p>
+                        <p className="text-sm font-semibold text-gray-900 group-hover:text-primary transition-colors">{offersData[o.slug]?.title ?? o.title}</p>
                         {(offersData[o.slug]?.departure ?? o.departure) && <p className="text-xs text-gray-400">{offersData[o.slug]?.departure ?? o.departure}</p>}
-                        <p className="text-xs font-bold text-[#0f5132] mt-0.5">
+                        <p className="text-xs font-bold text-primary mt-0.5">
                           {t("fromLabel")} {o.priceFrom.toLocaleString("fr-FR")} {o.priceCurrency}
                         </p>
                       </div>
-                      <ArrowRight size={14} className="text-gray-300 group-hover:text-[#0f5132] transition-colors" />
+                      <ArrowRight size={14} className="text-gray-300 group-hover:text-primary transition-colors" />
                     </Link>
                   ))}
                 </div>
               </div>
 
               {/* Contact */}
-              <div className="bg-[#062b1a] rounded-2xl p-5 text-white">
+              <div className="bg-brand-deep rounded-2xl p-5 text-white">
                 <p className="font-bold text-sm mb-1">{t("questionLabel")}</p>
                 <p className="text-white/60 text-xs mb-4">{t("teamReply")}</p>
                 <div className="space-y-2">
@@ -470,7 +470,7 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                 </div>
                 <p className="text-sm text-gray-600 leading-relaxed mb-4 flex-1">&ldquo;{item.text}&rdquo;</p>
                 <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
-                  <div className="w-8 h-8 rounded-full bg-[#0f5132] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                     {item.initial}
                   </div>
                   <div>
@@ -485,7 +485,7 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
       </section>
 
       {/* FINAL CTA */}
-      <section className="relative bg-[#062b1a] py-20 overflow-hidden text-center text-white px-4">
+      <section className="relative bg-brand-deep py-20 overflow-hidden text-center text-white px-4">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, #fbbf24, transparent 50%)" }} />
         <div className="relative z-10 max-w-xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-black mb-3" style={{ fontFamily: "var(--font-playfair, serif)" }}>

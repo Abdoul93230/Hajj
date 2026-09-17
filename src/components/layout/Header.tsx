@@ -37,15 +37,15 @@ function MegaDropdown({ item }: { item: NavItem }) {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url('${mega.leftImage}')` }}
           />
-          <div className="absolute inset-0 bg-[#0f5132]/70" />
+          <div className="absolute inset-0 bg-primary/70" />
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <p className="text-white font-bold text-sm leading-tight">{mega.leftTitle}</p>
-            <p className="text-emerald-200 text-xs mt-1 leading-snug">{mega.leftSubtitle}</p>
+            <p className="text-cream-dark text-xs mt-1 leading-snug">{mega.leftSubtitle}</p>
           </div>
         </div>
 
         <div className="px-6 py-5">
-          <p className="text-xs font-bold tracking-widest text-amber-600 mb-3 uppercase">
+          <p className="text-xs font-bold tracking-widest text-gold mb-3 uppercase">
             {mega.categoryLabel}
           </p>
           <ul className="space-y-1">
@@ -53,7 +53,7 @@ function MegaDropdown({ item }: { item: NavItem }) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="block text-sm text-gray-700 hover:text-[#0f5132] py-1 transition-colors hover:translate-x-1 transform duration-150"
+                  className="block text-sm text-gray-700 hover:text-primary py-1 transition-colors hover:translate-x-1 transform duration-150"
                 >
                   {link.label}
                 </Link>
@@ -67,7 +67,7 @@ function MegaDropdown({ item }: { item: NavItem }) {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url('${mega.rightImage}')` }}
           />
-          <div className="absolute inset-0 bg-[#0f5132]/20" />
+          <div className="absolute inset-0 bg-primary/20" />
         </div>
       </div>
     </div>
@@ -152,9 +152,9 @@ export default function Header({
   return (
     <div className="sticky top-0 z-50">
       {/* Announcement bar */}
-      <div className="bg-[#0f5132] text-white text-xs py-2 px-4 flex items-center justify-between">
+      <div className="bg-primary text-white text-xs py-2 px-4 flex items-center justify-between">
         <span className="flex items-center gap-2 font-semibold">
-          <span className="w-2 h-2 rounded-full bg-emerald-300 inline-block animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-cream-dark inline-block animate-pulse" />
           {th("announcement1")}
         </span>
         <span className="hidden sm:block">{th("announcement2")}</span>
@@ -176,12 +176,12 @@ export default function Header({
               </div>
               <div className="flex flex-col leading-none">
                 <span
-                  className="font-bold text-xl tracking-tight text-[#0f5132]"
+                  className="font-bold text-xl tracking-tight text-primary"
                   style={{ fontFamily: "var(--font-playfair, serif)" }}
                 >
                   Hajj et Oumra ZAM
                 </span>
-                <span className="text-xs tracking-widest text-amber-700 font-semibold">
+                <span className="text-xs tracking-widest text-gold-dark font-semibold">
                   {th("logoSubtitle")}
                 </span>
               </div>
@@ -200,8 +200,8 @@ export default function Header({
                     href={item.href}
                     className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors rounded ${
                       openDropdown === item.label
-                        ? "text-[#0f5132]"
-                        : "text-gray-700 hover:text-[#0f5132]"
+                        ? "text-primary"
+                        : "text-gray-700 hover:text-primary"
                     }`}
                   >
                     {item.label}
@@ -221,7 +221,7 @@ export default function Header({
 
             {/* Right actions */}
             <div className="flex items-center gap-2">
-              <Link href="/boutique" className="p-2 text-gray-500 hover:text-[#0f5132]">
+              <Link href="/boutique" className="p-2 text-gray-500 hover:text-primary">
                 <ShoppingCart size={18} />
               </Link>
 
@@ -229,7 +229,7 @@ export default function Header({
               <div className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
-                  className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-[#0f5132] px-2 py-1"
+                  className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-primary px-2 py-1"
                 >
                   <Globe size={15} />
                   {localeNames[locale]}
@@ -241,8 +241,8 @@ export default function Header({
                       <button
                         key={l}
                         onClick={() => { router.push(pathname, { locale: l }); setLangOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 hover:text-[#0f5132] ${
-                          l === locale ? "font-bold text-[#0f5132]" : "text-gray-700"
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-cream hover:text-primary ${
+                          l === locale ? "font-bold text-primary" : "text-gray-700"
                         }`}
                       >
                         {localeNames[l]}
@@ -274,7 +274,7 @@ export default function Header({
                     <>
                       <button
                         onClick={() => setMobileExpanded(mobileExpanded === item.label ? null : item.label)}
-                        className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0f5132] hover:bg-emerald-50 rounded"
+                        className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary hover:bg-cream rounded"
                       >
                         {item.label}
                         <ChevronDown
@@ -289,7 +289,7 @@ export default function Header({
                               key={link.href}
                               href={link.href}
                               onClick={() => setMobileOpen(false)}
-                              className="block px-3 py-1.5 text-sm text-gray-600 hover:text-[#0f5132]"
+                              className="block px-3 py-1.5 text-sm text-gray-600 hover:text-primary"
                             >
                               {link.label}
                             </Link>
@@ -301,7 +301,7 @@ export default function Header({
                     <Link
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0f5132] hover:bg-emerald-50 rounded"
+                      className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary hover:bg-cream rounded"
                     >
                       {item.label}
                     </Link>
@@ -312,7 +312,7 @@ export default function Header({
                 (() => {
                   const home = spaceHomeForRole(user.role);
                   const label = spaceLabelForRole(user.role);
-                  const cls = "block px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0f5132] hover:bg-emerald-50 rounded";
+                  const cls = "block px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary hover:bg-cream rounded";
                   return isLocaleAwareSpace(home) ? (
                     <Link href={home} onClick={() => setMobileOpen(false)} className={cls}>
                       {label}
@@ -327,7 +327,7 @@ export default function Header({
                 <Link
                   href="/compte"
                   onClick={() => setMobileOpen(false)}
-                  className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0f5132] hover:bg-emerald-50 rounded"
+                  className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary hover:bg-cream rounded"
                 >
                   {th("pilgrimSpace")}
                 </Link>

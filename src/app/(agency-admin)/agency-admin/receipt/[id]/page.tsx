@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
+import { themeStyleTag } from "@/lib/tenant-theme";
 import ReceiptView from "@/components/receipt/ReceiptView";
 
 export default async function ReceiptPage({
@@ -85,14 +86,18 @@ export default async function ReceiptPage({
   };
 
   return (
-    <ReceiptView
-      payment={JSON.parse(JSON.stringify(serial))}
-      tenant={tenant ?? { name: "Agence", email: "", phone: null, address: null, theme: null }}
-      totalAmount={totalAmount}
-      paidBefore={paidBefore}
-      totalPaid={totalPaid}
-      remaining={remaining}
-      copies={2}
-    />
+    <>
+      {/* Couleurs de marque de l'agence (hors layout dashboard) */}
+      <style id="tenant-theme" dangerouslySetInnerHTML={{ __html: themeStyleTag(tenant?.theme) }} />
+      <ReceiptView
+        payment={JSON.parse(JSON.stringify(serial))}
+        tenant={tenant ?? { name: "Agence", email: "", phone: null, address: null, theme: null }}
+        totalAmount={totalAmount}
+        paidBefore={paidBefore}
+        totalPaid={totalPaid}
+        remaining={remaining}
+        copies={2}
+      />
+    </>
   );
 }

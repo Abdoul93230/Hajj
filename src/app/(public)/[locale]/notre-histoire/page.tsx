@@ -58,7 +58,7 @@ function StatItem({ value, suffix, label }: { value: number; suffix: string; lab
       <p className="text-4xl md:text-5xl font-black text-white mb-1">
         <span ref={ref}>{count}</span>{suffix}
       </p>
-      <p className="text-emerald-200 text-sm font-medium">{label}</p>
+      <p className="text-cream-dark text-sm font-medium">{label}</p>
     </div>
   );
 }
@@ -77,10 +77,10 @@ export default function NotreHistoirePage() {
     <div className="bg-white">
 
       {/* ── HERO ─────────────────────────────────────────── */}
-      <section className="relative bg-[#06251a] min-h-[440px] flex items-center overflow-hidden">
+      <section className="relative bg-brand-deep min-h-[440px] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <Image src="/images/kaaba.jpg" alt="La Kaaba" fill className="object-cover opacity-20" priority />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#06251a] via-[#06251a]/90 to-[#06251a]/50" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-deep via-brand-deep/90 to-brand-deep/50" />
         </div>
         <div className="absolute right-10 top-10 w-72 h-72 rounded-full border border-white/5 hidden lg:block" />
         <div className="absolute right-24 top-24 w-48 h-48 rounded-full border border-white/5 hidden lg:block" />
@@ -105,7 +105,7 @@ export default function NotreHistoirePage() {
       </section>
 
       {/* ── STATS ─────────────────────────────────────────── */}
-      <section className="bg-[#0a3d26]">
+      <section className="bg-primary-dark">
         <div className="max-w-5xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           {STATS_VALUES.map((s, i) => (
             <StatItem key={i} value={s.value} suffix={s.suffix} label={statsLabels[i]} />
@@ -116,7 +116,7 @@ export default function NotreHistoirePage() {
       {/* ── ÉQUIPE ────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-14 reveal">
-          <p className="text-xs font-bold tracking-widest text-amber-600 uppercase mb-3">{t("teamLabel")}</p>
+          <p className="text-xs font-bold tracking-widest text-gold uppercase mb-3">{t("teamLabel")}</p>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900"
             style={{ fontFamily: "var(--font-playfair, serif)" }}>
             {t("teamTitle")}
@@ -130,9 +130,9 @@ export default function NotreHistoirePage() {
               <div className="[direction:ltr]">
                 <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-xl">
                   <Image src={TEAM_IMAGES[i] ?? TEAM_IMAGES[0]} alt={member.name} fill className="object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#06251a]/70 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/70 to-transparent" />
                   <div className="absolute bottom-5 left-5">
-                    <span className="inline-block bg-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                    <span className="inline-block bg-gold-light text-white text-xs font-bold px-3 py-1.5 rounded-full">
                       {member.tag}
                     </span>
                   </div>
@@ -140,7 +140,7 @@ export default function NotreHistoirePage() {
               </div>
               <div className="[direction:ltr] space-y-4">
                 <div>
-                  <p className="text-xs font-bold tracking-widest text-[#0f5132] uppercase mb-1">{member.role}</p>
+                  <p className="text-xs font-bold tracking-widest text-primary uppercase mb-1">{member.role}</p>
                   <h3 className="text-2xl md:text-3xl font-black text-gray-900"
                     style={{ fontFamily: "var(--font-playfair, serif)" }}>
                     {member.name}
@@ -155,21 +155,21 @@ export default function NotreHistoirePage() {
       </section>
 
       {/* ── CITATION FONDATEUR ────────────────────────────── */}
-      <section className="bg-[#062b1a] py-16 px-4">
+      <section className="bg-brand-deep py-16 px-4">
         <div className="max-w-3xl mx-auto text-center reveal">
-          <Quote size={36} className="text-[#0f5132] mx-auto mb-6" />
+          <Quote size={36} className="text-primary mx-auto mb-6" />
           <blockquote className="text-2xl md:text-3xl font-bold text-white leading-snug mb-6"
             style={{ fontFamily: "var(--font-playfair, serif)" }}>
             &laquo;&nbsp;{t("quoteText")}&nbsp;&raquo;
           </blockquote>
-          <p className="text-emerald-300 font-semibold">{t("quoteAuthor")}</p>
+          <p className="text-cream-dark font-semibold">{t("quoteAuthor")}</p>
         </div>
       </section>
 
       {/* ── VALEURS ───────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-14 reveal">
-          <p className="text-xs font-bold tracking-widest text-amber-600 uppercase mb-3">{t("valuesLabel")}</p>
+          <p className="text-xs font-bold tracking-widest text-gold uppercase mb-3">{t("valuesLabel")}</p>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900"
             style={{ fontFamily: "var(--font-playfair, serif)" }}>
             {t("valuesTitle")}
@@ -177,8 +177,8 @@ export default function NotreHistoirePage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {values.map((v, i) => (
-            <div key={i} className="reveal group bg-white border border-gray-100 rounded-2xl p-6 hover:border-emerald-200 hover:shadow-md transition-all text-center">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-[#0f5132] mb-4 mx-auto group-hover:bg-[#0f5132] group-hover:text-white transition-all">
+            <div key={i} className="reveal group bg-white border border-gray-100 rounded-2xl p-6 hover:border-cream-dark hover:shadow-md transition-all text-center">
+              <div className="w-14 h-14 rounded-2xl bg-cream border border-cream flex items-center justify-center text-primary mb-4 mx-auto group-hover:bg-primary group-hover:text-white transition-all">
                 {VALUE_ICONS[i]}
               </div>
               <h3 className="font-bold text-gray-900 text-lg mb-2">{v.title}</h3>
@@ -192,7 +192,7 @@ export default function NotreHistoirePage() {
       <section className="bg-gray-50 py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14 reveal">
-            <p className="text-xs font-bold tracking-widest text-amber-600 uppercase mb-3">{t("timelineLabel")}</p>
+            <p className="text-xs font-bold tracking-widest text-gold uppercase mb-3">{t("timelineLabel")}</p>
             <h2 className="text-3xl md:text-4xl font-black text-gray-900"
               style={{ fontFamily: "var(--font-playfair, serif)" }}>
               {t("timelineTitle")}
@@ -201,7 +201,7 @@ export default function NotreHistoirePage() {
 
           {/* Desktop alternating */}
           <div className="hidden md:block relative">
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-emerald-200 -translate-x-1/2" />
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-cream-dark -translate-x-1/2" />
             <div className="space-y-10">
               {timeline.map((item, i) => {
                 const isLeft = i % 2 === 0;
@@ -214,8 +214,8 @@ export default function NotreHistoirePage() {
                       </div>
                     </div>
                     <div className="flex flex-col items-center gap-2 w-20 flex-shrink-0">
-                      <div className="w-5 h-5 rounded-full bg-[#0f5132] border-4 border-white shadow-md ring-2 ring-emerald-200 z-10" />
-                      <span className="text-xs font-black text-[#0f5132] bg-white border border-emerald-100 shadow-sm px-3 py-1 rounded-full">
+                      <div className="w-5 h-5 rounded-full bg-primary border-4 border-white shadow-md ring-2 ring-cream-dark z-10" />
+                      <span className="text-xs font-black text-primary bg-white border border-cream shadow-sm px-3 py-1 rounded-full">
                         {item.year}
                       </span>
                     </div>
@@ -228,13 +228,13 @@ export default function NotreHistoirePage() {
 
           {/* Mobile single column */}
           <div className="md:hidden relative">
-            <div className="absolute left-5 top-0 bottom-0 w-px bg-emerald-200" />
+            <div className="absolute left-5 top-0 bottom-0 w-px bg-cream-dark" />
             <div className="space-y-7">
               {timeline.map((item, i) => (
                 <div key={i} className="reveal relative flex gap-5 pl-12">
-                  <div className="absolute left-3.5 top-1.5 w-4 h-4 rounded-full bg-[#0f5132] border-4 border-white shadow ring-2 ring-emerald-200 z-10" />
+                  <div className="absolute left-3.5 top-1.5 w-4 h-4 rounded-full bg-primary border-4 border-white shadow ring-2 ring-cream-dark z-10" />
                   <div className="flex-1 bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-                    <span className="inline-block text-xs font-black text-[#0f5132] bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-full mb-2">
+                    <span className="inline-block text-xs font-black text-primary bg-cream border border-cream px-2.5 py-0.5 rounded-full mb-2">
                       {item.year}
                     </span>
                     <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
@@ -250,7 +250,7 @@ export default function NotreHistoirePage() {
       {/* ── GALERIE ───────────────────────────────────────── */}
       <section id="galerie" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-10 reveal">
-          <p className="text-xs font-bold tracking-widest text-amber-600 uppercase mb-3">{t("galleryLabel")}</p>
+          <p className="text-xs font-bold tracking-widest text-gold uppercase mb-3">{t("galleryLabel")}</p>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900"
             style={{ fontFamily: "var(--font-playfair, serif)" }}>
             {t("galleryTitle")}
@@ -259,7 +259,7 @@ export default function NotreHistoirePage() {
 
         <div className="reveal relative rounded-3xl overflow-hidden aspect-video shadow-xl mb-4">
           <Image src={GALLERY[galleryIdx]} alt={t("galleryAlt")} fill className="object-cover transition-all duration-500" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#06251a]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/40 to-transparent" />
           <button onClick={() => setGalleryIdx(i => (i - 1 + GALLERY.length) % GALLERY.length)}
             className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow transition-all">
             <ChevronLeft size={18} className="text-gray-800" />
@@ -279,7 +279,7 @@ export default function NotreHistoirePage() {
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
           {GALLERY.map((src, i) => (
             <button key={i} onClick={() => setGalleryIdx(i)}
-              className={`relative rounded-xl overflow-hidden aspect-square transition-all ${i === galleryIdx ? "ring-2 ring-[#0f5132] opacity-100" : "opacity-60 hover:opacity-90"}`}>
+              className={`relative rounded-xl overflow-hidden aspect-square transition-all ${i === galleryIdx ? "ring-2 ring-primary opacity-100" : "opacity-60 hover:opacity-90"}`}>
               <Image src={src} alt="" fill className="object-cover" />
             </button>
           ))}
@@ -306,7 +306,7 @@ export default function NotreHistoirePage() {
       </section>
 
       {/* ── CTA FINAL ─────────────────────────────────────── */}
-      <section className="relative bg-[#062b1a] py-20 px-4 overflow-hidden">
+      <section className="relative bg-brand-deep py-20 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center opacity-10"
           style={{ backgroundImage: "url('/images/kaaba.jpg')" }} />
         <div className="relative z-10 max-w-3xl mx-auto text-center reveal">
@@ -318,7 +318,7 @@ export default function NotreHistoirePage() {
           <p className="text-white/60 mb-8 text-base max-w-xl mx-auto">{t("ctaText")}</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link href="/offres"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-bold px-8 py-3.5 rounded-full transition-all hover:scale-105 shadow-lg">
+              className="inline-flex items-center gap-2 bg-gold-light hover:bg-amber-400 text-white font-bold px-8 py-3.5 rounded-full transition-all hover:scale-105 shadow-lg">
               {t("ctaOffers")} <ArrowRight size={16} />
             </Link>
             <Link href="/contact"

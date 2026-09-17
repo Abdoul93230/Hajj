@@ -1,14 +1,37 @@
 @import "tailwindcss";
 
-@theme {
-  --color-primary: #0f5132;
-  --color-primary-dark: #0a3d26;
-  --color-primary-light: #157347;
-  --color-gold: #b8860b;
-  --color-gold-light: #d4af37;
-  --color-cream: #f2f7f3;
-  --color-cream-dark: #dde9e0;
+/*
+ * ── Thème par tenant (white-labeling) ───────────────────────────────────────
+ * Les utilitaires (bg-primary, text-gold, bg-cream…) pointent sur des
+ * variables CSS runtime, écrasées par le <style> injecté dans les layouts
+ * (public + admin agence) depuis Tenant.theme — voir src/lib/tenant-theme.ts.
+ * Les valeurs ci-dessous = défauts ZAM (superadmin, pages sans tenant).
+ */
+:root {
+  --brand: #0f5132;
+  --brand-dark: #0a3d26;
+  --brand-light: #157347;
+  --brand-deep: #062b1a;
+  --on-brand: #ffffff;
+  --accent: #b8860b;
+  --accent-dark: #9a7209;
+  --accent-light: #d4af37;
+  --cream: #f2f7f3;
+  --cream-dark: #dde9e0;
 }
+
+@theme inline {
+  --color-primary: var(--brand);
+  --color-primary-dark: var(--brand-dark);
+  --color-primary-light: var(--brand-light);
+  --color-brand-deep: var(--brand-deep);
+  --color-gold: var(--accent);
+  --color-gold-dark: var(--accent-dark);
+  --color-gold-light: var(--accent-light);
+  --color-cream: var(--cream);
+  --color-cream-dark: var(--cream-dark);
+}
+
 
 body {
   background-color: #f8fafc;
@@ -24,12 +47,12 @@ body {
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #b8860b;
+  color: var(--accent);
 }
 
 .btn-primary {
-  background-color: #0f5132;
-  color: white;
+  background-color: var(--brand);
+  color: var(--on-brand);
   font-weight: 600;
   padding: 0.625rem 1.5rem;
   border-radius: 9999px;
@@ -39,11 +62,11 @@ body {
   transition: background-color 0.2s;
   font-size: 0.875rem;
 }
-.btn-primary:hover { background-color: #0a3d26; }
+.btn-primary:hover { background-color: var(--brand-dark); }
 
 .btn-gold {
-  background-color: #b8860b;
-  color: white;
+  background-color: var(--accent);
+  color: var(--on-brand);
   font-weight: 600;
   padding: 0.625rem 1.5rem;
   border-radius: 9999px;
@@ -53,11 +76,11 @@ body {
   transition: background-color 0.2s;
   font-size: 0.875rem;
 }
-.btn-gold:hover { background-color: #9a7209; }
+.btn-gold:hover { background-color: var(--accent-dark); }
 
 .btn-outline {
-  border: 1.5px solid #0f5132;
-  color: #0f5132;
+  border: 1.5px solid var(--brand);
+  color: var(--brand);
   font-weight: 600;
   padding: 0.625rem 1.5rem;
   border-radius: 9999px;
@@ -68,7 +91,7 @@ body {
   font-size: 0.875rem;
   background: transparent;
 }
-.btn-outline:hover { background-color: #0f5132; color: white; }
+.btn-outline:hover { background-color: var(--brand); color: var(--on-brand); }
 
 /* ── ANIMATIONS ─────────────────────────────────── */
 
@@ -175,7 +198,7 @@ body {
 }
 .card-lift:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(15,81,50,0.14);
+  box-shadow: 0 20px 40px color-mix(in srgb, var(--brand) 14%, transparent);
 }
 
 /* Glass card */
@@ -188,7 +211,7 @@ body {
 
 /* Gradient text */
 .text-gradient {
-  background: linear-gradient(135deg, #0f5132, #157347, #b8860b);
+  background: linear-gradient(135deg, var(--brand), var(--brand-light), var(--accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

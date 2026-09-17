@@ -18,7 +18,7 @@ const STATUS_BADGE: Record<string, string> = {
   VISA_DEPOSE: "bg-purple-100 text-purple-700",
   VISA_OK: "bg-green-100 text-green-700",
   PARTI: "bg-cyan-100 text-cyan-700",
-  RETOUR: "bg-emerald-100 text-emerald-700",
+  RETOUR: "bg-cream text-primary",
 };
 
 type Props = { params: Promise<{ locale: string }> };
@@ -99,7 +99,7 @@ export default async function MonDossierPage({ params }: Props) {
               className="w-16 h-16 rounded-2xl object-cover border border-gray-100"
             />
           ) : (
-            <div className="w-16 h-16 rounded-2xl bg-[#0f5132] text-white flex items-center justify-center text-xl font-bold flex-shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-primary text-white flex items-center justify-center text-xl font-bold flex-shrink-0">
               {initials}
             </div>
           )}
@@ -127,14 +127,14 @@ export default async function MonDossierPage({ params }: Props) {
                   {i > 0 && (
                     <div
                       className={`absolute top-3 right-1/2 w-full h-0.5 ${
-                        i <= statusIndex ? "bg-[#0f5132]" : "bg-gray-200"
+                        i <= statusIndex ? "bg-primary" : "bg-gray-200"
                       }`}
                     />
                   )}
                   <div
                     className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${
                       done
-                        ? "bg-[#0f5132] text-white"
+                        ? "bg-primary text-white"
                         : current
                           ? "bg-amber-400 text-white ring-4 ring-amber-100"
                           : "bg-gray-200 text-gray-400"
@@ -144,7 +144,7 @@ export default async function MonDossierPage({ params }: Props) {
                   </div>
                   <span
                     className={`mt-1.5 text-[9px] font-semibold text-center leading-tight ${
-                      current ? "text-[#0f5132]" : done ? "text-gray-600" : "text-gray-300"
+                      current ? "text-primary" : done ? "text-gray-600" : "text-gray-300"
                     }`}
                   >
                     {t(`status.${step}`)}
@@ -233,7 +233,7 @@ export default async function MonDossierPage({ params }: Props) {
                       className={`text-[10px] font-bold px-2 py-1 rounded-full ${
                         r.status === "CANCELLED"
                           ? "bg-red-100 text-red-600"
-                          : "bg-[#0f5132]/10 text-[#0f5132]"
+                          : "bg-primary/10 text-primary"
                       }`}
                     >
                       {r.status === "CANCELLED"
@@ -262,7 +262,7 @@ export default async function MonDossierPage({ params }: Props) {
                     </div>
                     <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-2 bg-[#0f5132] rounded-full transition-all"
+                        className="h-2 bg-primary rounded-full transition-all"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -325,7 +325,7 @@ export default async function MonDossierPage({ params }: Props) {
           </p>
           <a
             href={`/${locale}/compte/mes-documents`}
-            className="text-xs font-semibold text-[#0f5132] hover:underline"
+            className="text-xs font-semibold text-primary hover:underline"
           >
             {t("docs.goToDocuments")} →
           </a>
@@ -359,7 +359,7 @@ export default async function MonDossierPage({ params }: Props) {
             {agencyPhone && (
               <a
                 href={`tel:${agencyPhone.replace(/\s+/g, "")}`}
-                className="flex items-center gap-2 bg-[#0f5132]/5 hover:bg-[#0f5132]/10 text-[#0f5132] font-semibold px-4 py-2 rounded-xl transition"
+                className="flex items-center gap-2 bg-primary/5 hover:bg-primary/10 text-primary font-semibold px-4 py-2 rounded-xl transition"
               >
                 📞 {agencyPhone}
               </a>
