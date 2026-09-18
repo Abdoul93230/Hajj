@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2, RotateCcw, Save } from "lucide-react";
+import { Check, ChevronDown, Loader2, RotateCcw, Save, Search } from "lucide-react";
 import type { SlotLocales, ThemeSlotGroupPayload } from "@/lib/tenant-theme";
 
 const inputCls =
@@ -24,9 +24,9 @@ type Props = {
 
 /**
  * Éditeur des textes personnalisés du tenant (superadmin).
- * Chaque slot = 3 champs (fr/en/ar). Vide = le texte statique de la plateforme
- * est utilisé (placeholder visible) — une chaîne vide SUPPRIME l'override de
- * cette langue (repli automatique sur le statique).
+ * Chaque champ est PRÉ-REMPLI avec le texte actuellement affiché (override du
+ * tenant, sinon texte de la plateforme) et éditable en fr/en/ar. À
+ * l'enregistrement, seules les différences avec la plateforme sont envoyées.
  */
 export default function ThemeTextEditor({
   tenantId,
@@ -37,8 +37,23 @@ export default function ThemeTextEditor({
 }: Props) {
   const [values, setValues] = useState<Record<string, SlotLocales>>(() => {
     const init: Record<string, SlotLocales> = {};
-    for (const g of groups) for (const s of g.slots) init[s.key] = { ...s.override };
-    init[metaKey] = { ...metaOverride };
+    // PRÉ-REMPLISSAGE : le champ contient la valeur EFFECTIVE — l'override du
+    // tenant s'il existe, sinon le texte statique de la plateforme. L'utilisateur
+    // voit et modifie un vrai texte, jamais un champ vide.
+    for (const g of groups) {
+      for (const s of g.slots) {
+        init[s.key] = {
+          fr: s.override.fr.trim() || s.statics.fr,
+          en: s.override.en.trim() || s.statics.en,
+          ar: s.override.ar.trim() || s.statics.ar,
+        };
+      }
+    }
+    init[metaKey] = {
+      fr: metaOverride.fr.trim() || metaStatics.fr,
+      en: metaOverride.en.trim() || metaStatics.en,
+      ar: metaOverride.ar.trim() || metaStatics.ar,
+    };
     return init;
   });
   const [saving, setSaving] = useState(false);
@@ -46,22 +61,108 @@ export default function ThemeTextEditor({
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  // Sections repliables (1095 champs : tout afficher d'un coup serait lourd).
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [query, setQuery] = useState("");
+
+  const toggleGroup = (name: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+
+  const q = query.trim().toLowerCase();
+  const visibleGroups = useMemo(() => {
+    if (!q) return groups;
+    return groups
+      .map((group) => ({
+        ...group,
+        slots: group.slots.filter(
+          (slot) =>
+            slot.label.toLowerCase().includes(q) ||
+            slot.key.toLowerCase().includes(q) ||
+            group.group.toLowerCase().includes(q)
+        ),
+      }))
+      .filter((group) => group.slots.length > 0);
+  }, [groups, q]);
+
+  const totalSlots = useMemo(() => groups.reduce((n, g) => n + g.slots.length, 0), [groups]);
+
   const setValue = (key: string, lang: keyof SlotLocales, value: string) =>
     setValues((s) => ({ ...s, [key]: { ...s[key], [lang]: value } }));
 
-  const resetSlot = (key: string) =>
-    setValues((s) => ({ ...s, [key]: { fr: "", en: "", ar: "" } }));
+  const staticsByKey = useMemo(() => {
+    const map: Record<string, SlotLocales> = {};
+    for (const g of groups) for (const s of g.slots) map[s.key] = s.statics;
+    map[metaKey] = metaStatics;
+    return map;
+  }, [groups, metaKey, metaStatics]);
 
-  const isCustom = (key: string) =>
-    Object.values(values[key] ?? {}).some((v) => v.trim() !== "");
+  /** Overrides tels que chargés depuis la base ("" = pas d'override). */
+  const overridesByKey = useMemo(() => {
+    const map: Record<string, SlotLocales> = {};
+    for (const g of groups) for (const s of g.slots) map[s.key] = s.override;
+    map[metaKey] = metaOverride;
+    return map;
+  }, [groups, metaKey, metaOverride]);
+
+  /** Remet ce champ au texte de la plateforme (supprime l'override). */
+  const resetSlot = (key: string) =>
+    setValues((s) => ({ ...s, [key]: { ...staticsByKey[key] } }));
+
+  const isCustom = (key: string) => {
+    const stat = staticsByKey[key];
+    const val = values[key];
+    if (!val) return false;
+    return (["fr", "en", "ar"] as const).some((lang) => val[lang].trim() !== stat?.[lang]);
+  };
+
+  const customCount = useMemo(
+    () =>
+      groups.reduce(
+        (n, group) =>
+          n +
+          group.slots.filter((slot) => {
+            const val = values[slot.key];
+            const stat = staticsByKey[slot.key];
+            if (!val || !stat) return false;
+            return (["fr", "en", "ar"] as const).some(
+              (lang) => val[lang].trim() !== stat[lang].trim()
+            );
+          }).length,
+        0
+      ),
+    [groups, values, staticsByKey]
+  );
 
   async function save() {
     setSaving(true);
     setSaved(false);
     setError(null);
     try {
-      const content: Record<string, SlotLocales> = {};
-      for (const key of Object.keys(values)) content[key] = values[key];
+      // N'envoyer que les DIFFÉRENCES avec le texte de la plateforme :
+      //  - champ modifié            → valeur envoyée (chaîne vide = efface l'override) ;
+      //  - champ identique au texte plateforme → rien (évite de copier toute la
+      //    plateforme dans la base du tenant) ; si un override existait et est
+      //    revenu au défaut, on envoie "" pour le supprimer.
+      const content: Record<string, Partial<SlotLocales>> = {};
+      for (const key of Object.keys(values)) {
+        const stat = staticsByKey[key];
+        const cur = values[key];
+        if (!stat || !cur) continue;
+        const patch: Partial<SlotLocales> = {};
+        const original = overridesByKey[key] ?? { fr: "", en: "", ar: "" };
+        for (const lang of ["fr", "en", "ar"] as const) {
+          const now = cur[lang].trim();
+          const def = stat[lang].trim();
+          if (now !== def) patch[lang] = now;
+          else if (original[lang].trim()) patch[lang] = ""; // revenu au défaut → supprime l'override
+        }
+        if (Object.keys(patch).length) content[key] = patch;
+      }
       const res = await fetch(`/api/superadmin/tenants/${tenantId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -85,11 +186,22 @@ export default function ThemeTextEditor({
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Textes du portail</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Laissez vide pour utiliser le texte de la plateforme (visible en placeholder).
-            Les 3 langues sont éditées ensemble.
+            <strong>{totalSlots}</strong> textes personnalisables · <strong>{customCount}</strong>{" "}
+            personnalisé(s) — les champs sont pré-remplis avec le texte actuel ; seules vos
+            modifications sont enregistrées.
           </p>
         </div>
         <SaveButton onClick={() => void save()} saving={saving} saved={saved} />
+      </div>
+
+      <div className="relative">
+        <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Rechercher un texte (libellé, clé, groupe)…"
+          className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+        />
       </div>
 
       {error && (
@@ -99,13 +211,27 @@ export default function ThemeTextEditor({
       )}
 
       {/* __GROUPS__ */}
-      {groups.map((group) => (
+      {visibleGroups.map((group) => {
+        const isOpen = expanded.has(group.group) || q !== "";
+        return (
         <section key={group.group} className="rounded-2xl border border-gray-200 bg-white p-5">
-          <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-500">
-            {group.group}
-          </h2>
-
-          {group.slots.map((slot) => (
+          <button
+            type="button"
+            onClick={() => toggleGroup(group.group)}
+            className="mb-4 flex w-full items-center justify-between gap-2 text-left"
+          >
+            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500">
+              {group.group}
+              <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-400">
+                {group.slots.length}
+              </span>
+            </h2>
+            <ChevronDown
+              size={16}
+              className={`shrink-0 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+          {isOpen && group.slots.map((slot) => (
             <div key={slot.key} className="mb-4 rounded-xl border border-gray-100 p-4 last:mb-0">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <div>
@@ -117,7 +243,6 @@ export default function ThemeTextEditor({
                       </span>
                     )}
                   </p>
-                  {slot.hint && <p className="text-xs text-gray-400">{slot.hint}</p>}
                 </div>
                 {isCustom(slot.key) && (
                   <button
@@ -159,7 +284,8 @@ export default function ThemeTextEditor({
             </div>
           ))}
         </section>
-      ))}
+        );
+      })}
       {/* __SEO__ */}
       <section className="rounded-2xl border border-gray-200 bg-white p-5">
         <h2 className="mb-1 text-sm font-bold uppercase tracking-wider text-gray-500">SEO</h2>

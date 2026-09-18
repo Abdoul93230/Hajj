@@ -168,58 +168,95 @@ function setDeep(obj: Record<string, unknown>, path: string[], value: string): v
 // ─── Catalogue des textes personnalisables (éditeur superadmin) ───────────────
 //
 // Chaque slot = un chemin i18n pointé (voir applyTenantOverrides) éditable en
-// fr/en/ar. Le texte STATIQUE sert de placeholder et de repli : un slot sans
-// override affiche exactement le texte de la plateforme.
+// fr/en/ar. Le catalogue est construit AUTOMATIQUEMENT depuis les fichiers de
+// messages (fr = référence) : tout texte public est personnalisable, sans liste
+// manuelle à maintenir. Le texte statique est PRÉ-REMPLI dans l'éditeur et sert
+// de repli : un slot sans override affiche exactement le texte de la plateforme.
 
 export type SlotLocales = Record<"fr" | "en" | "ar", string>;
 
 export type ThemeSlot = {
   key: string;
   label: string;
-  hint?: string;
   multiline?: boolean;
 };
 
 export type ThemeSlotGroup = { group: string; slots: ThemeSlot[] };
 
-export const THEME_TEXT_SLOTS: ThemeSlotGroup[] = [
-  {
-    group: "Accueil",
-    slots: [
-      { key: "home.heroBadge", label: "Badge du hero", hint: "Petite étiquette au-dessus du titre." },
-      { key: "home.heroTitle1", label: "Titre principal — ligne 1" },
-      { key: "home.heroTitle2", label: "Titre principal — ligne 2 (dorée)", hint: "Seconde ligne mise en valeur." },
-      { key: "home.heroSubtitle", label: "Sous-titre du hero", multiline: true },
-      { key: "home.ctaOumra2026", label: "Bouton — Oumra (saison)" },
-      { key: "home.ctaOumraRamadan", label: "Bouton — Oumra Ramadan" },
-      { key: "home.ctaHajj2027", label: "Bouton — Hajj (saison)" },
-      { key: "home.statsExperience", label: "Statistique — expérience" },
-      { key: "home.statsPilgrims", label: "Statistique — pèlerins" },
-      { key: "home.statsSatisfaction", label: "Statistique — satisfaction" },
-    ],
-  },
-  {
-    group: "Pied de page",
-    slots: [
-      { key: "footer.tagline", label: "Slogan du footer" },
-      { key: "footer.brandDesc", label: "Description de l'agence", multiline: true },
-    ],
-  },
-  {
-    group: "À propos & contact",
-    slots: [
-      { key: "about.title", label: "Titre de la page" },
-      { key: "about.subtitle", label: "Sous-titre de la page", multiline: true },
-      { key: "about.address", label: "Adresse" },
-      { key: "about.phone1", label: "Téléphone 1" },
-      { key: "about.phone2", label: "Téléphone 2" },
-      { key: "about.missionTitle", label: "Titre — notre mission" },
-      { key: "about.missionText", label: "Texte — notre mission", multiline: true },
-      { key: "about.historyTitle", label: "Titre — notre histoire" },
-      { key: "about.historyText", label: "Texte — notre histoire", multiline: true },
-    ],
-  },
-];
+export type ThemeMessages = Record<"fr" | "en" | "ar", Record<string, unknown>>;
+
+/** Libellés de groupes par namespace i18n (l'ordre de la carte = ordre d'affichage). */
+const GROUP_LABELS: Record<string, string> = {
+  nav: "Navigation",
+  header: "En-tête",
+  footer: "Pied de page",
+  home: "Accueil",
+  about: "À propos",
+  history: "Notre histoire",
+  contact: "Contact",
+  offers: "Offres",
+  offersData: "Contenu des offres",
+  guide: "Guide du pèlerin",
+  coran: "Coran",
+  qibla: "Boussole Qibla",
+  reviews: "Avis clients",
+  pilgrim: "Espace pèlerin",
+  portal: "Portail pèlerin (connexion / inscription)",
+  comingSoon: "Page « Bientôt disponible »",
+  placeholder: "Champs de formulaire",
+};
+
+const GROUP_ORDER = Object.keys(GROUP_LABELS);
+
+/** « heroTitle1 » → « Hero title 1 ». */
+function humanize(segment: string): string {
+  const spaced = segment.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/_/g, " ").trim();
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+/**
+ * Construit le catalogue COMPLET des textes éditables en parcourant l'arbre FR
+ * (chaque feuille string = un slot). Les statiques EN/AR sont résolues côté
+ * page via readMessagePath. Aucune clé n'est oubliée par construction.
+ */
+export function buildThemeTextCatalog(messages: ThemeMessages): ThemeSlotGroup[] {
+  const fr = messages.fr && typeof messages.fr === "object" ? messages.fr : {};
+  const collected = new Map<string, ThemeSlot[]>();
+
+  const walk = (prefix: string, node: unknown): void => {
+    if (!node || typeof node !== "object" || Array.isArray(node)) return;
+    for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
+      const key = prefix ? `${prefix}.${k}` : k;
+      if (v && typeof v === "object" && !Array.isArray(v)) {
+        walk(key, v);
+        continue;
+      }
+      if (typeof v !== "string") continue;
+      const ns = key.split(".")[0];
+      let list = collected.get(ns);
+      if (!list) {
+        list = [];
+        collected.set(ns, list);
+      }
+      list.push({
+        key,
+        label: humanize(key.split(".").pop() ?? key),
+        multiline: v.includes("\n") || v.length > 90,
+      });
+    }
+  };
+  walk("", fr);
+
+  const ordered: ThemeSlotGroup[] = [];
+  for (const ns of GROUP_ORDER) {
+    const slots = collected.get(ns);
+    if (slots?.length) ordered.push({ group: GROUP_LABELS[ns], slots });
+  }
+  for (const [ns, slots] of collected) {
+    if (!GROUP_ORDER.includes(ns) && slots.length) ordered.push({ group: humanize(ns), slots });
+  }
+  return ordered;
+}
 
 /** Slot spécial (non i18n pointé) : description SEO consommée par generateMetadata. */
 export const META_DESCRIPTION_SLOT = "metaDescription";
@@ -342,7 +379,8 @@ export function mergeTenantTheme(
         if (typeof v === "string" && v.trim()) prev[loc] = v.trim();
         else delete prev[loc];
       }
-      content[key] = prev;
+      if (Object.keys(prev).length) content[key] = prev;
+      else delete content[key]; // toutes les langues revenues au défaut → clé retirée
     }
   }
   base.content = content;

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getStaticMessages } from "@/lib/static-messages";
 import {
   META_DESCRIPTION_SLOT,
-  THEME_TEXT_SLOTS,
+  buildThemeTextCatalog,
   readMessagePath,
   type SlotLocales,
   type ThemeSlotGroupPayload,
@@ -38,21 +38,34 @@ export default async function TextesPage({
   const theme = (tenant.theme ?? {}) as Record<string, unknown>;
   const content = (theme.content ?? {}) as Record<string, unknown>;
 
-  const groups: ThemeSlotGroupPayload[] = THEME_TEXT_SLOTS.map((group) => ({
-    group: group.group,
-    slots: group.slots.map((slot) => ({
-      key: slot.key,
-      label: slot.label,
-      hint: slot.hint,
-      multiline: slot.multiline,
-      statics: {
-        fr: readMessagePath(frMsgs, slot.key),
-        en: readMessagePath(enMsgs, slot.key),
-        ar: readMessagePath(arMsgs, slot.key),
-      },
-      override: readOverride(content[slot.key]),
-    })),
-  }));
+  // Catalogue EXHAUSTIF : construit depuis les 3 arbres de messages (fr = réf.).
+  // Une clé dont les 3 statiques sont vides n'a rien à montrer → ignorée.
+  const groups: ThemeSlotGroupPayload[] = buildThemeTextCatalog({
+    fr: frMsgs,
+    en: enMsgs,
+    ar: arMsgs,
+  })
+    .map(({ group, slots }) => ({
+      group,
+      slots: slots.flatMap((slot) => {
+        const statics = {
+          fr: readMessagePath(frMsgs, slot.key),
+          en: readMessagePath(enMsgs, slot.key),
+          ar: readMessagePath(arMsgs, slot.key),
+        };
+        if (!statics.fr && !statics.en && !statics.ar) return [];
+        return [
+          {
+            key: slot.key,
+            label: slot.label,
+            multiline: slot.multiline,
+            statics,
+            override: readOverride(content[slot.key]),
+          },
+        ];
+      }),
+    }))
+    .filter((group) => group.slots.length > 0);
 
   const metaStatics: SlotLocales = {
     fr: process.env.NEXT_PUBLIC_META_DESCRIPTION ?? "Agence de pèlerinage Hajj & Oumra",
