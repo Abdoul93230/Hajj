@@ -165,6 +165,89 @@ function setDeep(obj: Record<string, unknown>, path: string[], value: string): v
   node[path[path.length - 1]] = value;
 }
 
+// ─── Catalogue des textes personnalisables (éditeur superadmin) ───────────────
+//
+// Chaque slot = un chemin i18n pointé (voir applyTenantOverrides) éditable en
+// fr/en/ar. Le texte STATIQUE sert de placeholder et de repli : un slot sans
+// override affiche exactement le texte de la plateforme.
+
+export type SlotLocales = Record<"fr" | "en" | "ar", string>;
+
+export type ThemeSlot = {
+  key: string;
+  label: string;
+  hint?: string;
+  multiline?: boolean;
+};
+
+export type ThemeSlotGroup = { group: string; slots: ThemeSlot[] };
+
+export const THEME_TEXT_SLOTS: ThemeSlotGroup[] = [
+  {
+    group: "Accueil",
+    slots: [
+      { key: "home.heroBadge", label: "Badge du hero", hint: "Petite étiquette au-dessus du titre." },
+      { key: "home.heroTitle1", label: "Titre principal — ligne 1" },
+      { key: "home.heroTitle2", label: "Titre principal — ligne 2 (dorée)", hint: "Seconde ligne mise en valeur." },
+      { key: "home.heroSubtitle", label: "Sous-titre du hero", multiline: true },
+      { key: "home.ctaOumra2026", label: "Bouton — Oumra (saison)" },
+      { key: "home.ctaOumraRamadan", label: "Bouton — Oumra Ramadan" },
+      { key: "home.ctaHajj2027", label: "Bouton — Hajj (saison)" },
+      { key: "home.statsExperience", label: "Statistique — expérience" },
+      { key: "home.statsPilgrims", label: "Statistique — pèlerins" },
+      { key: "home.statsSatisfaction", label: "Statistique — satisfaction" },
+    ],
+  },
+  {
+    group: "Pied de page",
+    slots: [
+      { key: "footer.tagline", label: "Slogan du footer" },
+      { key: "footer.brandDesc", label: "Description de l'agence", multiline: true },
+    ],
+  },
+  {
+    group: "À propos & contact",
+    slots: [
+      { key: "about.title", label: "Titre de la page" },
+      { key: "about.subtitle", label: "Sous-titre de la page", multiline: true },
+      { key: "about.address", label: "Adresse" },
+      { key: "about.phone1", label: "Téléphone 1" },
+      { key: "about.phone2", label: "Téléphone 2" },
+      { key: "about.missionTitle", label: "Titre — notre mission" },
+      { key: "about.missionText", label: "Texte — notre mission", multiline: true },
+      { key: "about.historyTitle", label: "Titre — notre histoire" },
+      { key: "about.historyText", label: "Texte — notre histoire", multiline: true },
+    ],
+  },
+];
+
+/** Slot spécial (non i18n pointé) : description SEO consommée par generateMetadata. */
+export const META_DESCRIPTION_SLOT = "metaDescription";
+
+/** Payload sérialisable vers l'éditeur client. */
+export type ThemeSlotPayload = {
+  key: string;
+  label: string;
+  hint?: string;
+  multiline?: boolean;
+  /** Textes statiques (placeholder + repli). */
+  statics: SlotLocales;
+  /** Override actuel du tenant ("" = utilise le statique). */
+  override: SlotLocales;
+};
+
+export type ThemeSlotGroupPayload = { group: string; slots: ThemeSlotPayload[] };
+
+/** Lit une clé pointée dans l'arbre des messages ("" si absente). */
+export function readMessagePath(messages: Record<string, unknown>, dotted: string): string {
+  let node: unknown = messages;
+  for (const part of dotted.split(".")) {
+    if (!node || typeof node !== "object") return "";
+    node = (node as Record<string, unknown>)[part];
+  }
+  return typeof node === "string" ? node : "";
+}
+
 // ── Batch 2 : contenus éditoriaux (textes) + branding ──────────────────────
 
 /** Valeur localisée ({fr,en,ar}) ou chaîne simple → texte pour `locale`, fallback fr. */
