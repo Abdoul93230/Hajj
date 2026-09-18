@@ -79,7 +79,7 @@ export default function ThemeTextEditor({
   }
 
   return (
-    <div className="space-y-6 max-w-5xl pb-16">
+    <div className="w-full space-y-6 pb-16">
       {/* __HEADER__ */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
