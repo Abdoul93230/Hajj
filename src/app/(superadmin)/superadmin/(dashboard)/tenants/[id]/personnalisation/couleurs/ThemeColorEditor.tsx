@@ -7,7 +7,7 @@ import { DEFAULT_ACCENT, DEFAULT_BRAND, readableOn, shade } from "@/lib/tenant-t
 
 const HEX_RE = /^#[0-9a-fA-F]{6}$/;
 const inputCls =
-  "w-full px-3 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-gray-300";
+  "w-full px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-gray-300";
 
 export default function ThemeColorEditor({ tenantId, theme }: { tenantId: string; theme: unknown }) {
   const t = theme && typeof theme === "object" ? (theme as Record<string, unknown>) : {};
@@ -107,7 +107,7 @@ export default function ThemeColorEditor({ tenantId, theme }: { tenantId: string
         </div>
 
         <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 space-y-2">
-          <p className="text-[11px] font-bold tracking-widest text-gray-400 uppercase">Où ces couleurs s'appliquent</p>
+          <p className="text-[11px] font-bold tracking-widest text-gray-400 uppercase">Où ces couleurs s&apos;appliquent</p>
           <p className="text-xs text-gray-600 leading-relaxed">
             Boutons, liens, en-tête et sidebar actifs, hero, badges de marque, jauge de progression,
             focus rings, reçus et badges imprimables. Les couleurs <strong>sémantiques</strong>

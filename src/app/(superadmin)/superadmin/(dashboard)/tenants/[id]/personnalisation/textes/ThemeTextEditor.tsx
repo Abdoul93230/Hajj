@@ -6,7 +6,7 @@ import { Check, ChevronDown, Loader2, RotateCcw, Save, Search } from "lucide-rea
 import type { SlotLocales, ThemeSlotGroupPayload } from "@/lib/tenant-theme";
 
 const inputCls =
-  "w-full px-3 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-gray-300";
+  "w-full px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-gray-300";
 
 const LANGS = [
   { code: "fr" as const, label: "Français", dir: "ltr" as const },
@@ -200,7 +200,7 @@ export default function ThemeTextEditor({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Rechercher un texte (libellé, clé, groupe)…"
-          className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+          className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
         />
       </div>
 

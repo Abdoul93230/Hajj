@@ -20,10 +20,10 @@ export default async function PersonnalisationLayout({
   if (!tenant || tenant.status === "PLATFORM") notFound();
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 text-gray-900">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Personnalisation — {tenant.name}</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-xl font-bold text-white">Personnalisation — {tenant.name}</h1>
+        <p className="text-sm text-gray-400 mt-1">
           Personnalisez l&apos;apparence et les textes du portail public et de l&apos;espace agence.
           Les modifications sont visibles immédiatement après enregistrement.
         </p>

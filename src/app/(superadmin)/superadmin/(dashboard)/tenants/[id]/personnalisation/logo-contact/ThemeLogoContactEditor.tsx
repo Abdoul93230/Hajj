@@ -7,7 +7,7 @@ import { Check, Loader2, Save, Trash2, Upload } from "lucide-react";
 
 type ThemeObj = Record<string, unknown>;
 const inputCls =
-  "w-full px-3 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-gray-300";
+  "w-full px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-gray-300";
 
 function str(v: unknown): string {
   return typeof v === "string" ? v : "";
@@ -115,7 +115,7 @@ export default function ThemeLogoContactEditor({
             <button
               onClick={() => fileRef.current?.click()}
               disabled={uploading}
-              className="flex items-center gap-2 text-sm font-medium border border-gray-200 rounded-xl px-3 py-2 hover:bg-gray-50 transition disabled:opacity-60"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl px-3 py-2 bg-white hover:bg-gray-50 transition disabled:opacity-60"
             >
               {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
               {uploading ? "Téléversement…" : "Téléverser un logo"}

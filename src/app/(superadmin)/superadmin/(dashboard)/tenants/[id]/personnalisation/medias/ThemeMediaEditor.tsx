@@ -132,7 +132,7 @@ export default function ThemeMediaEditor({
   };
 
   return (
-    <div className="w-full space-y-6 pb-16">
+    <div className="w-full space-y-6 pb-16 text-gray-900">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Images du portail</h1>
@@ -144,9 +144,9 @@ export default function ThemeMediaEditor({
         <button
           onClick={saveAll}
           disabled={saving || !!uploading}
-          className="flex items-center gap-2 bg-gray-900 hover:bg-black text-white text-sm font-semibold px-4 py-2 rounded-xl transition disabled:opacity-60"
+          className="flex items-center gap-2 bg-gray-900 text-white hover:bg-black text-sm font-semibold px-4 py-2 rounded-xl transition disabled:opacity-60"
         >
-          {saving ? <Loader2 size={15} className="animate-spin" /> : saved ? <Check size={15} /> : <Upload size={15} />}
+          {saving ? <Loader2 size={15} className="animate-spin" /> : saved ? <Check size={15} className="text-emerald-400" /> : <Upload size={15} />}
           {saving ? "Enregistrement…" : saved ? "Enregistré ✓" : "Enregistrer"}
         </button>
       </div>
@@ -189,7 +189,7 @@ export default function ThemeMediaEditor({
                 value={url}
                 onChange={(e) => setUrls((prev) => ({ ...prev, [slot.key]: e.target.value }))}
                 placeholder="Ou collez une URL d'image…"
-                className={inputCls}
+                className={`${inputCls} text-gray-900 placeholder:text-gray-400`}
               />
 
               <div className="flex items-center gap-2">
@@ -209,7 +209,7 @@ export default function ThemeMediaEditor({
                 <button
                   onClick={() => fileRefs.current[slot.kind]?.click()}
                   disabled={uploading !== null}
-                  className="flex items-center gap-2 text-sm font-medium border border-gray-200 rounded-xl px-3 py-2 hover:bg-gray-50 transition disabled:opacity-60"
+                  className="flex items-center gap-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-xl px-3 py-2 bg-white hover:bg-gray-50 transition disabled:opacity-60"
                 >
                   {uploading === slot.kind ? (
                     <Loader2 size={14} className="animate-spin" />
@@ -222,7 +222,7 @@ export default function ThemeMediaEditor({
                   <button
                     onClick={() => void reset(slot)}
                     disabled={saving}
-                    className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-xl px-3 py-2 hover:bg-gray-50 transition disabled:opacity-60"
+                    className="flex items-center gap-1 text-sm text-gray-600 border border-gray-300 rounded-xl px-3 py-2 bg-white hover:bg-gray-50 hover:text-gray-800 transition disabled:opacity-60"
                   >
                     <RotateCcw size={14} /> Réinitialiser
                   </button>
