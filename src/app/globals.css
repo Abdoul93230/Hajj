@@ -18,6 +18,17 @@
   --accent-light: #d4af37;
   --cream: #f2f7f3;
   --cream-dark: #dde9e0;
+
+  /* ── Neutres (surfaces, textes, bordures) ───────────────────────────────
+   * Manquaient au socle : sans eux, impossible de thémer le fond/les gris, et
+   * les champs de saisie héritaient de la couleur du conteneur (texte saisi
+   * illisible dès qu'un thème teintait le fond). Valeurs = celles d'origine. */
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --text-soft: #9ca3af;
+  --border: #e5e7eb;
 }
 
 @theme inline {
@@ -28,14 +39,49 @@
   --color-gold: var(--accent);
   --color-gold-dark: var(--accent-dark);
   --color-gold-light: var(--accent-light);
+--color-on-accent: var(--on-accent);
+--color-on-brand: var(--on-brand);
   --color-cream: var(--cream);
   --color-cream-dark: var(--cream-dark);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--text);
+  --color-ink-muted: var(--text-muted);
+  --color-ink-soft: var(--text-soft);
+  --color-line: var(--border);
 }
 
 
 body {
-  background-color: #f8fafc;
-  color: #111827;
+  background-color: var(--surface-muted);
+  color: var(--text);
+}
+
+/* ── Champs de saisie ─────────────────────────────────────────────────────
+ * Couleur explicite : un champ ne doit JAMAIS dépendre de la couleur héritée
+ * du conteneur (sinon le texte saisi disparaît selon le thème / le fond). */
+input,
+textarea,
+select {
+  color: var(--text);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-soft);
+  opacity: 1;
+}
+
+select option {
+  color: var(--text);
+  background-color: var(--surface);
+}
+
+/* Corrige le remplissage automatique du navigateur (Chrome/Edge) qui
+ * réapplique un texte noir sur fond clair forcé. */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
 }
 
 .font-playfair {

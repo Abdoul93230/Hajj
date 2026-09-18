@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { BookOpen, Compass, ChevronRight, ArrowRight } from "lucide-react";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
+import { WaLink } from "@/components/tenant/ContactLinks";
 
 interface TocItem     { id: string; label: string }
 interface Pilgrimage  { title: string; arabic: string; desc: string; badge: string }
@@ -337,10 +338,9 @@ export default function GuidePelerinPage() {
                     className="flex items-center gap-2 bg-gold-light hover:bg-amber-400 text-white font-bold text-sm px-6 py-3 rounded-xl transition-all hover:scale-105">
                     {t("btnSeeOffers")} <ArrowRight size={14} />
                   </Link>
-                  <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all">
+                  <WaLink className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all">
                     <IconWhatsApp size={16} /> {t("btnContact")}
-                  </a>
+                  </WaLink>
                 </div>
               </section>
 
@@ -361,10 +361,9 @@ export default function GuidePelerinPage() {
             <Link href="/offres" className="btn-primary px-8 py-3 flex items-center gap-2">
               {t("btnOffers")} <ArrowRight size={14} />
             </Link>
-            <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 border-2 border-primary text-primary font-semibold text-sm px-6 py-3 rounded-full hover:bg-cream transition-all">
+            <WaLink className="flex items-center gap-2 border-2 border-primary text-primary font-semibold text-sm px-6 py-3 rounded-full hover:bg-cream transition-all">
               <IconWhatsApp size={16} /> WhatsApp
-            </a>
+            </WaLink>
           </div>
         </div>
       </section>

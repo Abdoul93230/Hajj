@@ -2,9 +2,10 @@ import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, Calendar, Clock, Users } from "lucide-react";
-import IconWhatsApp from "@/components/ui/IconWhatsApp";
 import { prisma } from "@/lib/prisma";
+import { getTenantBySlug } from "@/lib/tenant-data";
 import { resolveTenantSlugFromHost } from "@/lib/tenant-slug";
+import { waLink } from "@/lib/contact";
 
 // Inscriptions fermées dès que la date de départ est atteinte (départ aujourd'hui inclus)
 function isBookingClosed(departureDate: Date | null): boolean {
@@ -22,9 +23,12 @@ export default async function OffresPage() {
   const headersList = await headers();
   const tenantSlug = headersList.get("x-tenant-slug")
     ?? resolveTenantSlugFromHost(headersList.get("host"));
-  const tenant = tenantSlug
-    ? await prisma.tenant.findUnique({ where: { slug: tenantSlug } })
-    : null;
+  // Dédupliqué par requête (React cache) — voir lib/tenant-data.ts
+  const tenant = tenantSlug ? await getTenantBySlug(tenantSlug) : null;
+
+  // Lien WhatsApp du tenant (masqué si non configuré — jamais un autre numéro)
+  const theme = (tenant?.theme ?? {}) as Record<string, unknown>;
+  const waHref = waLink(typeof theme.whatsappNumber === "string" ? theme.whatsappNumber : null);
 
   const dbOffers = tenant
     ? await prisma.offer.findMany({
@@ -226,8 +230,8 @@ export default async function OffresPage() {
                                       }`}>
                                       {t("details")} <ArrowRight size={14} />
                                     </Link>
-                                    {available && (
-                                      <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
+                                    {available && waHref && (
+                                      <a href={waHref} target="_blank" rel="noopener noreferrer"
                                         className="flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl border-2 border-primary text-primary hover:bg-cream transition-all">
                                         <Users size={14} /> {t("bookBtn")}
                                       </a>

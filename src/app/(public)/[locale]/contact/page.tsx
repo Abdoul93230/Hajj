@@ -5,10 +5,14 @@ import { useState } from "react";
 import { MapPin, Phone, Send } from "lucide-react";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
 import PhoneInput from "@/components/ui/PhoneInput";
+import { waLink } from "@/lib/contact";
+import { useTenantBranding } from "@/components/tenant/TenantBranding";
+import { WaLink } from "@/components/tenant/ContactLinks";
 
 export default function ContactPage() {
   const t = useTranslations("contact");
   const ta = useTranslations("about");
+  const branding = useTenantBranding();
 
   const [form, setForm] = useState({
     name: "",
@@ -36,10 +40,11 @@ export default function ContactPage() {
   }
 
   function openWhatsApp() {
-    const text = encodeURIComponent(
+    const href = waLink(
+      branding?.whatsappNumber,
       t("whatsappTemplate", { name: form.name, subject: form.subject, message: form.message })
     );
-    window.open(`https://wa.me/22791882121?text=${text}`, "_blank");
+    if (href) window.open(href, "_blank");
   }
 
   return (
@@ -154,15 +159,10 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <a
-              href="https://wa.me/22791882121"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 bg-green-500 text-white font-semibold py-4 rounded-xl hover:bg-green-400 transition-colors"
-            >
+            <WaLink className="flex items-center justify-center gap-3 bg-green-500 text-white font-semibold py-4 rounded-xl hover:bg-green-400 transition-colors">
               <IconWhatsApp size={22} />
               {t("whatsapp")}
-            </a>
+            </WaLink>
           </div>
         </div>
       </div>

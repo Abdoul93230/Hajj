@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { OFFERS, getOfferBySlug } from "@/lib/offers-data";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
+import { WaLink, TelLink } from "@/components/tenant/ContactLinks";
+import { useTenantBranding } from "@/components/tenant/TenantBranding";
 
 const TESTIMONIAL_STATIC = [
   { initial: "A", name: "Aminata D.",   location: "Niamey", rating: 5 },
@@ -29,7 +31,22 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
   const t = useTranslations("offers");
   const testimonialTexts = t.raw("testimonialTexts") as string[];
   const TESTIMONIALS = TESTIMONIAL_STATIC.map((s, i) => ({ ...s, text: testimonialTexts[i] }));
-  const offersData = t.raw("offersData") as Record<string, any>;
+  type OfferExtra = {
+    highlights?: unknown;
+    hotels?: Record<string, unknown>[];
+    flights?: Record<string, unknown>[];
+    pricing?: Record<string, unknown>[];
+    program?: unknown;
+    documents?: unknown;
+    included?: unknown;
+    notIncluded?: unknown;
+    title?: string;
+    subtitle?: string;
+    departure?: string;
+    returnDate?: string;
+    duration?: string;
+  };
+  const offersData = t.raw("offersData") as Record<string, OfferExtra>;
   const od = offersData[offer.slug] ?? {};
   const highlights = (od.highlights ?? offer.highlights) as typeof offer.highlights;
   const hotels = offer.hotels.map((h, i) => ({ ...h, ...(od.hotels?.[i] ?? {}) }));
@@ -105,14 +122,13 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
             <span className="text-xs text-gray-400">{t("perPerson")}</span>
           </div>
           <div className="flex gap-2">
-            <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-2 border-2 border-primary text-primary text-sm font-semibold px-4 py-2 rounded-full hover:bg-cream transition-all">
+            <WaLink className="hidden sm:flex items-center gap-2 border-2 border-primary text-primary text-sm font-semibold px-4 py-2 rounded-full hover:bg-cream transition-all">
               <IconWhatsApp size={16} /> WhatsApp
-            </a>
-            <a href="tel:+22791882121"
+            </WaLink>
+            <TelLink
               className={`flex items-center gap-2 ${btnClass} text-white text-sm font-bold px-5 py-2 rounded-full transition-all`}>
               {t("confirmBtn")} <ArrowRight size={13} />
-            </a>
+            </TelLink>
           </div>
         </div>
       </div>
@@ -314,10 +330,9 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                   </div>
                   <div className="px-6 py-5 bg-gray-50 border-t border-gray-100">
                     <p className="text-xs text-gray-500 mb-4">{t("acompteNote")}</p>
-                    <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-2 ${btnClass} text-white font-bold text-sm px-6 py-3 rounded-xl transition-all hover:scale-105`}>
+                    <WaLink className={`inline-flex items-center gap-2 ${btnClass} text-white font-bold text-sm px-6 py-3 rounded-xl transition-all hover:scale-105`}>
                       {t("bookNow")} <ArrowRight size={14} />
-                    </a>
+                    </WaLink>
                   </div>
                 </div>
               )}
@@ -399,14 +414,12 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                     </div>
                   )}
                   <div className="pt-2 space-y-2">
-                    <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-                      className={`flex items-center justify-center gap-2 w-full ${btnClass} text-white font-bold text-sm py-3 rounded-xl transition-all hover:scale-105`}>
+                    <WaLink className={`flex items-center justify-center gap-2 w-full ${btnClass} text-white font-bold text-sm py-3 rounded-xl transition-all hover:scale-105`}>
                       {t("confirmBtn")} <ArrowRight size={14} />
-                    </a>
-                    <a href="tel:+22791882121"
-                      className="flex items-center justify-center gap-2 w-full border-2 border-gray-200 text-gray-700 font-semibold text-sm py-3 rounded-xl hover:border-cream-dark transition-all">
+                    </WaLink>
+                    <TelLink className="flex items-center justify-center gap-2 w-full border-2 border-gray-200 text-gray-700 font-semibold text-sm py-3 rounded-xl hover:border-cream-dark transition-all">
                       <Phone size={14} /> {t("callBtn")}
-                    </a>
+                    </TelLink>
                   </div>
                   <p className="text-xs text-center text-gray-400 pt-1">{t("acompteNote")}</p>
                 </div>
@@ -437,14 +450,12 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
                 <p className="font-bold text-sm mb-1">{t("questionLabel")}</p>
                 <p className="text-white/60 text-xs mb-4">{t("teamReply")}</p>
                 <div className="space-y-2">
-                  <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
+                  <WaLink className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
                     <IconWhatsApp size={16} /> WhatsApp
-                  </a>
-                  <a href="tel:+22791882121"
-                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
-                    <Phone size={14} /> +227 96 96 39 61
-                  </a>
+                  </WaLink>
+                  <TelLink className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
+                    <Phone size={14} /> {useTenantBranding()?.phone}
+                  </TelLink>
                 </div>
               </div>
             </aside>
@@ -493,10 +504,9 @@ export default function StaticOfferDetail({ slug }: { slug: string }) {
           </h2>
           <p className="text-white/60 mb-8">{t("trustText")}</p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-              className="btn-gold hover:scale-105 transition-transform px-8 py-3.5">
+            <WaLink className="btn-gold hover:scale-105 transition-transform px-8 py-3.5">
               <IconWhatsApp size={16} /> WhatsApp
-            </a>
+            </WaLink>
             <Link href="/offres"
               className="px-8 py-3.5 rounded-full border-2 border-white/30 text-white font-semibold hover:bg-white/10 transition-all text-sm">
               {t("allOffersBtn")}

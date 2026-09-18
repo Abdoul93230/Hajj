@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, Calendar, Clock, ChevronRight, Users, Plane, Hotel } from "lucide-react";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
+import { WaLink } from "@/components/tenant/ContactLinks";
 import { type OfferProgramData } from "@/lib/offer-program";
 
 export type DbOffer = {
@@ -338,10 +339,9 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
                   {t("closed")}
                 </span>
               ) : (
-                <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-                  className={`flex items-center justify-center gap-2 font-bold text-sm px-6 py-3 rounded-xl text-white transition-all hover:scale-105 ${btn}`}>
+                <WaLink className={`flex items-center justify-center gap-2 font-bold text-sm px-6 py-3 rounded-xl text-white transition-all hover:scale-105 ${btn}`}>
                   <Users size={14} /> {t("bookBtn")}
-                </a>
+                </WaLink>
               )}
               <Link href="/compte/voyages"
                 className="flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl border-2 border-primary text-primary hover:bg-cream transition-all">

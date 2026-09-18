@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { routing } from "@/i18n/routing";
-import { prisma } from "@/lib/prisma";
+import { getTenantBySlug } from "@/lib/tenant-data";
 import { themeStyleTag } from "@/lib/tenant-theme";
 import "../../globals.css";
 
@@ -23,9 +23,7 @@ export default async function PrintLayout({
   children: React.ReactNode;
 }) {
   const tenantSlug = (await headers()).get("x-tenant-slug") ?? "";
-  const tenant = tenantSlug
-    ? await prisma.tenant.findUnique({ where: { slug: tenantSlug }, select: { theme: true } })
-    : null;
+  const tenant = tenantSlug ? await getTenantBySlug(tenantSlug) : null;
 
   return (
     <>

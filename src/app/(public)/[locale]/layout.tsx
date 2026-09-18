@@ -11,6 +11,7 @@ import DirectionSetter from "@/components/ui/DirectionSetter";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
+import { getTenantBySlug } from "@/lib/tenant-data";
 import { readTenantBranding, themeStyleTag } from "@/lib/tenant-theme";
 import { TenantBrandingProvider } from "@/components/tenant/TenantBranding";
 import "../../globals.css";
@@ -93,9 +94,8 @@ export default async function LocaleLayout({
   // ── Thème du tenant (couleurs de marque) ───────────────────────────────────
   // Le slug est posé par le middleware (host en prod, DEV_DEFAULT_TENANT en dev).
   const tenantSlug = (await headers()).get("x-tenant-slug") ?? "";
-  const tenantForTheme = tenantSlug
-    ? await prisma.tenant.findUnique({ where: { slug: tenantSlug }, select: { name: true, theme: true } })
-    : null;
+  // Dédupliqué par requête (React cache) — voir lib/tenant-data.ts
+  const tenantForTheme = tenantSlug ? await getTenantBySlug(tenantSlug) : null;
   const branding = readTenantBranding(
     tenantForTheme?.theme,
     locale,

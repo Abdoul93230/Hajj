@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
 import { useTenantBranding } from "@/components/tenant/TenantBranding";
+import { telLink, waLink } from "@/lib/contact";
 import {
   ArrowRight, Check, Plus, AlertTriangle,
   Plane, Building2, Train, Users, ShieldCheck, CreditCard,
@@ -83,7 +84,7 @@ function TestimonialCard({ item, active }: { item: TestimonialItem; active?: boo
       <p className="text-sm text-gray-600 leading-relaxed flex-1">&ldquo;{item.text}&rdquo;</p>
       <div className="flex items-center gap-3 pt-2 border-t border-gray-50">
         <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-          style={{ backgroundColor: colors[colorIdx] ?? "#065f46" }}>
+          style={{ backgroundColor: colors[colorIdx] ?? "var(--brand)" }}>
           {item.initial}
         </div>
         <div>
@@ -100,6 +101,8 @@ function TestimonialCard({ item, active }: { item: TestimonialItem; active?: boo
 export default function HomePage() {
   const t = useTranslations("home");
   const branding = useTenantBranding();
+  const waHref = waLink(branding?.whatsappNumber);
+  const telHref = telLink(branding?.phone);
   const [whyOpen, setWhyOpen] = useState(0);
   const [faqOpen, setFaqOpen] = useState(-1);
   const [testimonialIdx, setTestimonialIdx] = useState(0);
@@ -178,15 +181,19 @@ export default function HomePage() {
               ))}
             </div>
             <div className="flex items-center gap-4 animate-fade-up delay-400">
-              <a href={`tel:${(branding?.phone ?? "+22796963961").replace(/\s/g, "")}`} className="flex items-center gap-2 text-white/70 hover:text-white transition-colors text-sm">
-                <Phone size={14} /> {branding?.phone ?? "+227 96 96 39 61"}
-              </a>
-              <span className="text-white/30">|</span>
-              <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 text-primary-light hover:text-cream-dark transition-colors text-sm font-medium">
-                <IconWhatsApp size={16} />
-                {t("whatsappAvailable")}
-              </a>
+              {telHref && (
+                <a href={telHref} className="flex items-center gap-2 text-white/70 hover:text-white transition-colors text-sm">
+                  <Phone size={14} /> {branding?.phone}
+                </a>
+              )}
+              {telHref && waHref && <span className="text-white/30">|</span>}
+              {waHref && (
+                <a href={waHref} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-primary-light hover:text-cream-dark transition-colors text-sm font-medium">
+                  <IconWhatsApp size={16} />
+                  {t("whatsappAvailable")}
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -582,18 +589,22 @@ export default function HomePage() {
           </h2>
           <p className="text-white/60 mb-10 text-lg">{t("ctaSubtitle")}</p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <a href="https://wa.me/22791882121" target="_blank" rel="noopener noreferrer"
-              className="btn-gold hover:scale-105 transition-transform shadow-xl shadow-amber-900/30 text-base px-8 py-3.5">
-              <IconWhatsApp size={18} /> {t("ctaWhatsapp")}
-            </a>
+            {waHref && (
+              <a href={waHref} target="_blank" rel="noopener noreferrer"
+                className="btn-gold hover:scale-105 transition-transform shadow-xl shadow-amber-900/30 text-base px-8 py-3.5">
+                <IconWhatsApp size={18} /> {t("ctaWhatsapp")}
+              </a>
+            )}
             <Link href="/contact"
               className="px-8 py-3.5 rounded-full border-2 border-white/30 text-white font-semibold hover:bg-white hover:text-primary transition-all hover:scale-105 text-sm">
               {t("ctaContact")}
             </Link>
-            <a href="tel:+22796963961"
-              className="px-8 py-3.5 rounded-full glass text-white font-semibold hover:bg-white/20 transition-all text-sm flex items-center gap-2">
-              <Phone size={15} /> {t("ctaCall")}
-            </a>
+            {telHref && (
+              <a href={telHref}
+                className="px-8 py-3.5 rounded-full glass text-white font-semibold hover:bg-white/20 transition-all text-sm flex items-center gap-2">
+                <Phone size={15} /> {t("ctaCall")}
+              </a>
+            )}
           </div>
         </div>
       </section>

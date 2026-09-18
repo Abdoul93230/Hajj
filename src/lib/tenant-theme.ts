@@ -77,17 +77,30 @@ export function readTenantThemeColors(raw: unknown): { brand: string; accent: st
 /** Variables CSS runtime dérivées du thème du tenant. */
 export function tenantThemeVars(raw: unknown): Record<string, string> {
   const { brand, accent } = readTenantThemeColors(raw);
+  const t = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
   return {
     "--brand": brand,
     "--brand-dark": shade(brand, -0.25),
     "--brand-light": shade(brand, 0.18),
     "--brand-deep": shade(brand, -0.62), // fonds très sombres (footer, sidebar)
     "--on-brand": readableOn(brand),
+    "--on-accent": readableOn(accent),
     "--accent": accent,
     "--accent-dark": shade(accent, -0.2),
     "--accent-light": shade(accent, 0.25),
     "--cream": shade(brand, 0.92), // teintes très pâles de la marque (fonds de cartes)
     "--cream-dark": shade(brand, 0.84),
+
+    // ── Neutres (surfaces, textes, bordures) ───────────────────────────────
+    // Dérivés de la marque pour rester cohérents en white-label, mais toujours
+    // très clairs : les textes restent donc lisibles (contraste garanti).
+    // Surchargeables finement via theme.surfaceColor / textColor / borderColor…
+    "--surface": normalizeHex(t.surfaceColor, "#ffffff"),
+    "--surface-muted": normalizeHex(t.surfaceMutedColor, shade(brand, 0.965)),
+    "--text": normalizeHex(t.textColor, "#111827"),
+    "--text-muted": normalizeHex(t.textMutedColor, "#6b7280"),
+    "--text-soft": normalizeHex(t.textSoftColor, "#9ca3af"),
+    "--border": normalizeHex(t.borderColor, shade(brand, 0.9)),
   };
 }
 

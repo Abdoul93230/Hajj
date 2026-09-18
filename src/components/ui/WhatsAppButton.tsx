@@ -2,10 +2,15 @@
 
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
 import { useTenantBranding } from "@/components/tenant/TenantBranding";
+import { contactDigits } from "@/lib/contact";
 
 export default function WhatsAppButton() {
   const branding = useTenantBranding();
-  const number = (branding?.whatsappNumber ?? "22791882121").replace(/\D/g, "");
+  const number = contactDigits(branding?.whatsappNumber);
+
+  // Aucun WhatsApp configuré pour cette agence → pas de bouton flottant.
+  // (JAMAIS de numéro d'une autre agence en secours.)
+  if (!number) return null;
 
   return (
     <a

@@ -8,6 +8,7 @@ import Image from "next/image";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
 import { useTenantBranding } from "@/components/tenant/TenantBranding";
 import type { TenantBranding } from "@/lib/tenant-theme";
+import { contactDigits } from "@/lib/contact";
 
 function IconFacebook({ size = 16 }: { size?: number }) {
   return (
@@ -25,18 +26,21 @@ function IconTikTok({ size = 16 }: { size?: number }) {
   );
 }
 
-const SOCIAL_DEFAULT = {
-  facebook: "https://www.facebook.com/profile.php?id=61582139390008",
-  whatsapp: "22791882121",
-  tiktok: "https://www.tiktok.com/@hajjoumra.zam",
-};
-
+// Réseaux sociaux UNIQUEMENT depuis le branding de l'agence : un réseau non
+// configuré n'est pas affiché (jamais de lien ZAM en secours — multitenant).
 function buildSocials(b: TenantBranding | null) {
-  return [
-    { label: "Facebook", href: b?.facebookUrl ?? SOCIAL_DEFAULT.facebook, icon: <IconFacebook size={16} />, hover: "hover:bg-[#1877f2] hover:border-[#1877f2]" },
-    { label: "WhatsApp", href: `https://wa.me/${(b?.whatsappNumber ?? SOCIAL_DEFAULT.whatsapp).replace(/\D/g, "")}`, icon: <IconWhatsApp size={16} />, hover: "hover:bg-[#25d366] hover:border-[#25d366]" },
-    { label: "TikTok",   href: b?.tiktokUrl ?? SOCIAL_DEFAULT.tiktok,                  icon: <IconTikTok size={15} />,   hover: "hover:bg-black hover:border-black" },
-  ];
+  const socials: { label: string; href: string; icon: React.ReactNode; hover: string }[] = [];
+  const wa = contactDigits(b?.whatsappNumber);
+  if (b?.facebookUrl) {
+    socials.push({ label: "Facebook", href: b.facebookUrl, icon: <IconFacebook size={16} />, hover: "hover:bg-[#1877f2] hover:border-[#1877f2]" });
+  }
+  if (wa) {
+    socials.push({ label: "WhatsApp", href: `https://wa.me/${wa}`, icon: <IconWhatsApp size={16} />, hover: "hover:bg-[#25d366] hover:border-[#25d366]" });
+  }
+  if (b?.tiktokUrl) {
+    socials.push({ label: "TikTok", href: b.tiktokUrl, icon: <IconTikTok size={15} />, hover: "hover:bg-black hover:border-black" });
+  }
+  return socials;
 }
 
 const ACCREDITATIONS = [
@@ -179,7 +183,7 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm">
               {[
                 { icon: <MapPin size={13} />, text: ta("address") },
-                { icon: <Phone size={13} />,  text: branding?.phone ?? "+227 96 96 39 61 · +227 96 87 27 87" },
+                ...(branding?.phone ? [{ icon: <Phone size={13} />, text: branding.phone }] : []),
                 { icon: <Mail size={13} />,   text: tf("email") },
                 { icon: <Clock size={13} />,  text: tf("hours") },
               ].map(({ icon, text }) => (

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { headers, cookies } from "next/headers";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
-import { prisma } from "@/lib/prisma";
+import { getTenantBySlug } from "@/lib/tenant-data";
 import { themeStyleTag } from "@/lib/tenant-theme";
 import AgencyAdminSidebar from "@/components/layout/agency-admin/Sidebar";
 import AgencyAdminTopbar from "@/components/layout/agency-admin/Topbar";
@@ -20,7 +20,8 @@ export default async function AgencyAdminLayout({ children }: { children: React.
     redirect("/agency-admin/login");
   }
 
-  const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+  // Dédupliqué par requête (React cache) — voir lib/tenant-data.ts
+  const tenant = await getTenantBySlug(tenantSlug);
   const tenantName = tenant?.name ?? tenantSlug;
 
   // ── Système de sélection d'année ──────────────────────────────────────────
