@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useTenantBranding } from "@/components/tenant/TenantBranding";
 import { Link } from "@/i18n/navigation";
 import { BookOpen, Compass, ChevronRight, ArrowRight } from "lucide-react";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
@@ -15,6 +16,7 @@ interface Dua         { id: string; category: string; title: string; arabic: str
 
 export default function GuidePelerinPage() {
   const t = useTranslations("guide");
+  const banner = useTenantBranding()?.guideBannerUrl || "/images/mosque-interior.jpg";
 
   const toc          = t.raw("toc")          as TocItem[];
   const pilgrimages  = t.raw("pilgrimages")  as Pilgrimage[];
@@ -61,7 +63,7 @@ export default function GuidePelerinPage() {
     <>
       {/* HERO */}
       <section className="relative bg-brand-deep py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: "url('/images/mosque-interior.jpg')" }} />
+        <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: `url('${banner}')` }} />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-deep/60 to-brand-deep" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-white/50 text-xs mb-4">

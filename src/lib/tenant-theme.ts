@@ -312,6 +312,10 @@ export type TenantBranding = {
   facebookUrl: string | null;
   tiktokUrl: string | null;
   phone: string | null;
+  heroImageUrl: string | null;
+  offersBannerUrl: string | null;
+  guideBannerUrl: string | null;
+  coranBannerUrl: string | null;
   heroTitle: string | null;
   heroSubtitle: string | null;
   footerDescription: string | null;
@@ -335,6 +339,10 @@ export function readTenantBranding(raw: unknown, locale: string, tenantName: str
     facebookUrl: str(t.facebookUrl),
     tiktokUrl: str(t.tiktokUrl),
     phone: str(t.phone),
+    heroImageUrl: str(t.heroImageUrl),
+    offersBannerUrl: str(t.offersBannerUrl),
+    guideBannerUrl: str(t.guideBannerUrl),
+    coranBannerUrl: str(t.coranBannerUrl),
     heroTitle: pickLocalized(c.heroTitle, locale),
     heroSubtitle: pickLocalized(c.heroSubtitle, locale),
     footerDescription: pickLocalized(c.footerDescription, locale),
@@ -355,7 +363,17 @@ export function mergeTenantTheme(
   const base: Record<string, unknown> =
     existing && typeof existing === "object" ? { ...(existing as Record<string, unknown>) } : {};
 
-  for (const k of ["logoUrl", "whatsappNumber", "phone", "facebookUrl", "tiktokUrl"]) {
+  for (const k of [
+    "logoUrl",
+    "whatsappNumber",
+    "phone",
+    "facebookUrl",
+    "tiktokUrl",
+    "heroImageUrl",
+    "offersBannerUrl",
+    "guideBannerUrl",
+    "coranBannerUrl",
+  ]) {
     if (patch[k] !== undefined) {
       const v = patch[k];
       base[k] = typeof v === "string" && v.trim() ? v.trim() : null;

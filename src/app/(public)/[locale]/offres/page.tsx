@@ -101,7 +101,7 @@ export default async function OffresPage() {
     <>
       {/* Hero */}
       <section className="relative bg-brand-deep py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: "url('/images/kaaba.jpg')" }} />
+        <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url('${typeof theme.offersBannerUrl === "string" && theme.offersBannerUrl ? theme.offersBannerUrl : "/images/kaaba.jpg"}')` }} />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-deep/80 to-brand-deep" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="section-label text-amber-400 mb-3">{t("heroLabel2")}</p>

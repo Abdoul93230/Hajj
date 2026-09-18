@@ -6,6 +6,7 @@ import { ArrowRight, Calendar, Clock, ChevronRight, Users, Plane, Hotel } from "
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
 import { WaLink } from "@/components/tenant/ContactLinks";
 import { type OfferProgramData } from "@/lib/offer-program";
+import { useTenantBranding } from "@/components/tenant/TenantBranding";
 
 export type DbOffer = {
   slug: string;
@@ -69,12 +70,13 @@ export default function DbOfferDetail({ offer }: { offer: DbOffer }) {
 
   const accent = isHajj ? "bg-gold-dark" : "bg-primary";
   const btn = isHajj ? "bg-gold hover:bg-gold-light" : "bg-primary hover:bg-primary-light";
+  const banner = useTenantBranding()?.offersBannerUrl || "/images/kaaba.jpg";
 
   return (
     <>
       {/* HERO */}
       <section className="relative min-h-[45vh] flex items-end overflow-hidden bg-brand-deep">
-        <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: "url('/images/kaaba.jpg')" }} />
+        <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: `url('${banner}')` }} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
           <div className="flex items-center gap-2 text-white/50 text-xs mb-4">

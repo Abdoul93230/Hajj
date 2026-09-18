@@ -132,7 +132,7 @@ export default function HomePage() {
     <>
       {/* ═══════════════ HERO ═══════════════════════════ */}
       <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-brand-deep">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/hero-bg.jpg')" }} />
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${branding?.heroImageUrl || "/images/hero-bg.jpg"}')` }} />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-deep/70 via-brand-deep/50 to-brand-deep/90" />
         <div className="absolute top-1/4 right-10 w-72 h-72 rounded-full border border-white/10 animate-rotate-slow" />
         <div className="absolute top-1/4 right-10 w-48 h-48 rounded-full border border-white/10" style={{ animation: "rotateSlow 14s linear infinite reverse" }} />

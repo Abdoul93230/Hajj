@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { useTenantBranding } from "@/components/tenant/TenantBranding";
 import {
   ChevronLeft, ChevronRight, Search, BookOpen,
   Play, Pause, SkipBack, SkipForward, Volume2, Eye, EyeOff,
@@ -230,13 +231,14 @@ export default function CoranPage() {
   const arabicFontSize = fontSize === "sm" ? "text-xl" : fontSize === "lg" ? "text-3xl" : "text-2xl";
   const transFontSize  = fontSize === "sm" ? "text-xs"  : fontSize === "lg" ? "text-base" : "text-sm";
   const playingAyah    = playingIdx !== null ? ayahs[playingIdx] : null;
+  const banner = useTenantBranding()?.coranBannerUrl || "/images/quran.jpg";
 
   if (view === "home") return (
     <>
       {/* Hero */}
       <section className="relative bg-brand-deep py-20 overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center opacity-15"
-          style={{ backgroundImage: "url('/images/quran.jpg')" }} />
+          style={{ backgroundImage: `url('${banner}')` }} />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-deep/70 to-brand-deep" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
           <p className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-4">{t("toolsLabel")}</p>
