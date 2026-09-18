@@ -112,6 +112,59 @@ export function themeStyleTag(raw: unknown): string {
   return `:root{${body}}`;
 }
 
+// ─── Overlay i18n : textes personnalisés du tenant ────────────────────────────
+//
+// Les messages statiques (src/messages/{fr,en,ar}/index.json) sont la BASE de
+// repli universelle. Le tenant ne stocke que les clés qu'il a personnalisées,
+// sous forme de chemins pointés localisés :
+//
+//   theme.content = {
+//     "home.heroTitle1":   { "fr": "…", "en": "…", "ar": "…" },
+//     "footer.brandDesc":  { "fr": "…" },
+//   }
+//
+// Règles :
+//   • clé pointée absente du thème            → texte statique (repli) ;
+//   • clé présente SANS valeur pour `locale`  → texte statique de CETTE langue
+//     (pas de repli croisé : un tenant qui n'a écrit qu'en FR ne doit pas
+//     écraser le texte EN du portail avec du français) ;
+//   • les clés sans point (slots historiques : metaDescription…) ne sont PAS
+//     des overrides i18n et sont ignorées ici.
+
+/** Injecte les overrides i18n du tenant dans l'arbre des messages (pur). */
+export function applyTenantOverrides(
+  messages: Record<string, unknown>,
+  theme: unknown,
+  locale: string
+): Record<string, unknown> {
+  const t = theme && typeof theme === "object" ? (theme as Record<string, unknown>) : {};
+  const content = t.content && typeof t.content === "object" ? (t.content as Record<string, unknown>) : {};
+
+  const entries = Object.entries(content).filter(([key]) => key.includes("."));
+  if (!entries.length) return messages;
+
+  const clone = structuredClone(messages);
+  for (const [key, val] of entries) {
+    if (!val || typeof val !== "object" || Array.isArray(val)) continue;
+    const value = (val as Record<string, unknown>)[locale];
+    if (typeof value !== "string" || !value.trim()) continue;
+    setDeep(clone, key.split("."), value.trim());
+  }
+  return clone;
+}
+
+/** Pose une valeur en profondeur (`["footer","brandDesc"]`), en créant les niveaux. */
+function setDeep(obj: Record<string, unknown>, path: string[], value: string): void {
+  let node = obj;
+  for (let i = 0; i < path.length - 1; i++) {
+    const key = path[i];
+    const next = node[key];
+    if (!next || typeof next !== "object" || Array.isArray(next)) node[key] = {};
+    node = node[key] as Record<string, unknown>;
+  }
+  node[path[path.length - 1]] = value;
+}
+
 // ── Batch 2 : contenus éditoriaux (textes) + branding ──────────────────────
 
 /** Valeur localisée ({fr,en,ar}) ou chaîne simple → texte pour `locale`, fallback fr. */

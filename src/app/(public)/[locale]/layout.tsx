@@ -12,7 +12,7 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { getTenantBySlug } from "@/lib/tenant-data";
-import { readTenantBranding, themeStyleTag } from "@/lib/tenant-theme";
+import { applyTenantOverrides, readTenantBranding, themeStyleTag } from "@/lib/tenant-theme";
 import { TenantBrandingProvider } from "@/components/tenant/TenantBranding";
 import "../../globals.css";
 
@@ -88,7 +88,7 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const messages = await getMessages();
+  const rawMessages = await getMessages();
   const session = await getSession();
 
   // ── Thème du tenant (couleurs de marque) ───────────────────────────────────
@@ -96,6 +96,15 @@ export default async function LocaleLayout({
   const tenantSlug = (await headers()).get("x-tenant-slug") ?? "";
   // Dédupliqué par requête (React cache) — voir lib/tenant-data.ts
   const tenantForTheme = tenantSlug ? await getTenantBySlug(tenantSlug) : null;
+
+  // Textes personnalisés du tenant : les overrides (clés pointées localisées)
+  // écrasent les messages statiques — les autres restent la base de repli.
+  const messages = applyTenantOverrides(
+    rawMessages as Record<string, unknown>,
+    tenantForTheme?.theme,
+    locale
+  );
+
   const branding = readTenantBranding(
     tenantForTheme?.theme,
     locale,
