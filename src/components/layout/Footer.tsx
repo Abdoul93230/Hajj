@@ -43,7 +43,7 @@ function buildSocials(b: TenantBranding | null) {
   return socials;
 }
 
-const ACCREDITATIONS = [
+const ACCREDITATION_FALLBACKS = [
   { src: "/images/IATA.webp",      alt: "IATA",              w: 64, h: 32 },
   { src: "/images/coho.webp",      alt: "COHO",              w: 64, h: 32 },
   { src: "/images/min-hadjj.webp", alt: "Ministère du Hadj", w: 64, h: 32 },
@@ -56,6 +56,11 @@ export default function Footer() {
   const brandName = branding?.tenantName ?? "Hajj et Oumra ZAM";
   const logoSrc = branding?.logoUrl ?? "/image ZAM/logo.png";
   const SOCIAL = buildSocials(branding);
+  const accreditations = [
+    { ...ACCREDITATION_FALLBACKS[0], src: branding?.partnerIataUrl || ACCREDITATION_FALLBACKS[0].src },
+    { ...ACCREDITATION_FALLBACKS[1], src: branding?.partnerCohoUrl || ACCREDITATION_FALLBACKS[1].src },
+    { ...ACCREDITATION_FALLBACKS[2], src: branding?.partnerMinistryUrl || ACCREDITATION_FALLBACKS[2].src },
+  ];
 
   const tf = useTranslations("footer");
   const ta = useTranslations("about");
@@ -197,7 +202,7 @@ export default function Footer() {
             <div className="mt-7">
               <p className="text-xs font-bold tracking-widest text-white/30 uppercase mb-3">{tf("accreditationsTitle")}</p>
               <div className="flex gap-3 flex-wrap items-center">
-                {ACCREDITATIONS.map(({ src, alt, w, h }) => (
+                {accreditations.map(({ src, alt, w, h }) => (
                   <div key={alt}
                     className="bg-white rounded-lg px-3 py-2 flex items-center justify-center hover:shadow-lg hover:shadow-primary-dark/40 transition-all">
                     <Image src={src} alt={alt} width={w} height={h} className="object-contain max-h-8 w-auto" />

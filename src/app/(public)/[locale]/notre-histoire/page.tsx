@@ -5,8 +5,14 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { Shield, Heart, Star, Users, ArrowRight, MapPin, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTenantBranding } from "@/components/tenant/TenantBranding";
 
-const VALUE_ICONS = [<Shield size={24} />, <Heart size={24} />, <Star size={24} />, <Users size={24} />];
+const VALUE_ICONS = [
+  <Shield key="shield" size={24} />,
+  <Heart key="heart" size={24} />,
+  <Star key="star" size={24} />,
+  <Users key="users" size={24} />,
+];
 const GALLERY = [
   "/images/med.jpeg",
   "/images/medine - Copy.jpg",
@@ -67,6 +73,23 @@ export default function NotreHistoirePage() {
   const t = useTranslations("history");
   useReveal();
   const [galleryIdx, setGalleryIdx] = useState(0);
+  const branding = useTenantBranding();
+
+  // Visuels personnalisables par tenant (fallback : images de la plateforme)
+  const GALLERY_KEYS = [
+    "historyGallery1Url",
+    "historyGallery2Url",
+    "historyGallery3Url",
+    "historyGallery4Url",
+    "historyGallery5Url",
+    "historyGallery6Url",
+  ] as const;
+  const gallery = GALLERY.map((fallback, i) => branding?.[GALLERY_KEYS[i]] || fallback);
+  const teamImages = [
+    branding?.historyTeam1Url || TEAM_IMAGES[0],
+    branding?.historyTeam2Url || TEAM_IMAGES[1],
+  ];
+  const historyBanner = branding?.makkahImageUrl || "/images/kaaba.jpg";
 
   const team = t.raw("team") as { name: string; role: string; tag: string; bio: string; bio2: string }[];
   const values = t.raw("values") as { title: string; desc: string }[];
@@ -79,7 +102,7 @@ export default function NotreHistoirePage() {
       {/* ── HERO ─────────────────────────────────────────── */}
       <section className="relative bg-brand-deep min-h-[440px] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/images/kaaba.jpg" alt="La Kaaba" fill className="object-cover opacity-20" priority />
+          <Image src={historyBanner} alt="La Kaaba" fill className="object-cover opacity-20" priority />
           <div className="absolute inset-0 bg-gradient-to-r from-brand-deep via-brand-deep/90 to-brand-deep/50" />
         </div>
         <div className="absolute right-10 top-10 w-72 h-72 rounded-full border border-white/5 hidden lg:block" />
@@ -129,7 +152,7 @@ export default function NotreHistoirePage() {
             <div key={i} className={`reveal grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${i % 2 === 1 ? "lg:[direction:rtl]" : ""}`}>
               <div className="[direction:ltr]">
                 <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-xl">
-                  <Image src={TEAM_IMAGES[i] ?? TEAM_IMAGES[0]} alt={member.name} fill className="object-cover" />
+                  <Image src={teamImages[i] ?? teamImages[0]} alt={member.name} fill className="object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/70 to-transparent" />
                   <div className="absolute bottom-5 left-5">
                     <span className="inline-block bg-gold-light text-white text-xs font-bold px-3 py-1.5 rounded-full">
@@ -258,18 +281,18 @@ export default function NotreHistoirePage() {
         </div>
 
         <div className="reveal relative rounded-3xl overflow-hidden aspect-video shadow-xl mb-4">
-          <Image src={GALLERY[galleryIdx]} alt={t("galleryAlt")} fill className="object-cover transition-all duration-500" />
+          <Image src={gallery[galleryIdx]} alt={t("galleryAlt")} fill className="object-cover transition-all duration-500" />
           <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/40 to-transparent" />
-          <button onClick={() => setGalleryIdx(i => (i - 1 + GALLERY.length) % GALLERY.length)}
+          <button onClick={() => setGalleryIdx(i => (i - 1 + gallery.length) % gallery.length)}
             className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow transition-all">
             <ChevronLeft size={18} className="text-gray-800" />
           </button>
-          <button onClick={() => setGalleryIdx(i => (i + 1) % GALLERY.length)}
+          <button onClick={() => setGalleryIdx(i => (i + 1) % gallery.length)}
             className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow transition-all">
             <ChevronRight size={18} className="text-gray-800" />
           </button>
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {GALLERY.map((_, i) => (
+            {gallery.map((_, i) => (
               <button key={i} onClick={() => setGalleryIdx(i)}
                 className={`w-2 h-2 rounded-full transition-all ${i === galleryIdx ? "bg-white w-6" : "bg-white/50"}`} />
             ))}
@@ -277,7 +300,7 @@ export default function NotreHistoirePage() {
         </div>
 
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-          {GALLERY.map((src, i) => (
+          {gallery.map((src, i) => (
             <button key={i} onClick={() => setGalleryIdx(i)}
               className={`relative rounded-xl overflow-hidden aspect-square transition-all ${i === galleryIdx ? "ring-2 ring-primary opacity-100" : "opacity-60 hover:opacity-90"}`}>
               <Image src={src} alt="" fill className="object-cover" />
@@ -292,9 +315,9 @@ export default function NotreHistoirePage() {
           <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-8">{t("accreditationsLabel")}</p>
           <div className="flex flex-wrap items-center justify-center gap-6">
             {[
-              { src: "/images/IATA.webp",      alt: "IATA" },
-              { src: "/images/coho.webp",      alt: "COHO" },
-              { src: "/images/min-hadjj.webp", alt: "Ministère du Hadj" },
+              { src: branding?.partnerIataUrl || "/images/IATA.webp",      alt: "IATA" },
+              { src: branding?.partnerCohoUrl || "/images/coho.webp",      alt: "COHO" },
+              { src: branding?.partnerMinistryUrl || "/images/min-hadjj.webp", alt: "Ministère du Hadj" },
             ].map(({ src, alt }) => (
               <div key={alt} className="bg-white rounded-2xl border border-gray-100 shadow-sm px-8 py-5 hover:shadow-md transition-shadow">
                 <Image src={src} alt={alt} width={90} height={45} className="object-contain max-h-10 w-auto" />
@@ -308,7 +331,7 @@ export default function NotreHistoirePage() {
       {/* ── CTA FINAL ─────────────────────────────────────── */}
       <section className="relative bg-brand-deep py-20 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center opacity-10"
-          style={{ backgroundImage: "url('/images/kaaba.jpg')" }} />
+          style={{ backgroundImage: `url('${historyBanner}')` }} />
         <div className="relative z-10 max-w-3xl mx-auto text-center reveal">
           <p className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-4">{t("ctaLabel")}</p>
           <h2 className="text-3xl md:text-4xl font-black text-white mb-5"

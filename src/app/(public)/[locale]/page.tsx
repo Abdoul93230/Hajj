@@ -281,7 +281,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="reveal-left relative">
             <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-2xl">
-              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/560922223_122098605927071313_4417420479539281621_n.jpg')" }} />
+              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${branding?.founderImageUrl || "/images/560922223_122098605927071313_4417420479539281621_n.jpg"}')` }} />
               <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/60 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 glass rounded-xl p-3 text-white text-sm font-medium">
                 <div className="flex items-center gap-2">
@@ -372,7 +372,7 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="reveal-right rounded-3xl overflow-hidden aspect-[4/3] shadow-2xl">
-              <div className="w-full h-full bg-cover bg-center hover:scale-105 transition-transform duration-700" style={{ backgroundImage: "url('/images/oumra-ramadan.jpg')" }} />
+              <div className="w-full h-full bg-cover bg-center hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${branding?.oumraRamadanImageUrl || "/images/oumra-ramadan.jpg"}')` }} />
             </div>
           </div>
         </div>
@@ -380,7 +380,7 @@ export default function HomePage() {
 
       {/* ═══════════════ HADJ 2027 ════════════════════ */}
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: "url('/images/tawaf.jpg')" }} />
+        <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: `url('${branding?.hajjImageUrl || "/images/tawaf.jpg"}')` }} />
         <div className="absolute inset-0 bg-gradient-to-br from-brand-deep via-primary-dark to-primary-dark" />
         <div className="absolute top-12 right-12 w-64 h-64 rounded-full border border-white/5 animate-rotate-slow" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -414,7 +414,7 @@ export default function HomePage() {
             </div>
             <div className="reveal-right">
               <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-2xl border border-white/10">
-                <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url('/images/tawaf.jpg')" }} />
+                <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url('${branding?.hajjImageUrl || "/images/tawaf.jpg"}')` }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/70 to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5 glass rounded-xl p-4">
                   <p className="text-white font-bold text-sm mb-1">🕋 {t("hajjCardTitle")}</p>
@@ -440,13 +440,13 @@ export default function HomePage() {
               <p className="text-gray-600 leading-relaxed">{t("makkahText2")}</p>
             </div>
             <div className="reveal-right rounded-3xl overflow-hidden aspect-[4/3] shadow-xl group">
-              <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: "url('/images/kaaba.jpg')" }} />
+              <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${branding?.makkahImageUrl || "/images/kaaba.jpg"}')` }} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
             <div className="reveal-left rounded-3xl overflow-hidden aspect-[4/3] shadow-xl group">
-              <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: "url('/images/medine2.jpg')" }} />
+              <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${branding?.medineImageUrl || "/images/medine2.jpg"}')` }} />
             </div>
             <div className="reveal-right">
               <p className="section-label mb-2">{t("madineLabel")}</p>

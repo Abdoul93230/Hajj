@@ -101,10 +101,10 @@ export default function Header({
       href: "/a-propos",
       mega: {
         categoryLabel: th("aboutCategory"),
-        leftImage: "/images/men-ihram.jpg",
+        leftImage: branding?.menuIhramImageUrl ?? "/images/men-ihram.jpg",
         leftTitle: th("aboutLeftTitle"),
         leftSubtitle: th("aboutLeftSubtitle"),
-        rightImage: "/images/560922223_122098605927071313_4417420479539281621_n.jpg",
+        rightImage: branding?.founderImageUrl ?? "/images/560922223_122098605927071313_4417420479539281621_n.jpg",
         links: [
           { label: th("aboutLink1"), href: "/notre-histoire" },
           { label: th("aboutLink2"), href: "/a-propos" },
@@ -120,10 +120,10 @@ export default function Header({
       href: "/offres",
       mega: {
         categoryLabel: th("hajjCategory"),
-        leftImage: "/images/kaaba.jpg",
+        leftImage: branding?.makkahImageUrl ?? "/images/kaaba.jpg",
         leftTitle: th("hajjLeftTitle"),
         leftSubtitle: th("hajjLeftSubtitle"),
-        rightImage: "/images/tawaf.jpg",
+        rightImage: branding?.hajjImageUrl ?? "/images/tawaf.jpg",
         links: [
           { label: th("hajjLink1"), href: "/offres#umrah-2026" },
           { label: th("hajjLink2"), href: "/offres#umrah-ramadan" },
@@ -137,10 +137,10 @@ export default function Header({
       href: "/guide-pelerin",
       mega: {
         categoryLabel: th("toolsCategory"),
-        leftImage: "/images/quran.jpg",
+        leftImage: branding?.coranBannerUrl ?? "/images/quran.jpg",
         leftTitle: th("toolsLeftTitle"),
         leftSubtitle: th("toolsLeftSubtitle"),
-        rightImage: "/images/mosque-dome.jpg",
+        rightImage: branding?.menuMosqueUrl ?? "/images/mosque-dome.jpg",
         links: [
           { label: th("toolsLink1"), href: "/guide-pelerin" },
           { label: th("toolsLink2"), href: "/coran" },

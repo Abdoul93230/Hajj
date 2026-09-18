@@ -316,6 +316,24 @@ export type TenantBranding = {
   offersBannerUrl: string | null;
   guideBannerUrl: string | null;
   coranBannerUrl: string | null;
+  founderImageUrl: string | null;
+  oumraRamadanImageUrl: string | null;
+  hajjImageUrl: string | null;
+  makkahImageUrl: string | null;
+  medineImageUrl: string | null;
+  menuIhramImageUrl: string | null;
+  menuMosqueUrl: string | null;
+  historyGallery1Url: string | null;
+  historyGallery2Url: string | null;
+  historyGallery3Url: string | null;
+  historyGallery4Url: string | null;
+  historyGallery5Url: string | null;
+  historyGallery6Url: string | null;
+  historyTeam1Url: string | null;
+  historyTeam2Url: string | null;
+  partnerIataUrl: string | null;
+  partnerCohoUrl: string | null;
+  partnerMinistryUrl: string | null;
   heroTitle: string | null;
   heroSubtitle: string | null;
   footerDescription: string | null;
@@ -343,6 +361,24 @@ export function readTenantBranding(raw: unknown, locale: string, tenantName: str
     offersBannerUrl: str(t.offersBannerUrl),
     guideBannerUrl: str(t.guideBannerUrl),
     coranBannerUrl: str(t.coranBannerUrl),
+    founderImageUrl: str(t.founderImageUrl),
+    oumraRamadanImageUrl: str(t.oumraRamadanImageUrl),
+    hajjImageUrl: str(t.hajjImageUrl),
+    makkahImageUrl: str(t.makkahImageUrl),
+    medineImageUrl: str(t.medineImageUrl),
+    menuIhramImageUrl: str(t.menuIhramImageUrl),
+    menuMosqueUrl: str(t.menuMosqueUrl),
+    historyGallery1Url: str(t.historyGallery1Url),
+    historyGallery2Url: str(t.historyGallery2Url),
+    historyGallery3Url: str(t.historyGallery3Url),
+    historyGallery4Url: str(t.historyGallery4Url),
+    historyGallery5Url: str(t.historyGallery5Url),
+    historyGallery6Url: str(t.historyGallery6Url),
+    historyTeam1Url: str(t.historyTeam1Url),
+    historyTeam2Url: str(t.historyTeam2Url),
+    partnerIataUrl: str(t.partnerIataUrl),
+    partnerCohoUrl: str(t.partnerCohoUrl),
+    partnerMinistryUrl: str(t.partnerMinistryUrl),
     heroTitle: pickLocalized(c.heroTitle, locale),
     heroSubtitle: pickLocalized(c.heroSubtitle, locale),
     footerDescription: pickLocalized(c.footerDescription, locale),
@@ -373,6 +409,24 @@ export function mergeTenantTheme(
     "offersBannerUrl",
     "guideBannerUrl",
     "coranBannerUrl",
+    "founderImageUrl",
+    "oumraRamadanImageUrl",
+    "hajjImageUrl",
+    "makkahImageUrl",
+    "medineImageUrl",
+    "menuIhramImageUrl",
+    "menuMosqueUrl",
+    "historyGallery1Url",
+    "historyGallery2Url",
+    "historyGallery3Url",
+    "historyGallery4Url",
+    "historyGallery5Url",
+    "historyGallery6Url",
+    "historyTeam1Url",
+    "historyTeam2Url",
+    "partnerIataUrl",
+    "partnerCohoUrl",
+    "partnerMinistryUrl",
   ]) {
     if (patch[k] !== undefined) {
       const v = patch[k];

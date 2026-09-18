@@ -10,23 +10,68 @@ type ThemeObj = Record<string, unknown>;
 type MediaSlot = {
   kind: string;
   key: string;
+  group: string;
   label: string;
   hint: string;
   fallback: string;
 };
 
-/** Les 4 images personnalisables + leur fallback plateforme. */
+/** Les 22 images personnalisables, groupées par section du portail. */
 const SLOTS: MediaSlot[] = [
+  // ── Accueil ──
   {
     kind: "hero",
     key: "heroImageUrl",
+    group: "Accueil",
     label: "Hero — page d'accueil",
     hint: "Grande image de fond en haut de la page d'accueil (format paysage, ≥ 1600 px).",
     fallback: "/images/hero-bg.jpg",
   },
   {
+    kind: "founder",
+    key: "founderImageUrl",
+    group: "Accueil",
+    label: "Photo fondateur",
+    hint: "Section « Fondateur » de l'accueil + menu « À propos » (image de droite).",
+    fallback: "/images/560922223_122098605927071313_4417420479539281621_n.jpg",
+  },
+  {
+    kind: "oumra-ramadan",
+    key: "oumraRamadanImageUrl",
+    group: "Accueil",
+    label: "Visuel — Oumra Ramadan",
+    hint: "Image de la section Oumra Ramadan de l'accueil.",
+    fallback: "/images/oumra-ramadan.jpg",
+  },
+  {
+    kind: "hajj",
+    key: "hajjImageUrl",
+    group: "Accueil",
+    label: "Visuel — Hadj 2027",
+    hint: "Fond et carte de la section Hadj 2027 + menu Hajj & Omra (image de droite).",
+    fallback: "/images/tawaf.jpg",
+  },
+  {
+    kind: "makkah",
+    key: "makkahImageUrl",
+    group: "Accueil",
+    label: "Visuel — Makkah",
+    hint: "Section Makkah de l'accueil + menu Hajj (image de gauche) + page Notre histoire.",
+    fallback: "/images/kaaba.jpg",
+  },
+  {
+    kind: "medine",
+    key: "medineImageUrl",
+    group: "Accueil",
+    label: "Visuel — Médine",
+    hint: "Section Médine de l'accueil.",
+    fallback: "/images/medine2.jpg",
+  },
+  // ── Bannières de pages ──
+  {
     kind: "offers",
     key: "offersBannerUrl",
+    group: "Bannières de pages",
     label: "Bannière — Offres & détail d'une offre",
     hint: "Fond de l'en-tête de la page Offres et du détail d'une offre.",
     fallback: "/images/kaaba.jpg",
@@ -34,6 +79,7 @@ const SLOTS: MediaSlot[] = [
   {
     kind: "guide",
     key: "guideBannerUrl",
+    group: "Bannières de pages",
     label: "Bannière — Guide du pèlerin",
     hint: "Fond de l'en-tête de la page Guide du pèlerin.",
     fallback: "/images/mosque-interior.jpg",
@@ -41,11 +87,83 @@ const SLOTS: MediaSlot[] = [
   {
     kind: "coran",
     key: "coranBannerUrl",
+    group: "Bannières de pages",
     label: "Bannière — Coran",
-    hint: "Fond de l'en-tête de la page Coran.",
+    hint: "Fond de l'en-tête de la page Coran + menu Outils (image de gauche).",
     fallback: "/images/quran.jpg",
   },
+  // ── Menu de navigation ──
+  {
+    kind: "menu-ihram",
+    key: "menuIhramImageUrl",
+    group: "Menu de navigation",
+    label: "Menu « À propos » — image de gauche",
+    hint: "Vignette affichée dans le méga-menu « À propos ».",
+    fallback: "/images/men-ihram.jpg",
+  },
+  {
+    kind: "menu-mosque",
+    key: "menuMosqueUrl",
+    group: "Menu de navigation",
+    label: "Menu « Outils » — image de droite",
+    hint: "Vignette affichée dans le méga-menu « Outils ».",
+    fallback: "/images/mosque-dome.jpg",
+  },
+  // ── Notre histoire ──
+  ...([
+    ["history-g1", "historyGallery1Url", "Galerie 1", "/images/med.jpeg"],
+    ["history-g2", "historyGallery2Url", "Galerie 2", "/images/medine - Copy.jpg"],
+    ["history-g3", "historyGallery3Url", "Galerie 3", "/images/kaaba3.jpg"],
+    ["history-g4", "historyGallery4Url", "Galerie 4", "/images/med2.jpeg"],
+    ["history-g5", "historyGallery5Url", "Galerie 5", "/images/kaaba.jpg"],
+    ["history-g6", "historyGallery6Url", "Galerie 6", "/images/medine - Copy.jpg"],
+  ] as const).map(([kind, key, label, fallback]) => ({
+    kind,
+    key,
+    group: "Notre histoire",
+    label: `Galerie — ${label}`,
+    hint: "Carrousel de la galerie de la page Notre histoire.",
+    fallback,
+  })),
+  ...([
+    ["history-t1", "historyTeam1Url", "Visuel équipe 1", "/images/kaaba.jpg"],
+    ["history-t2", "historyTeam2Url", "Visuel équipe 2", "/images/medine - Copy.jpg"],
+  ] as const).map(([kind, key, label, fallback]) => ({
+    kind,
+    key,
+    group: "Notre histoire",
+    label,
+    hint: "Images de la section équipe de la page Notre histoire.",
+    fallback,
+  })),
+  // ── Logos partenaires ──
+  {
+    kind: "partner-iata",
+    key: "partnerIataUrl",
+    group: "Logos partenaires",
+    label: "Logo IATA",
+    hint: "Affiché dans le footer et la page Notre histoire (accréditations).",
+    fallback: "/images/IATA.webp",
+  },
+  {
+    kind: "partner-coho",
+    key: "partnerCohoUrl",
+    group: "Logos partenaires",
+    label: "Logo COHO",
+    hint: "Affiché dans le footer et la page Notre histoire (accréditations).",
+    fallback: "/images/coho.webp",
+  },
+  {
+    kind: "partner-ministry",
+    key: "partnerMinistryUrl",
+    group: "Logos partenaires",
+    label: "Logo Ministère du Hadj",
+    hint: "Affiché dans le footer et la page Notre histoire (accréditations).",
+    fallback: "/images/min-hadjj.webp",
+  },
 ];
+
+const GROUP_ORDER = [...new Set(SLOTS.map((slot) => slot.group))];
 
 const inputCls =
   "w-full px-3 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-gray-300";
@@ -157,10 +275,17 @@ export default function ThemeMediaEditor({
         </div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {SLOTS.map((slot) => {
-          const url = urls[slot.key] ?? "";
-          return (
+      {GROUP_ORDER.map((group) => {
+        const slots = SLOTS.filter((slot) => slot.group === group);
+        return (
+        <section key={group} className="space-y-4">
+          <h2 className="border-b border-gray-200 pb-2 text-sm font-bold uppercase tracking-wider text-gray-500">
+            {group}
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {slots.map((slot) => {
+              const url = urls[slot.key] ?? "";
+              return (
             <section
               key={slot.key}
               className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3"
@@ -229,9 +354,12 @@ export default function ThemeMediaEditor({
                 )}
               </div>
             </section>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+        </section>
+        );
+      })}
     </div>
   );
 }
