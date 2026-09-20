@@ -36,14 +36,40 @@ export function devDefaultTenant(): string | null {
 }
 
 /**
+ * Routage multi-tenant par sous-domaine — piloté par `USE_SUBDOMAIN_TENANT`.
+ *
+ *   true  → le sous-domaine désigne l'agence en prod
+ *           (zam.domaine.com, dashboard.zam.domaine.com, admin.domaine.com)
+ *   false → mode MONO-TENANT : DEV_DEFAULT_TENANT est TOUJOURS utilisé, le
+ *           sous-domaine du host est ignoré (déploiement d'une seule agence
+ *           sur son propre domaine).
+ *
+ * Les espaces superadmin / agence restent accessibles par CHEMIN dans les deux
+ * modes (/superadmin, /agency-admin — voir le middleware).
+ */
+export function subdomainRoutingEnabled(): boolean {
+  const value = (process.env.USE_SUBDOMAIN_TENANT ?? "").trim().toLowerCase();
+  return value === "true" || value === "1" || value === "yes";
+}
+
+/**
  * Espace + tenant déduits du host de la requête.
  *
- *   dashboard.zam.hajj-…     → { agency-admin, "zam" }
- *   zam.hajj-platform.com    → { public, "zam" }
- *   admin.hajj-platform.com  → { superadmin, null }
- *   localhost:3000           → { public, DEV_DEFAULT_TENANT ?? null }
+ *   USE_SUBDOMAIN_TENANT=true :
+ *     dashboard.zam.hajj-…     → { agency-admin, "zam" }
+ *     zam.hajj-platform.com    → { public, "zam" }
+ *     admin.hajj-platform.com  → { superadmin, null }
+ *     localhost:3000           → { public, DEV_DEFAULT_TENANT ?? null }
+ *
+ *   USE_SUBDOMAIN_TENANT=false (ou absent) :
+ *     n'importe quel host      → { public, DEV_DEFAULT_TENANT ?? null }
  */
 export function resolveSpaceFromHost(host: string): { space: Space; tenantSlug: string | null } {
+  // Mode mono-tenant : la valeur .env fait foi, le sous-domaine est ignoré.
+  if (!subdomainRoutingEnabled()) {
+    return { space: "public", tenantSlug: devDefaultTenant() };
+  }
+
   const h = host.split(":")[0];
   const parts = h.split(".");
 
