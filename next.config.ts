@@ -5,7 +5,15 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        // Toutes les images de marque (logo, hero, bannières, galerie) téléversées
+        // via /api/superadmin/tenants/[id]/media sont servies depuis Cloudinary.
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+    ],
   },
   serverExternalPackages: ["@prisma/client", ".prisma/client"],
 };
