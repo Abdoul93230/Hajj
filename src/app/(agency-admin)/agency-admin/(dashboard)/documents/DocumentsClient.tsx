@@ -86,16 +86,24 @@ export default function DocumentsClient({
   pilgrims,
   selectedYear,
   initialPilgrimId,
+  embedded = false,
 }: {
   pilgrims: PilgrimRow[];
   selectedYear: number;
   /** Pèlerin présélectionné (fiche pèlerin → onglet Documents). */
   initialPilgrimId?: string;
+  /**
+   * Mode embarqué (fiche pèlerin → onglet Documents) : masque l'en-tête de page,
+   * les statistiques globales, la recherche et la liste des pèlerins. Ne conserve
+   * que le dossier documentaire du pèlerin et ses actions.
+   */
+  embedded?: boolean;
 }) {
   const router = useRouter();
   const [search, setSearch]       = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(initialPilgrimId ?? null);
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [modalType, setModalType]   = useState<DocType | null>(null);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -115,6 +123,45 @@ export default function DocumentsClient({
 
   function onChanged() {
     router.refresh();
+  }
+
+  // ── Mode embarqué (fiche pèlerin) : uniquement le dossier de CE pèlerin ───
+  if (embedded) {
+    const pilgrim =
+      (initialPilgrimId ? pilgrims.find((p) => p.id === initialPilgrimId) : null) ??
+      pilgrims[0] ??
+      null;
+
+    if (!pilgrim) {
+      return (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
+          <p className="text-gray-500 text-sm font-semibold">Aucun dossier documentaire</p>
+          <p className="text-gray-400 text-xs mt-1">Ce pèlerin n&apos;a encore aucun document enregistré.</p>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <PilgrimDetail
+            pilgrim={pilgrim}
+            embedded
+            onAddDoc={(t) => { setModalType(t ?? null); setAddModalOpen(true); }}
+            onChanged={onChanged}
+          />
+        </div>
+
+        {addModalOpen && (
+          <AddDocumentModal
+            pilgrim={pilgrim}
+            initialType={modalType ?? undefined}
+            onClose={() => setAddModalOpen(false)}
+            onSaved={() => { setAddModalOpen(false); router.refresh(); }}
+          />
+        )}
+      </>
+    );
   }
 
   return (
@@ -283,6 +330,7 @@ export default function DocumentsClient({
       {addModalOpen && selected && (
         <AddDocumentModal
           pilgrim={selected}
+          initialType={modalType ?? undefined}
           onClose={() => setAddModalOpen(false)}
           onSaved={() => { setAddModalOpen(false); router.refresh(); }}
         />
@@ -295,11 +343,14 @@ export default function DocumentsClient({
 
 function PilgrimDetail({
   pilgrim,
+  embedded = false,
   onAddDoc,
   onChanged,
 }: {
   pilgrim: PilgrimRow;
-  onAddDoc: () => void;
+  /** Mode embarqué (fiche pèlerin) : nom et avatar déjà affichés au-dessus. */
+  embedded?: boolean;
+  onAddDoc: (type?: DocType) => void;
   onChanged: () => void;
 }) {
   const st  = PILGRIM_STATUSES[pilgrim.pilgrimStatus] ?? PILGRIM_STATUSES.PENDING;
@@ -308,29 +359,38 @@ function PilgrimDetail({
 
   return (
     <div className="flex flex-col h-full">
-      {/* En-tête pèlerin */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
-        <div className="flex items-center gap-4">
-          {pilgrim.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={pilgrim.photoUrl} alt="" className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
-          ) : (
-            <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-primary">{ini}</span>
-            </div>
-          )}
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-bold text-gray-800">{pilgrim.name}</h3>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${st.cls}`}>
-                {st.label}
-              </span>
-            </div>
-            <p className="text-xs text-gray-400 mt-0.5">{pilgrim.phone ?? "—"}</p>
+      {/* En-tête — en mode embarqué le nom/l'avatar sont déjà affichés par la fiche */}
+      <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-gray-100 flex-shrink-0 flex-wrap">
+        {embedded ? (
+          <div className="min-w-0">
+            <h3 className="font-bold text-gray-800">Pièces justificatives</h3>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {pg.done}/{pg.total} document{pg.total > 1 ? "s" : ""} obligatoire{pg.total > 1 ? "s" : ""} fourni{pg.done > 1 ? "s" : ""}
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            {pilgrim.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={pilgrim.photoUrl} alt="" className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-bold text-primary">{ini}</span>
+              </div>
+            )}
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-bold text-gray-800">{pilgrim.name}</h3>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${st.cls}`}>
+                  {st.label}
+                </span>
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">{pilgrim.phone ?? "—"}</p>
+            </div>
+          </div>
+        )}
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-shrink-0">
           {/* Progression */}
           <div className="text-right hidden sm:block">
             <p className="text-xs text-gray-400 mb-1">{pg.done}/{pg.total} docs requis</p>
@@ -345,13 +405,13 @@ function PilgrimDetail({
           </div>
           {/* Bouton ajouter */}
           <button
-            onClick={onAddDoc}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-dark transition"
+            onClick={() => onAddDoc()}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-dark active:scale-95 transition"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
-            Ajouter
+            {embedded ? "Ajouter un document" : "Ajouter"}
           </button>
         </div>
       </div>
@@ -377,7 +437,20 @@ function PilgrimDetail({
                   {sm.label}
                 </span>
               )}
-              {!doc && <span className="text-[9px] opacity-60">manquant</span>}
+              {!doc && (
+                embedded ? (
+                  <button
+                    type="button"
+                    onClick={() => onAddDoc(type)}
+                    title={`Ajouter le document « ${meta.label} »`}
+                    className="text-[10px] font-bold underline underline-offset-2 hover:opacity-70 transition"
+                  >
+                    + Ajouter
+                  </button>
+                ) : (
+                  <span className="text-[9px] opacity-60">manquant</span>
+                )
+              )}
             </div>
           );
         })}
@@ -412,13 +485,40 @@ function PilgrimDetail({
   );
 }
 
+// ─── DocCard helpers ──────────────────────────────────────────────────────────
+
+/** Libellé de l'ACTION (verbe) correspondant à chaque statut cible. */
+const STATUS_ACTION: Record<DocStatus, string> = {
+  RECEIVED: "Reçu",
+  VALID:    "Valider",
+  EXPIRED:  "Expiré",
+  REJECTED: "Rejeter",
+};
+
+/** Petite icône associée à un statut. */
+function StatusIcon({ status }: { status: DocStatus }) {
+  const d: Record<DocStatus, string> = {
+    RECEIVED: "M3 8l9 6 9-6M4 6h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1z",
+    VALID:    "M5 13l4 4L19 7",
+    EXPIRED:  "M12 8v4l3 2M12 3a9 9 0 100 18 9 9 0 000-18z",
+    REJECTED: "M6 18L18 6M6 6l12 12",
+  };
+  return (
+    <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d={d[status]} />
+    </svg>
+  );
+}
+
 // ─── DocCard ──────────────────────────────────────────────────────────────────
 
 function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void }) {
   const meta   = docTypeMeta(doc.type);
+  const stMeta = docStatusMeta(doc.status);
   const [updating, setUpdating] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [viewer, setViewer] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const isPdf   = doc.fileUrl?.toLowerCase().includes(".pdf") || doc.fileUrl?.includes("/raw/");
   const isImage = doc.fileUrl && !isPdf;
@@ -438,11 +538,11 @@ function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void })
     }
   }
 
-  async function remove() {
-    if (!confirm("Supprimer ce document ?")) return;
+  async function handleRemove() {
     setRemoving(true);
     try {
       await fetch(`/api/agency-admin/documents/${doc.id}`, { method: "DELETE" });
+      setConfirmDelete(false);
       onChanged();
     } finally {
       setRemoving(false);
@@ -488,8 +588,8 @@ function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void })
       )}
 
       <div className="p-3">
-        {/* Type + supprimer */}
-        <div className="flex items-start justify-between gap-2 mb-2">
+        {/* Type + statut courant */}
+        <div className="flex items-start justify-between gap-2 mb-2.5">
           <div className="min-w-0">
             <span className={`inline-block text-[10px] font-bold px-1.5 py-0.5 rounded mb-1 ${meta.color}`}>
               {meta.short} — {meta.label}
@@ -503,38 +603,73 @@ function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void })
               </p>
             )}
           </div>
-          <button
-            onClick={remove}
-            disabled={removing}
-            className="flex-shrink-0 p-1 rounded hover:bg-red-50 text-gray-300 hover:text-red-400 transition"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <span className={`flex-shrink-0 text-[10px] font-bold px-2 py-1 rounded-lg border ${stMeta.cls}`}>
+            {stMeta.label}
+          </span>
         </div>
 
-        {/* Sélecteur statut */}
-        <div className="flex gap-1 flex-wrap">
-          {DOC_STATUSES.map((s) => (
+        {/* Actions de statut */}
+        <div className="grid grid-cols-2 gap-1.5">
+          {DOC_STATUSES.filter((s) => s.value !== doc.status).map((s) => (
             <button
               key={s.value}
               onClick={() => changeStatus(s.value)}
-              disabled={updating || doc.status === s.value}
-              className={`text-[9px] font-bold px-1.5 py-0.5 rounded border transition ${
-                doc.status === s.value
-                  ? s.cls + " cursor-default"
-                  : "bg-gray-50 text-gray-400 border-gray-200 hover:border-gray-300 hover:text-gray-600"
-              }`}
+              disabled={updating}
+              title={`Marquer comme « ${s.label} »`}
+              className="flex items-center justify-center gap-1.5 text-[11px] font-semibold px-2 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 hover:border-gray-300 active:scale-95 transition disabled:opacity-50"
             >
-              {s.label}
+              <StatusIcon status={s.value} />
+              {STATUS_ACTION[s.value]}
             </button>
           ))}
         </div>
 
         {doc.notes && (
-          <p className="mt-1.5 text-[10px] text-gray-400 italic truncate">{doc.notes}</p>
+          <p className="mt-2 text-[10px] text-gray-400 italic truncate">{doc.notes}</p>
         )}
+
+        {/* Actions fichier */}
+        <div className="mt-2.5 pt-2.5 border-t border-gray-100 flex items-center gap-1">
+          {doc.fileUrl && (
+            <button
+              onClick={() => setViewer(true)}
+              title="Ouvrir l'aperçu"
+              className="flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1.5 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Aperçu
+            </button>
+          )}
+          {doc.fileUrl && (
+            <a
+              href={doc.fileUrl}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Télécharger le fichier"
+              className="flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1.5 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              Télécharger
+            </a>
+          )}
+          <button
+            onClick={() => setConfirmDelete(true)}
+            disabled={removing}
+            title="Supprimer ce document"
+            className="ml-auto flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1.5 rounded-lg text-red-500 hover:bg-red-50 transition disabled:opacity-50"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Supprimer
+          </button>
+        </div>
       </div>
 
       {/* Visionneuse intégrée : aperçu, téléchargement, nouvel onglet */}
@@ -552,6 +687,34 @@ function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void })
           onClose={() => setViewer(false)}
         />
       )}
+
+      {/* Confirmation de suppression */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
+            <p className="font-bold text-gray-800 text-sm mb-1">Supprimer ce document ?</p>
+            <p className="text-gray-500 text-sm mb-1">{docTitle} — {meta.label}</p>
+            <p className="text-gray-400 text-xs mb-5">
+              Le fichier sera définitivement retiré du dossier du pèlerin.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="flex-1 py-2 px-4 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleRemove}
+                disabled={removing}
+                className="flex-1 py-2 px-4 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 rounded-xl transition disabled:opacity-60"
+              >
+                {removing ? "Suppression…" : "Supprimer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -560,10 +723,13 @@ function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void })
 
 function AddDocumentModal({
   pilgrim,
+  initialType,
   onClose,
   onSaved,
 }: {
   pilgrim: PilgrimRow;
+  /** Type pré-sélectionné (ajout rapide depuis la fiche pèlerin). */
+  initialType?: DocType;
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -571,7 +737,7 @@ function AddDocumentModal({
   const [file, setFile]       = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [form, setForm] = useState({
-    type:      "PASSPORT" as DocType,
+    type:      (initialType ?? "PASSPORT") as DocType,
     status:    "RECEIVED" as DocStatus,
     label:     "",
     expiresAt: "",

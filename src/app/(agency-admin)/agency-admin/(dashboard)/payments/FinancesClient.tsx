@@ -146,9 +146,17 @@ interface Props {
   selectedYear:      number;
   initialPilgrimId?: string;
   initialAction?:    string;
+  /**
+   * Mode embarqué (fiche pèlerin → onglet Paiements) : masque l'en-tête de page,
+   * les statistiques globales, la recherche/filtres et la liste des pèlerins.
+   * Ne conserve que le détail financier du pèlerin et ses actions.
+   */
+  embedded?:         boolean;
+  /** Appelé quand l'action initiale (paiement / remboursement) a été consommée. */
+  onActionConsumed?: () => void;
 }
 
-export default function FinancesClient({ payments, pilgrims, offers, selectedYear, initialPilgrimId, initialAction }: Props) {
+export default function FinancesClient({ payments, pilgrims, offers, selectedYear, initialPilgrimId, initialAction, embedded = false, onActionConsumed }: Props) {
   const router = useRouter();
 
   const [search,          setSearch]          = useState("");
@@ -157,15 +165,16 @@ export default function FinancesClient({ payments, pilgrims, offers, selectedYea
   const [selectedId,      setSelectedId]      = useState<string | null>(initialPilgrimId ?? null);
   const [pendingAction,   setPendingAction]   = useState<string | undefined>(initialAction);
 
-  // Clean URL params once consumed (avoid re-triggering on refresh)
+  // Clean URL params once consumed (avoid re-triggering on refresh).
+  // Inutile en mode embarqué : la fiche pèlerin gère son propre ?tab=
   useEffect(() => {
-    if (initialPilgrimId) {
+    if (initialPilgrimId && !embedded) {
       const url = new URL(window.location.href);
       url.searchParams.delete("pilgrimId");
       url.searchParams.delete("action");
       window.history.replaceState(null, "", url.toString());
     }
-  }, [initialPilgrimId]);
+  }, [initialPilgrimId, embedded]);
 
   const defaultCurrency = offers[0]?.currency ?? "FCFA";
 
@@ -243,6 +252,35 @@ export default function FinancesClient({ payments, pilgrims, offers, selectedYea
   [summaries, search, offerFilter, payStatusFilter]);
 
   const selectedSummary = selectedId ? summaries.find(s => s.pilgrim.id === selectedId) ?? null : null;
+
+  // ── Mode embarqué (fiche pèlerin) : uniquement le détail de CE pèlerin ────
+  if (embedded) {
+    const summary =
+      (initialPilgrimId ? summaries.find(s => s.pilgrim.id === initialPilgrimId) : null) ??
+      summaries[0] ??
+      null;
+
+    if (!summary) {
+      return (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
+          <p className="text-gray-500 text-sm font-semibold">Aucune donnée financière</p>
+          <p className="text-gray-400 text-xs mt-1">
+            Ce pèlerin n&apos;a pas encore de réservation ni de paiement enregistré.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <PilgrimFinancePanel
+        summary={summary}
+        embedded
+        initialAction={pendingAction}
+        onActionConsumed={() => { setPendingAction(undefined); onActionConsumed?.(); }}
+        onRefreshKeepSelected={() => router.refresh()}
+      />
+    );
+  }
 
   return (
     <div className="flex gap-5 w-full min-h-0">
@@ -326,12 +364,11 @@ export default function FinancesClient({ payments, pilgrims, offers, selectedYea
 
       {/* ── Right — Pilgrim detail drawer ── */}
       {selectedSummary && (
-        <PilgrimDrawer
+        <PilgrimFinancePanel
           summary={selectedSummary}
           initialAction={pendingAction}
           onActionConsumed={() => setPendingAction(undefined)}
           onClose={() => setSelectedId(null)}
-          onRefresh={() => { setSelectedId(null); router.refresh(); }}
           onRefreshKeepSelected={() => router.refresh()}
         />
       )}
@@ -430,14 +467,21 @@ function PilgrimPayCard({ summary, selected, onClick }: {
   );
 }
 
-// ─── PilgrimDrawer ────────────────────────────────────────────────────────────
+// ─── PilgrimFinancePanel ──────────────────────────────────────────────────────
+// Détail financier d'un pèlerin + ses actions. Utilisé à l'identique par le
+// tiroir de la page Paiements et par l'onglet Paiements de la fiche pèlerin
+// (mode `embedded` : pleine largeur, sans chrome de tiroir).
 
-function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRefresh, onRefreshKeepSelected }: {
+function PilgrimFinancePanel({
+  summary, embedded = false, onClose, initialAction, onActionConsumed, onRefreshKeepSelected,
+}: {
   summary:               PilgrimSummary;
+  /** Rendu pleine largeur, sans en-tête pèlerin ni bouton de fermeture. */
+  embedded?:             boolean;
+  /** Fermeture du tiroir — absent en mode embarqué. */
+  onClose?:              () => void;
   initialAction?:        string;
   onActionConsumed?:     () => void;
-  onClose:               () => void;
-  onRefresh:             () => void;
   onRefreshKeepSelected: () => void;
 }) {
   const { pilgrim, reservation, payments, paid, total, remaining, pct, payStatus, currency } = summary;
@@ -445,6 +489,7 @@ function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRe
   const [showModal,        setShowModal]        = useState(false);
   const [editPayment,      setEditPayment]      = useState<SerializedPayment | null>(null);
   const [modalDefaultType, setModalDefaultType] = useState<PType>("DEPOSIT");
+  const [presetAmount,     setPresetAmount]     = useState<number | null>(null);
   const [deleteTarget,     setDeleteTarget]     = useState<SerializedPayment | null>(null);
   const [deleting,         setDeleting]         = useState(false);
   const [typeFilter,       setTypeFilter]       = useState("ALL");
@@ -454,10 +499,12 @@ function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRe
     if (!initialAction || !reservation) return;
     if (initialAction === "payment" && payStatus !== "paid") {
       setEditPayment(null);
+      setPresetAmount(null);
       setModalDefaultType("DEPOSIT");
       setShowModal(true);
     } else if (initialAction === "refund" && payments.length > 0) {
       setEditPayment(null);
+      setPresetAmount(null);
       setModalDefaultType("REFUND");
       setShowModal(true);
     }
@@ -465,13 +512,15 @@ function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRe
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function openPayment() {
+  function openPayment(preset: number | null = null) {
     setEditPayment(null);
+    setPresetAmount(preset);
     setModalDefaultType("DEPOSIT");
     setShowModal(true);
   }
   function openRefund() {
     setEditPayment(null);
+    setPresetAmount(null);
     setModalDefaultType("REFUND");
     setShowModal(true);
   }
@@ -487,6 +536,193 @@ function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRe
       const res = await fetch(`/api/agency-admin/payments/${deleteTarget.id}`, { method: "DELETE" });
       if (res.ok) { setDeleteTarget(null); onRefreshKeepSelected(); }
     } finally { setDeleting(false); }
+  }
+
+  // ── Blocs partagés tiroir / mode embarqué ──────────────────────────────────
+  const historyToolbar = (
+    <>
+      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+        Historique · {payments.length} versement{payments.length > 1 ? "s" : ""}
+      </p>
+      <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
+        className="text-[11px] py-1 px-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-primary/30 text-gray-500 cursor-pointer">
+        <option value="ALL">Tous types</option>
+        {(["DEPOSIT","INSTALLMENT","FINAL","REFUND"] as PType[]).map(t =>
+          <option key={t} value={t}>{TYPE_LABEL[t]}</option>)}
+      </select>
+    </>
+  );
+
+  const historyList = filteredPmts.length === 0 ? (
+    <div className="text-center py-10">
+      <p className="text-gray-400 text-sm">Aucun paiement enregistré</p>
+      {reservation && (
+        <p className="text-gray-300 text-xs mt-1">
+          Utilisez « Enregistrer un paiement » ci-dessus pour en ajouter un
+        </p>
+      )}
+    </div>
+  ) : (
+    <div className={embedded ? "grid grid-cols-1 xl:grid-cols-2 gap-2" : "space-y-2"}>
+      {filteredPmts.map(p => (
+        <PaymentItem
+          key={p.id}
+          payment={p}
+          currency={currency}
+          onEdit={() => { setEditPayment(p); setPresetAmount(null); setModalDefaultType(p.type); setShowModal(true); }}
+          onDelete={() => setDeleteTarget(p)}
+        />
+      ))}
+    </div>
+  );
+
+  // Modales partagées par les deux rendus (tiroir / embarqué)
+  const modals = (
+    <>
+      {showModal && reservation && (
+        <PaymentModal
+          payment={editPayment}
+          defaultType={modalDefaultType}
+          presetAmount={presetAmount}
+          pilgrim={pilgrim}
+          reservation={reservation}
+          remainingAmount={remaining}
+          paidAmount={paid}
+          totalAmount={total}
+          onClose={() => setShowModal(false)}
+          onSaved={() => { setShowModal(false); onRefreshKeepSelected(); }}
+        />
+      )}
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
+            <p className="font-bold text-gray-800 text-sm mb-1">Supprimer ce paiement ?</p>
+            <p className="text-gray-500 text-sm mb-1">{fmt(deleteTarget.amount, currency)} — {TYPE_LABEL[deleteTarget.type]}</p>
+            <p className="text-gray-400 text-xs mb-5">Cette action est irréversible.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setDeleteTarget(null)}
+                className="flex-1 py-2 px-4 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
+                Annuler
+              </button>
+              <button onClick={handleDelete} disabled={deleting}
+                className="flex-1 py-2 px-4 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 rounded-xl transition disabled:opacity-60">
+                {deleting ? "Suppression…" : "Supprimer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+
+  // ── Rendu embarqué (fiche pèlerin) : cartes empilées, pleine largeur ───────
+  if (embedded) {
+    const pctCls     = payStatus === "paid" ? "text-green-600" : payStatus === "partial" ? "text-orange-500" : "text-gray-400";
+    const heroBorder = payStatus === "paid" ? "border-green-100" : payStatus === "partial" ? "border-orange-100" : "border-gray-100";
+
+    return (
+      <div className="space-y-5">
+
+        {/* Avancement du forfait */}
+        {total > 0 && (
+          <div className={`bg-white rounded-2xl border shadow-sm p-6 ${heroBorder}`}>
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Avancement du forfait</p>
+                <p className="text-sm font-semibold text-gray-700 mt-1 truncate">
+                  {reservation?.offer?.titleFr ?? "Aucune offre rattachée"}
+                </p>
+              </div>
+              <div className="text-right flex-shrink-0">
+                <p className={`text-4xl font-black leading-none ${pctCls}`}>{pct}%</p>
+                {payStatus === "paid" && <p className="text-[11px] font-bold text-green-600 mt-1">Soldé ✓</p>}
+              </div>
+            </div>
+
+            <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-5">
+              <div className={`h-full rounded-full transition-all ${PAY_BAR[payStatus]}`} style={{ width: `${pct}%` }} />
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-xl bg-gray-50 px-3 py-3 text-center">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Forfait</p>
+                <p className="text-sm font-bold text-gray-800 mt-1">{fmt(total, currency)}</p>
+              </div>
+              <div className="rounded-xl bg-green-50 px-3 py-3 text-center">
+                <p className="text-[10px] font-bold text-green-700/70 uppercase tracking-wider">Versé</p>
+                <p className="text-sm font-bold text-green-700 mt-1">{fmt(paid, currency)}</p>
+              </div>
+              <div className={`rounded-xl px-3 py-3 text-center ${remaining > 0 ? "bg-orange-50" : "bg-green-50"}`}>
+                <p className={`text-[10px] font-bold uppercase tracking-wider ${remaining > 0 ? "text-orange-600/80" : "text-green-700/70"}`}>
+                  Reste
+                </p>
+                <p className={`text-sm font-bold mt-1 ${remaining > 0 ? "text-orange-600" : "text-green-700"}`}>
+                  {remaining > 0 ? fmt(remaining, currency) : "Soldé"}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Actions */}
+        {reservation && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Actions</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+
+              <button
+                onClick={() => openPayment(null)}
+                disabled={payStatus === "paid"}
+                title={payStatus === "paid" ? "Ce pèlerin a déjà soldé intégralement son forfait" : undefined}
+                className={`flex items-center justify-center gap-2 text-sm font-semibold py-3 px-4 rounded-xl transition shadow-sm ${
+                  payStatus === "paid"
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-primary hover:bg-primary-dark active:scale-95 text-white"
+                }`}>
+                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                {payStatus === "paid" ? "Paiement complet ✓" : "Enregistrer un paiement"}
+              </button>
+
+              {payStatus === "partial" && remaining > 0 && (
+                <button
+                  onClick={() => openPayment(remaining)}
+                  title="Ouvre le formulaire pré-rempli avec le solde restant"
+                  className="flex items-center justify-center gap-2 text-sm font-semibold py-3 px-4 rounded-xl border border-green-200 bg-green-50 text-green-700 hover:bg-green-100 active:scale-95 transition">
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Solder le reste ({fmt(remaining, currency)})
+                </button>
+              )}
+
+              {payments.length > 0 && (
+                <button
+                  onClick={openRefund}
+                  className="flex items-center justify-center gap-2 text-sm font-semibold py-3 px-4 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 active:scale-95 transition">
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                  </svg>
+                  Enregistrer un remboursement
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Historique des versements */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+            {historyToolbar}
+          </div>
+          {historyList}
+        </div>
+
+        {modals}
+      </div>
+    );
   }
 
   return (
@@ -550,7 +786,7 @@ function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRe
         <div className="px-5 py-3 border-b border-gray-100 flex-shrink-0 space-y-2">
           {/* Paiement normal — désactivé si entièrement soldé */}
           <button
-            onClick={openPayment}
+            onClick={() => openPayment(null)}
             disabled={payStatus === "paid"}
             title={payStatus === "paid" ? "Ce pèlerin a déjà soldé intégralement son forfait" : undefined}
             className={`w-full flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl transition shadow-sm ${
@@ -581,74 +817,12 @@ function PilgrimDrawer({ summary, initialAction, onActionConsumed, onClose, onRe
       {/* Payment history */}
       <div className="flex-1 overflow-y-auto px-5 py-4">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-            Historique · {payments.length} versement{payments.length > 1 ? "s" : ""}
-          </p>
-          <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
-            className="text-[11px] py-1 px-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-primary/30 text-gray-500 cursor-pointer">
-            <option value="ALL">Tous types</option>
-            {(["DEPOSIT","INSTALLMENT","FINAL","REFUND"] as PType[]).map(t =>
-              <option key={t} value={t}>{TYPE_LABEL[t]}</option>)}
-          </select>
+          {historyToolbar}
         </div>
-
-        {filteredPmts.length === 0 ? (
-          <div className="text-center py-10">
-            <p className="text-gray-400 text-sm">Aucun paiement enregistré</p>
-            {reservation && (
-              <p className="text-gray-300 text-xs mt-1">Cliquez sur le bouton ci-dessus pour en ajouter un</p>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {filteredPmts.map(p => (
-              <PaymentItem
-                key={p.id}
-                payment={p}
-                currency={currency}
-                onEdit={() => { setEditPayment(p); setModalDefaultType(p.type); setShowModal(true); }}
-                onDelete={() => setDeleteTarget(p)}
-              />
-            ))}
-          </div>
-        )}
+        {historyList}
       </div>
 
-      {/* Add/Edit modal */}
-      {showModal && reservation && (
-        <PaymentModal
-          payment={editPayment}
-          defaultType={modalDefaultType}
-          pilgrim={pilgrim}
-          reservation={reservation}
-          remainingAmount={remaining}
-          paidAmount={paid}
-          totalAmount={total}
-          onClose={() => setShowModal(false)}
-          onSaved={() => { setShowModal(false); onRefreshKeepSelected(); }}
-        />
-      )}
-
-      {/* Delete confirm */}
-      {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
-            <p className="font-bold text-gray-800 text-sm mb-1">Supprimer ce paiement ?</p>
-            <p className="text-gray-500 text-sm mb-1">{fmt(deleteTarget.amount, currency)} — {TYPE_LABEL[deleteTarget.type]}</p>
-            <p className="text-gray-400 text-xs mb-5">Cette action est irréversible.</p>
-            <div className="flex gap-3">
-              <button onClick={() => setDeleteTarget(null)}
-                className="flex-1 py-2 px-4 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
-                Annuler
-              </button>
-              <button onClick={handleDelete} disabled={deleting}
-                className="flex-1 py-2 px-4 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 rounded-xl transition disabled:opacity-60">
-                {deleting ? "Suppression..." : "Supprimer"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {modals}
     </div>
   );
 }
@@ -714,9 +888,11 @@ type DrawerReservation = SimplePilgrim["reservations"][0];
 
 function round1k(n: number) { return Math.max(1000, Math.round(n / 1000) * 1000); }
 
-function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmount, paidAmount, totalAmount, onClose, onSaved }: {
+function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation, remainingAmount, paidAmount, totalAmount, onClose, onSaved }: {
   payment:         SerializedPayment | null;
   defaultType:     PType;
+  /** Montant pré-rempli pour un nouveau paiement (ex. action « Solder le reste »). */
+  presetAmount?:   number | null;
   pilgrim:         SimplePilgrim;
   reservation:     DrawerReservation;
   remainingAmount: number;
@@ -727,7 +903,9 @@ function PaymentModal({ payment, defaultType, pilgrim, reservation, remainingAmo
 }) {
   const isEdit     = !!payment;
   const isRefund   = defaultType === "REFUND";
-  const [amount,    setAmount]    = useState(payment ? String(payment.amount) : "");
+  const [amount,    setAmount]    = useState(
+    payment ? String(payment.amount) : presetAmount ? String(presetAmount) : ""
+  );
   const [type,      setType]      = useState<PType>(payment?.type ?? defaultType);
   const [method,    setMethod]    = useState<PMethod>(payment?.method ?? "CASH");
   const [status,    setStatus]    = useState<PStatus>(payment?.status ?? "COMPLETED");

@@ -94,10 +94,13 @@ export default function PilgrimDetailClient({
   const [statusLoading, setStatusLoading] = useState(false);
   const [visaUploading, setVisaUploading] = useState(false);
   const [tab, setTab] = useState<Tab>(initialTab);
+  /** Action à exécuter à l'ouverture de l'onglet Paiements (ex. « Remboursement »). */
+  const [financeAction, setFinanceAction] = useState<string | undefined>(undefined);
   const visaInputRef  = useRef<HTMLInputElement>(null);
 
-  function openTab(next: Tab) {
+  function openTab(next: Tab, action?: string) {
     setTab(next);
+    if (next === "payments") setFinanceAction(action);
     // Onglet partageable / bouton retour navigateur cohérent
     window.history.replaceState(null, "", next === "infos" ? window.location.pathname : `?tab=${next}`);
   }
@@ -267,8 +270,9 @@ export default function PilgrimDetailClient({
           </button>
 
           <button
-            onClick={() => openTab("payments")}
+            onClick={() => openTab("payments", "refund")}
             disabled={pmts.length === 0}
+            title={pmts.length === 0 ? "Aucun paiement à rembourser" : "Ouvre directement le formulaire de remboursement"}
             className="flex items-center justify-center gap-2 py-2.5 px-3 text-sm font-semibold rounded-xl border border-red-200 text-red-500 hover:bg-red-50 active:scale-95 transition disabled:opacity-40 disabled:cursor-not-allowed">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -278,6 +282,7 @@ export default function PilgrimDetailClient({
 
           <button
             onClick={() => openTab("payments")}
+            title="Voir les paiements de ce pèlerin"
             className="flex items-center justify-center gap-2 py-2.5 px-3 text-sm font-semibold rounded-xl border border-blue-100 text-blue-600 hover:bg-blue-50 active:scale-95 transition">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -484,6 +489,9 @@ export default function PilgrimDetailClient({
           offers={offers}
           selectedYear={selectedYear}
           initialPilgrimId={pilgrim.id}
+          embedded
+          initialAction={financeAction}
+          onActionConsumed={() => setFinanceAction(undefined)}
         />
       )}
 
@@ -492,6 +500,7 @@ export default function PilgrimDetailClient({
           pilgrims={[docsRow]}
           selectedYear={selectedYear}
           initialPilgrimId={pilgrim.id}
+          embedded
         />
       )}
 
