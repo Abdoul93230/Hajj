@@ -3,6 +3,8 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import AddPilgrimModal from "../AddPilgrimModal";
+import FinancesClient, { type SerializedPayment, type SimplePilgrim } from "../../payments/FinancesClient";
+import DocumentsClient, { type PilgrimRow } from "../../documents/DocumentsClient";
 import type { SerializedPilgrim, SerializedOffer, SerializedReservation } from "../PilgrimsClient";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -61,14 +63,45 @@ interface Props {
   pilgrim:      SerializedPilgrim;
   offers:       SerializedOffer[];
   selectedYear: number;
+  /** Paiements + pèlerin au format FinancesClient (onglet Paiements). */
+  financePayments: SerializedPayment[];
+  financePilgrim:  SimplePilgrim;
+  /** Ligne au format DocumentsClient (onglet Documents). */
+  docsRow: PilgrimRow;
 }
 
-export default function PilgrimDetailClient({ pilgrim, offers, selectedYear }: Props) {
+type Tab = "infos" | "payments" | "documents";
+
+const TABS: { key: Tab; label: string }[] = [
+  { key: "infos",     label: "Infos" },
+  { key: "payments",  label: "Paiements" },
+  { key: "documents", label: "Documents" },
+];
+
+export default function PilgrimDetailClient({
+  pilgrim,
+  offers,
+  selectedYear,
+  financePayments,
+  financePilgrim,
+  docsRow,
+}: Props) {
   const router        = useRouter();
   const [showEdit, setShowEdit] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
   const [visaUploading, setVisaUploading] = useState(false);
+  const [tab, setTab] = useState<Tab>(() => {
+    if (typeof window === "undefined") return "infos";
+    const t = new URLSearchParams(window.location.search).get("tab");
+    return t === "payments" || t === "documents" ? t : "infos";
+  });
   const visaInputRef  = useRef<HTMLInputElement>(null);
+
+  function openTab(next: Tab) {
+    setTab(next);
+    // Onglet partageable / bouton retour navigateur cohérent
+    window.history.replaceState(null, "", next === "infos" ? window.location.pathname : `?tab=${next}`);
+  }
 
   async function markDossierDepose() {
     if (statusLoading) return;
@@ -144,7 +177,23 @@ export default function PilgrimDetailClient({ pilgrim, offers, selectedYear }: P
         </button>
       </div>
 
+      {/* ── Onglets ── */}
+      <div className="flex gap-1 bg-white border border-gray-100 rounded-xl p-1 shadow-sm w-fit">
+        {TABS.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => openTab(t.key)}
+            className={`px-4 py-2 text-sm font-semibold rounded-lg transition ${
+              tab === t.key ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:bg-gray-50"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       {/* ── Identity card ── */}
+      {tab === "infos" && (
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
         <div className="flex items-start gap-5">
           {/* Avatar / Photo */}
@@ -205,7 +254,7 @@ export default function PilgrimDetailClient({ pilgrim, offers, selectedYear }: P
         {/* Quick actions */}
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mt-5 pt-5 border-t border-gray-50">
           <button
-            onClick={() => router.push(`/agency-admin/payments?pilgrimId=${pilgrim.id}&action=payment`)}
+            onClick={() => openTab("payments")}
             disabled={payStatus === "paid"}
             className={`flex items-center justify-center gap-2 py-2.5 px-3 text-sm font-semibold rounded-xl transition ${
               payStatus === "paid"
@@ -219,7 +268,7 @@ export default function PilgrimDetailClient({ pilgrim, offers, selectedYear }: P
           </button>
 
           <button
-            onClick={() => router.push(`/agency-admin/payments?pilgrimId=${pilgrim.id}&action=refund`)}
+            onClick={() => openTab("payments")}
             disabled={pmts.length === 0}
             className="flex items-center justify-center gap-2 py-2.5 px-3 text-sm font-semibold rounded-xl border border-red-200 text-red-500 hover:bg-red-50 active:scale-95 transition disabled:opacity-40 disabled:cursor-not-allowed">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -229,7 +278,7 @@ export default function PilgrimDetailClient({ pilgrim, offers, selectedYear }: P
           </button>
 
           <button
-            onClick={() => router.push(`/agency-admin/payments?pilgrimId=${pilgrim.id}`)}
+            onClick={() => openTab("payments")}
             className="flex items-center justify-center gap-2 py-2.5 px-3 text-sm font-semibold rounded-xl border border-blue-100 text-blue-600 hover:bg-blue-50 active:scale-95 transition">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -238,7 +287,7 @@ export default function PilgrimDetailClient({ pilgrim, offers, selectedYear }: P
           </button>
 
           <button
-            onClick={() => router.push(`/agency-admin/documents?pilgrimId=${pilgrim.id}`)}
+            onClick={() => openTab("documents")}
             className="flex items-center justify-center gap-2 py-2.5 px-3 text-sm font-semibold rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-95 transition">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -297,8 +346,28 @@ export default function PilgrimDetailClient({ pilgrim, offers, selectedYear }: P
           </div>
         )}
       </div>
+      )}
+
+      {tab === "payments" && (
+        <FinancesClient
+          payments={financePayments}
+          pilgrims={[financePilgrim]}
+          offers={offers}
+          selectedYear={selectedYear}
+          initialPilgrimId={pilgrim.id}
+        />
+      )}
+
+      {tab === "documents" && (
+        <DocumentsClient
+          pilgrims={[docsRow]}
+          selectedYear={selectedYear}
+          initialPilgrimId={pilgrim.id}
+        />
+      )}
 
       {/* ── Main content grid ── */}
+      {tab === "infos" && (
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
 
         {/* ── Left col (3/4) ── */}
@@ -425,6 +494,25 @@ export default function PilgrimDetailClient({ pilgrim, offers, selectedYear }: P
           </Section>
         </div>
       </div>
+      )}
+
+      {tab === "payments" && (
+        <FinancesClient
+          payments={financePayments}
+          pilgrims={[financePilgrim]}
+          offers={offers}
+          selectedYear={selectedYear}
+          initialPilgrimId={pilgrim.id}
+        />
+      )}
+
+      {tab === "documents" && (
+        <DocumentsClient
+          pilgrims={[docsRow]}
+          selectedYear={selectedYear}
+          initialPilgrimId={pilgrim.id}
+        />
+      )}
 
       {/* Edit modal */}
       {showEdit && (

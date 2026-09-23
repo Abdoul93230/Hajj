@@ -30,7 +30,6 @@ export default async function PilgrimDetailPage({
         orderBy: { createdAt: "desc" },
       },
       documents: {
-        where: { status: { in: ["RECEIVED", "VALID"] } },
         orderBy: { createdAt: "desc" },
       },
     },
@@ -47,6 +46,16 @@ export default async function PilgrimDetailPage({
   const offers = await prisma.offer.findMany({
     where: { tenantId, active: true },
     orderBy: { createdAt: "desc" },
+  });
+
+  // Paiements du pèlerin — même forme que la page Paiements (FinancesClient)
+  const payments = await prisma.payment.findMany({
+    where: { pilgrimId: id, tenantId },
+    include: {
+      reservation: { include: { offer: true } },
+      pilgrim: { select: { id: true, name: true, phone: true, city: true, photoUrl: true } },
+    },
+    orderBy: { paidAt: "asc" },
   });
 
   const serialized = {
@@ -89,11 +98,57 @@ export default async function PilgrimDetailPage({
     updatedAt:     o.updatedAt.toISOString(),
   }));
 
+  const serializedPayments = payments.map((p) => ({
+    ...p,
+    paidAt:    p.paidAt.toISOString(),
+    createdAt: p.createdAt.toISOString(),
+    updatedAt: p.updatedAt.toISOString(),
+    reservation: {
+      ...p.reservation,
+      createdAt: p.reservation.createdAt.toISOString(),
+      updatedAt: p.reservation.updatedAt.toISOString(),
+      offer: {
+        ...p.reservation.offer,
+        departureDate: p.reservation.offer.departureDate ? p.reservation.offer.departureDate.toISOString() : null,
+        returnDate:    p.reservation.offer.returnDate    ? p.reservation.offer.returnDate.toISOString()    : null,
+        createdAt:     p.reservation.offer.createdAt.toISOString(),
+        updatedAt:     p.reservation.offer.updatedAt.toISOString(),
+      },
+    },
+  }));
+
+  // Ligne au format DocumentsClient, documents TOUS statuts (hors vaccin)
+  const docsRow = {
+    id:            pilgrim.id,
+    name:          pilgrim.name,
+    phone:         pilgrim.phone,
+    photoUrl:      pilgrim.photoUrl,
+    gender:        pilgrim.gender,
+    pilgrimStatus: pilgrim.pilgrimStatus,
+    hasPassport:   pilgrim.hasPassport,
+    hasCni:        pilgrim.hasCni,
+    documents: pilgrim.documents
+      .filter((d) => d.type !== "VACCINE")
+      .map((d) => ({
+        id: d.id,
+        type: d.type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER",
+        status: d.status as "RECEIVED" | "VALID" | "EXPIRED" | "REJECTED",
+        label: d.label,
+        fileUrl: d.fileUrl,
+        expiresAt: d.expiresAt ? d.expiresAt.toISOString() : null,
+        notes: d.notes,
+        createdAt: d.createdAt.toISOString(),
+      })),
+  };
+
   return (
     <PilgrimDetailClient
       pilgrim={JSON.parse(JSON.stringify(serialized))}
       offers={JSON.parse(JSON.stringify(serializedOffers))}
       selectedYear={selectedYear}
+      financePayments={JSON.parse(JSON.stringify(serializedPayments))}
+      financePilgrim={JSON.parse(JSON.stringify(serialized))}
+      docsRow={JSON.parse(JSON.stringify(docsRow))}
     />
   );
 }

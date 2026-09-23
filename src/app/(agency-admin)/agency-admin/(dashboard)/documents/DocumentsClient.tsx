@@ -20,7 +20,7 @@ type PilgrimDoc = {
   createdAt: string;
 };
 
-type PilgrimRow = {
+export type PilgrimRow = {
   id: string;
   name: string;
   phone: string | null;
@@ -85,13 +85,16 @@ function progress(docs: PilgrimDoc[]) {
 export default function DocumentsClient({
   pilgrims,
   selectedYear,
+  initialPilgrimId,
 }: {
   pilgrims: PilgrimRow[];
   selectedYear: number;
+  /** Pèlerin présélectionné (fiche pèlerin → onglet Documents). */
+  initialPilgrimId?: string;
 }) {
   const router = useRouter();
   const [search, setSearch]       = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(initialPilgrimId ?? null);
   const [addModalOpen, setAddModalOpen] = useState(false);
 
   const filtered = useMemo(() => {

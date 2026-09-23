@@ -31,7 +31,7 @@ export type SerializedPayment = {
 
 type ReservationOffer = { id: string; titleFr: string; currency: string; priceAdult: number };
 
-type SimplePilgrim = {
+export type SimplePilgrim = {
   id: string;
   name: string;
   phone: string | null;
@@ -47,7 +47,7 @@ type SimplePilgrim = {
   }[];
 };
 
-type SimpleOffer = { id: string; titleFr: string; currency: string; priceAdult: number };
+export type SimpleOffer = { id: string; titleFr: string; currency: string; priceAdult: number };
 
 interface PilgrimSummary {
   pilgrim:     SimplePilgrim;
