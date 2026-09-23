@@ -9,6 +9,7 @@ import {
   extractCloudinaryPublicId,
 } from "@/lib/cloudinary";
 import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
+import { checkPilgrimPassport } from "@/lib/passport-check";
 
 export const runtime = "nodejs";
 
@@ -40,6 +41,16 @@ export async function POST(req: Request) {
   // Vérifier que le pèlerin appartient au tenant
   const pilgrim = await prisma.user.findFirst({ where: { id: userId, tenantId, role: "PILGRIM" } });
   if (!pilgrim) return NextResponse.json({ error: "Pèlerin introuvable" }, { status: 404 });
+
+  // ── Règle passeport : valide au moins 6 mois après la date de retour ───────
+  // Un passeport non conforme est recalé : l'upload est refusé (aucun fichier
+  // n'est envoyé sur Cloudinary).
+  if (type === "PASSPORT") {
+    const verdict = await checkPilgrimPassport(tenantId, userId, expiresAt);
+    if (!verdict.ok) {
+      return NextResponse.json({ error: verdict.message, code: verdict.code }, { status: 400 });
+    }
+  }
 
   // Chercher un document existant du même type pour ce pèlerin
   // (pour supprimer l'ancien fichier Cloudinary avant d'uploader le nouveau)

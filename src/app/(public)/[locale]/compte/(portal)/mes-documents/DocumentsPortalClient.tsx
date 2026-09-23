@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Upload, Trash2, Pencil, X, Download, Lock } from "lucide-react";
 import DocumentViewer from "@/components/ui/DocumentViewer";
-import { isAgencyOnlyDocType } from "@/lib/documents";
+import { isAgencyOnlyDocType, checkPassportValidity, requiredPassportExpiry } from "@/lib/documents";
 
 export type PortalDoc = {
   id: string;
@@ -48,8 +48,13 @@ function isExpiringSoon(expiresAt: string | null): boolean {
   return d <= limit;
 }
 
-export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
+export default function DocumentsPortalClient({ docs, returnDate }: {
+  docs: PortalDoc[];
+  /** Date de retour du voyage (ISO) — référence de la règle passeport. */
+  returnDate: string | null;
+}) {
   const t = useTranslations("portal.docs");
+  const locale = useLocale();
   const router = useRouter();
 
   const [type, setType] = useState("PASSPORT");
@@ -74,6 +79,16 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
   const availableTypes = TYPES.filter(
     (tp) => !docs.some((d) => d.type === tp && d.status !== "REJECTED")
   );
+
+  // ── Règle passeport : valide au moins 6 mois après le retour du voyage ─────
+  const tripDates     = { returnDate };
+  const requiredUntil = requiredPassportExpiry(tripDates);
+  const requiredLabel = requiredUntil ? requiredUntil.toLocaleDateString(locale) : null;
+  const passportCheck = type === "PASSPORT" ? checkPassportValidity(expiresAt || null, tripDates) : null;
+  const passportBlocked = !!passportCheck && !passportCheck.ok;
+  const editPassportCheck =
+    editing && editing.type === "PASSPORT" ? checkPassportValidity(editExpiresAt || null, tripDates) : null;
+  const editPassportBlocked = !!editPassportCheck && !editPassportCheck.ok;
 
   useEffect(() => {
     if (availableTypes.length && !availableTypes.includes(type)) {
@@ -100,7 +115,15 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setMsg({ ok: false, text: data.error ?? t("errorGeneric") });
+        // Règle passeport : message traduit (le serveur renvoie aussi un texte FR)
+        const passportFailure =
+          data.code === "PASSPORT_TOO_SHORT" || data.code === "PASSPORT_EXPIRY_MISSING";
+        setMsg({
+          ok: false,
+          text: passportFailure && requiredLabel
+            ? t("passportRejected", { date: requiredLabel })
+            : data.error ?? t("errorGeneric"),
+        });
       } else {
         setMsg({ ok: true, text: t("success") });
         setFile(null);
@@ -168,7 +191,14 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setMsg({ ok: false, text: data.error ?? t("errorGeneric") });
+        const passportFailure =
+          data.code === "PASSPORT_TOO_SHORT" || data.code === "PASSPORT_EXPIRY_MISSING";
+        setMsg({
+          ok: false,
+          text: passportFailure && requiredLabel
+            ? t("passportRejected", { date: requiredLabel })
+            : data.error ?? t("errorGeneric"),
+        });
       } else {
         setMsg({ ok: true, text: t("saved") });
         closeEdit();
@@ -230,6 +260,26 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
           </div>
         </div>
 
+        {/* Règle passeport : valide au moins 6 mois après le retour du voyage */}
+        {type === "PASSPORT" && (
+          <div
+            className={`text-xs rounded-lg px-3 py-2.5 border ${
+              passportBlocked
+                ? "bg-red-50 border-red-200 text-red-600"
+                : "bg-blue-50 border-blue-100 text-blue-700"
+            }`}
+          >
+            <p className="font-semibold">{t("passportRuleTitle")}</p>
+            <p className="mt-0.5 leading-snug">
+              {passportBlocked && requiredLabel
+                ? t("passportRejected", { date: requiredLabel })
+                : requiredLabel
+                  ? t("passportMinExpiry", { date: requiredLabel })
+                  : t("passportExpiryRequired")}
+            </p>
+          </div>
+        )}
+
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">{t("label")}</label>
           <input
@@ -253,7 +303,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
 
         <button
           type="submit"
-          disabled={uploading || !file}
+          disabled={uploading || !file || passportBlocked}
           className="w-full bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm flex items-center justify-center gap-2"
         >
           <Upload size={15} />
@@ -273,6 +323,9 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {docs.map((doc) => {
               const warning = isExpiringSoon(doc.expiresAt);
+              // Règle passeport : validité exigée jusqu'à 6 mois après le retour
+              const passportIssue =
+                doc.type === "PASSPORT" && !checkPassportValidity(doc.expiresAt, tripDates).ok;
               const isPdf = doc.fileUrl?.toLowerCase().includes(".pdf") || doc.fileUrl?.includes("/raw/");
               const isImage = doc.fileUrl && !isPdf;
               return (
@@ -401,6 +454,11 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                         </>
                       )}
                     </p>
+                    {passportIssue && (
+                      <p className="text-[10px] font-semibold text-red-500 mt-1">
+                        {t("passportRejected", { date: requiredLabel ?? "" })}
+                      </p>
+                    )}
                     {doc.status === "REJECTED" && doc.notes && (
                       <p className="text-xs text-red-500 mt-1.5">
                         <span className="font-semibold">{t("rejectedReason")} :</span> {doc.notes}
@@ -460,6 +518,26 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
                 />
               </div>
 
+              {/* Règle passeport (rappel + blocage si non conforme) */}
+              {editing?.type === "PASSPORT" && (
+                <div
+                  className={`text-xs rounded-lg px-3 py-2.5 border ${
+                    editPassportBlocked
+                      ? "bg-red-50 border-red-200 text-red-600"
+                      : "bg-blue-50 border-blue-100 text-blue-700"
+                  }`}
+                >
+                  <p className="font-semibold">{t("passportRuleTitle")}</p>
+                  <p className="mt-0.5 leading-snug">
+                    {editPassportBlocked && requiredLabel
+                      ? t("passportRejected", { date: requiredLabel })
+                      : requiredLabel
+                        ? t("passportMinExpiry", { date: requiredLabel })
+                        : t("passportExpiryRequired")}
+                  </p>
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">{t("changeFile")}</label>
                 <input
@@ -473,7 +551,7 @@ export default function DocumentsPortalClient({ docs }: { docs: PortalDoc[] }) {
 
               <button
                 type="submit"
-                disabled={saving}
+                disabled={saving || editPassportBlocked}
                 className="w-full bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm"
               >
                 {saving ? t("saving") : t("save")}

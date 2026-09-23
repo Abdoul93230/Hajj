@@ -3,6 +3,7 @@ import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { deleteCloudinaryFile, extractCloudinaryPublicId } from "@/lib/cloudinary";
 import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
+import { checkPilgrimPassport } from "@/lib/passport-check";
 
 // PATCH /api/agency-admin/documents/[id]
 export async function PATCH(
@@ -23,6 +24,21 @@ export async function PATCH(
   const validStatuses = ["RECEIVED", "VALID", "EXPIRED", "REJECTED"];
   if (status && !validStatuses.includes(status)) {
     return NextResponse.json({ error: "Statut invalide" }, { status: 400 });
+  }
+
+  // ── Règle passeport : valide au moins 6 mois après la date de retour ───────
+  // Un passeport non conforme ne peut ni être validé, ni être enregistré avec
+  // une date d'expiration insuffisante. Le recalé (REJECTED) reste possible.
+  if (existing.type === "PASSPORT") {
+    const nextStatus   = status ?? existing.status;
+    const touchesProof = expiresAt !== undefined || status === "VALID";
+    if (touchesProof && nextStatus !== "REJECTED") {
+      const effectiveExpiry = expiresAt !== undefined ? expiresAt : existing.expiresAt;
+      const verdict = await checkPilgrimPassport(tenantId, existing.userId, effectiveExpiry);
+      if (!verdict.ok) {
+        return NextResponse.json({ error: verdict.message, code: verdict.code }, { status: 400 });
+      }
+    }
   }
 
   const updated = await prisma.pilgrimDocument.update({

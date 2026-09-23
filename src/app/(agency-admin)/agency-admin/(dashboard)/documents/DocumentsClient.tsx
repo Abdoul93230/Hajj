@@ -3,6 +3,11 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import DocumentViewer from "@/components/ui/DocumentViewer";
+import {
+  checkPassportValidity,
+  formatFrDate,
+  requiredPassportExpiry,
+} from "@/lib/documents";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -30,6 +35,11 @@ export type PilgrimRow = {
   hasPassport: boolean;
   hasCni: boolean;
   documents: PilgrimDoc[];
+  /**
+   * Date de retour du voyage (ISO) — référence de la règle « passeport valide
+   * au moins 6 mois après le retour ».
+   */
+  returnDate?: string | null;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -476,7 +486,7 @@ function PilgrimDetail({
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {pilgrim.documents.map((doc) => (
-              <DocCard key={doc.id} doc={doc} onChanged={onChanged} />
+              <DocCard key={doc.id} doc={doc} returnDate={pilgrim.returnDate} onChanged={onChanged} />
             ))}
           </div>
         )}
@@ -512,9 +522,18 @@ function StatusIcon({ status }: { status: DocStatus }) {
 
 // ─── DocCard ──────────────────────────────────────────────────────────────────
 
-function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void }) {
+function DocCard({ doc, returnDate, onChanged }: {
+  doc: PilgrimDoc;
+  /** Date de retour du voyage (ISO) — contrôle de validité du passeport. */
+  returnDate?: string | null;
+  onChanged: () => void;
+}) {
   const meta   = docTypeMeta(doc.type);
   const stMeta = docStatusMeta(doc.status);
+  // Règle passeport : validité exigée jusqu'à 6 mois après le retour du voyage
+  const passportVerdict =
+    doc.type === "PASSPORT" ? checkPassportValidity(doc.expiresAt, { returnDate: returnDate ?? null }) : null;
+  const passportRejected = !!passportVerdict && !passportVerdict.ok;
   const [updating, setUpdating] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [viewer, setViewer] = useState(false);
@@ -600,6 +619,11 @@ function DocCard({ doc, onChanged }: { doc: PilgrimDoc; onChanged: () => void })
             {doc.expiresAt && (
               <p className="text-[10px] text-gray-400">
                 Expire le {new Date(doc.expiresAt).toLocaleDateString("fr-FR")}
+              </p>
+            )}
+            {passportRejected && passportVerdict && !passportVerdict.ok && (
+              <p className="text-[10px] font-semibold text-red-500 leading-tight mt-0.5">
+                Recalé : doit rester valide jusqu&apos;au {formatFrDate(passportVerdict.requiredUntil)}
               </p>
             )}
           </div>
@@ -812,6 +836,12 @@ function AddDocumentModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [availableTypes.length]);
 
+  // ── Règle passeport : valide au moins 6 mois après le retour du voyage ─────
+  const tripDates      = { returnDate: pilgrim.returnDate ?? null };
+  const requiredUntil  = requiredPassportExpiry(tripDates);
+  const passportCheck  = form.type === "PASSPORT" ? checkPassportValidity(form.expiresAt || null, tripDates) : null;
+  const passportBlocked = !!passportCheck && !passportCheck.ok;
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
@@ -958,6 +988,24 @@ function AddDocumentModal({
             </div>
           </div>
 
+          {/* Règle passeport : valide au moins 6 mois après le retour du voyage */}
+          {form.type === "PASSPORT" && (
+            <div className={`rounded-xl border px-3 py-2.5 text-xs ${
+              passportBlocked
+                ? "bg-red-50 border-red-200 text-red-600"
+                : "bg-blue-50 border-blue-100 text-blue-700"
+            }`}>
+              <p className="font-semibold">Passeport : validité de 6 mois après le retour exigée</p>
+              <p className="mt-0.5 leading-snug">
+                {passportCheck && !passportCheck.ok
+                  ? passportCheck.message
+                  : requiredUntil
+                    ? `Date d'expiration minimale : ${formatFrDate(requiredUntil)}.`
+                    : "Renseignez la date d'expiration : elle sera contrôlée automatiquement."}
+              </p>
+            </div>
+          )}
+
           {/* Numéro / Notes */}
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Numéro / Notes</label>
@@ -997,7 +1045,7 @@ function AddDocumentModal({
               const f = modal?.querySelector("form");
               f?.requestSubmit();
             }}
-            disabled={submitting || !file}
+            disabled={submitting || !file || passportBlocked}
             className="flex-1 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {submitting ? (

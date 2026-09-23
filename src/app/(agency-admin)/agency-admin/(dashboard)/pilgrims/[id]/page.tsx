@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
+import { resolveTripReturnDate } from "@/lib/documents";
 import PilgrimDetailClient, { type Tab } from "./PilgrimDetailClient";
 
 export const metadata: Metadata = { title: "Dossier Pèlerin" };
@@ -135,6 +136,8 @@ export default async function PilgrimDetailPage({
     pilgrimStatus: pilgrim.pilgrimStatus,
     hasPassport:   pilgrim.hasPassport,
     hasCni:        pilgrim.hasCni,
+    // Date de retour du voyage : référence de la règle passeport (6 mois après)
+    returnDate:    resolveTripReturnDate(pilgrim.reservations[0]?.offer)?.toISOString() ?? null,
     documents: pilgrim.documents
       .filter((d) => d.type !== "VACCINE")
       .map((d) => ({

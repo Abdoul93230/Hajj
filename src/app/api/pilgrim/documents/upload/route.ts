@@ -9,6 +9,7 @@ import {
 } from "@/lib/cloudinary";
 import { logAction } from "@/lib/audit";
 import { isAgencyOnlyDocType, AGENCY_ONLY_ERROR } from "@/lib/documents";
+import { checkPilgrimPassport } from "@/lib/passport-check";
 import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 
 export const runtime = "nodejs";
@@ -48,6 +49,16 @@ export async function POST(req: Request) {
   }
   if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
     return NextResponse.json({ error: "Format accepté : image ou PDF" }, { status: 400 });
+  }
+
+  // ── Règle passeport : valide au moins 6 mois après la date de retour ───────
+  // Le pèlerin ne peut pas envoyer un passeport non conforme : l'upload est
+  // refusé (aucun fichier n'est envoyé sur Cloudinary).
+  if (type === "PASSPORT") {
+    const verdict = await checkPilgrimPassport(tenantId, userId, expiresAt);
+    if (!verdict.ok) {
+      return NextResponse.json({ error: verdict.message, code: verdict.code }, { status: 400 });
+    }
   }
 
   // Un seul document par type : on remplace l'existant (même logique que l'admin)

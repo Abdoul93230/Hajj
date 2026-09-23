@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
 import { redirect } from "next/navigation";
+import { resolveTripReturnDate } from "@/lib/documents";
 import DocumentsClient from "./DocumentsClient";
 
 export const metadata: Metadata = { title: "Documents Pèlerins" };
@@ -22,13 +23,19 @@ export default async function DocumentsPage() {
   const from = new Date(selectedYear, 0, 1);
   const to   = new Date(selectedYear + 1, 0, 1);
 
-  // Pèlerins de l'année avec leurs documents
+  // Pèlerins de l'année avec leurs documents (+ date de retour du voyage pour
+  // la règle « passeport valide 6 mois après le retour »)
   const pilgrims = await prisma.user.findMany({
     where: { tenantId, role: "PILGRIM", active: true, createdAt: { gte: from, lt: to } },
     include: {
       documents: {
         where: { createdAt: { gte: from, lt: to } },
         orderBy: { createdAt: "desc" },
+      },
+      reservations: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { offer: { select: { departureDate: true, returnDate: true } } },
       },
     },
     orderBy: { name: "asc" },
@@ -43,6 +50,7 @@ export default async function DocumentsPage() {
     pilgrimStatus: p.pilgrimStatus,
     hasPassport: p.hasPassport,
     hasCni: p.hasCni,
+    returnDate: resolveTripReturnDate(p.reservations[0]?.offer)?.toISOString() ?? null,
     documents: p.documents.filter((d) => d.type !== "VACCINE").map((d) => ({
       id: d.id,
       type: d.type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER",

@@ -9,6 +9,7 @@ import {
 } from "@/lib/cloudinary";
 import { logAction } from "@/lib/audit";
 import { isAgencyOnlyDocType, AGENCY_ONLY_ERROR } from "@/lib/documents";
+import { checkPilgrimPassport } from "@/lib/passport-check";
 import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 
 // syncPilgrimFlags est importé de "@/lib/pilgrim-sync" (source unique).
@@ -55,6 +56,14 @@ export async function PATCH(
 
   if (!file && !hasLabel && !hasExpiresAt) {
     return NextResponse.json({ error: "Aucune modification fournie" }, { status: 400 });
+  }
+
+  // ── Règle passeport : valide au moins 6 mois après la date de retour ───────
+  if (doc.type === "PASSPORT" && hasExpiresAt) {
+    const verdict = await checkPilgrimPassport(tenantId, userId, expiresAtRaw);
+    if (!verdict.ok) {
+      return NextResponse.json({ error: verdict.message, code: verdict.code }, { status: 400 });
+    }
   }
 
   let fileUrl = doc.fileUrl;
