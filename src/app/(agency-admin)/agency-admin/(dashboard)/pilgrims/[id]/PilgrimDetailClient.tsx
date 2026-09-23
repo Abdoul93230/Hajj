@@ -68,9 +68,11 @@ interface Props {
   financePilgrim:  SimplePilgrim;
   /** Ligne au format DocumentsClient (onglet Documents). */
   docsRow: PilgrimRow;
+  /** Onglet initial lu côté serveur depuis ?tab= (pas de mismatch d'hydratation). */
+  initialTab: Tab;
 }
 
-type Tab = "infos" | "payments" | "documents";
+export type Tab = "infos" | "payments" | "documents";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "infos",     label: "Infos" },
@@ -85,16 +87,13 @@ export default function PilgrimDetailClient({
   financePayments,
   financePilgrim,
   docsRow,
+  initialTab,
 }: Props) {
   const router        = useRouter();
   const [showEdit, setShowEdit] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
   const [visaUploading, setVisaUploading] = useState(false);
-  const [tab, setTab] = useState<Tab>(() => {
-    if (typeof window === "undefined") return "infos";
-    const t = new URLSearchParams(window.location.search).get("tab");
-    return t === "payments" || t === "documents" ? t : "infos";
-  });
+  const [tab, setTab] = useState<Tab>(initialTab);
   const visaInputRef  = useRef<HTMLInputElement>(null);
 
   function openTab(next: Tab) {
@@ -346,24 +345,6 @@ export default function PilgrimDetailClient({
           </div>
         )}
       </div>
-      )}
-
-      {tab === "payments" && (
-        <FinancesClient
-          payments={financePayments}
-          pilgrims={[financePilgrim]}
-          offers={offers}
-          selectedYear={selectedYear}
-          initialPilgrimId={pilgrim.id}
-        />
-      )}
-
-      {tab === "documents" && (
-        <DocumentsClient
-          pilgrims={[docsRow]}
-          selectedYear={selectedYear}
-          initialPilgrimId={pilgrim.id}
-        />
       )}
 
       {/* ── Main content grid ── */}

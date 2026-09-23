@@ -4,20 +4,28 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
-import PilgrimDetailClient from "./PilgrimDetailClient";
+import PilgrimDetailClient, { type Tab } from "./PilgrimDetailClient";
 
 export const metadata: Metadata = { title: "Dossier Pèlerin" };
 
 export default async function PilgrimDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const session = await getSession();
   if (!session || !isAgencyMember(session)) redirect("/agency-admin/login");
 
   const { id } = await params;
   const tenantId = session.tenantId;
+
+  // Onglet initial (Infos / Paiements / Documents) — lu côté serveur pour que
+  // le HTML rendu corresponde à l'onglet demandé (pas de mismatch d'hydratation).
+  const sp  = await searchParams;
+  const raw = typeof sp.tab === "string" ? sp.tab : "";
+  const initialTab: Tab = raw === "payments" || raw === "documents" ? raw : "infos";
 
   const pilgrim = await prisma.user.findFirst({
     where: { id, tenantId, role: "PILGRIM" },
@@ -149,6 +157,7 @@ export default async function PilgrimDetailPage({
       financePayments={JSON.parse(JSON.stringify(serializedPayments))}
       financePilgrim={JSON.parse(JSON.stringify(serialized))}
       docsRow={JSON.parse(JSON.stringify(docsRow))}
+      initialTab={initialTab}
     />
   );
 }
