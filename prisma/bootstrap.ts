@@ -2,7 +2,10 @@
 // BOOTSTRAP PRODUCTION — base neuve : crée le STRICT NÉCESSAIRE pour se connecter.
 //
 //   · tenant plateforme (`__platform__`) + utilisateur SUPER_ADMIN
-//   · une agence (slug, nom, email…) + son utilisateur AGENCY_ADMIN
+//   · (OPTIONNEL) une agence + son utilisateur AGENCY_ADMIN — uniquement si
+//     `BOOTSTRAP_TENANT_SLUG` est défini. Par défaut AUCUNE agence n'est créée :
+//     le superadmin les crée lui-même depuis /superadmin/tenants (la création
+//     du tenant et de son admin est transactionnelle côté API).
 //   · l'index unique SPARSE sur `Tenant.customDomain` (que `db push` ne crée pas)
 //
 // Idempotent : relançable autant de fois que voulu, NE SUPPRIME RIEN, aucune
@@ -128,7 +131,10 @@ async function ensureUser(input: {
 }
 
 async function ensureAgencyTenant() {
-  const slug = envOr("BOOTSTRAP_TENANT_SLUG", "zam").toLowerCase();
+  // Aucune agence par défaut : c'est le superadmin qui les crée (UI/API).
+  const slug = (process.env.BOOTSTRAP_TENANT_SLUG ?? "").trim().toLowerCase();
+  if (!slug) return null;
+
   const existing = await prisma.tenant.findUnique({ where: { slug } });
   if (existing) return { tenant: existing, created: false, slug };
 
@@ -205,30 +211,46 @@ async function main() {
       }`
   );
 
-  // 2) Agence + admin agence
-  const { tenant: agency, created: agencyCreated, slug } = await ensureAgencyTenant();
-  const adminEmail = envOr(
-    "BOOTSTRAP_ADMIN_EMAIL",
-    envOr(slugEnvKey(slug, "ADMIN_EMAIL"), `admin@${slug}.com`)
-  );
-  const adminPassword = envOr(
-    "BOOTSTRAP_ADMIN_PASSWORD",
-    envOr(slugEnvKey(slug, "ADMIN_PASSWORD"), "Admin123456!")
-  );
-  const adminResult = await ensureUser({
-    tenantId: agency.id,
-    email: adminEmail,
-    name: envOr("BOOTSTRAP_ADMIN_NAME", `Admin ${agency.name}`),
-    password: adminPassword,
-    role: "AGENCY_ADMIN",
-    resetPassword: reset,
-  });
-  console.log(
-    `✅ Agence « ${agency.name} » (${slug}) ${agencyCreated ? "créée" : "déjà présente"}` +
-      ` · admin ${
-        adminResult.created ? "créé" : adminResult.passwordReset ? "mot de passe réinitialisé" : "déjà présent"
-      }`
-  );
+  // 2) Agence + admin agence — UNIQUEMENT si BOOTSTRAP_TENANT_SLUG est fourni.
+  //    Par défaut : aucune agence, rien à voir avec une autre base — le
+  //    superadmin crée chaque agence (et son admin) depuis l'interface.
+  const agency = await ensureAgencyTenant();
+  let adminEmail: string | null = null;
+
+  if (agency) {
+    const { tenant: agencyTenant, created: agencyCreated, slug } = agency;
+    adminEmail = envOr(
+      "BOOTSTRAP_ADMIN_EMAIL",
+      envOr(slugEnvKey(slug, "ADMIN_EMAIL"), `admin@${slug}.com`)
+    );
+    const adminPassword = envOr(
+      "BOOTSTRAP_ADMIN_PASSWORD",
+      envOr(slugEnvKey(slug, "ADMIN_PASSWORD"), "Admin123456!")
+    );
+    const adminResult = await ensureUser({
+      tenantId: agencyTenant.id,
+      email: adminEmail,
+      name: envOr("BOOTSTRAP_ADMIN_NAME", `Admin ${agencyTenant.name}`),
+      password: adminPassword,
+      role: "AGENCY_ADMIN",
+      resetPassword: reset,
+    });
+    console.log(
+      `✅ Agence « ${agencyTenant.name} » (${slug}) ${agencyCreated ? "créée" : "déjà présente"}` +
+        ` · admin ${
+          adminResult.created
+            ? "créé"
+            : adminResult.passwordReset
+              ? "mot de passe réinitialisé"
+              : "déjà présent"
+        }`
+    );
+  } else {
+    console.log(
+      "ℹ️  Aucune agence créée (BOOTSTRAP_TENANT_SLUG non défini) :" +
+        " connectez-vous en superadmin puis Agences → Créer une agence."
+    );
+  }
 
   // 3) Index unique sparse — requis par le schéma, non créé par `prisma db push`
   const indexState = await ensureCustomDomainIndex();
@@ -247,22 +269,32 @@ async function main() {
   console.log(`    Email     : ${superEmail}`);
   console.log("    Password  : valeur de SUPER_ADMIN_PASSWORD (.env)");
   console.log("    Connexion : /superadmin/login");
-  console.log("  ─────────────────────────────────────────────────────────────");
-  console.log(`  ADMIN AGENCE « ${agency.name} » (${slug})`);
-  console.log(`    Email     : ${adminEmail}`);
-  console.log(`    Password  : valeur de ${slugEnvKey(slug, "ADMIN_PASSWORD")} / BOOTSTRAP_ADMIN_PASSWORD (.env)`);
-  console.log("    Connexion : /agency-admin/login");
+  if (agency && adminEmail) {
+    console.log("  ─────────────────────────────────────────────────────────────");
+    console.log(`  ADMIN AGENCE « ${agency.tenant.name} » (${agency.slug})`);
+    console.log(`    Email     : ${adminEmail}`);
+    console.log(
+      `    Password  : valeur de ${slugEnvKey(agency.slug, "ADMIN_PASSWORD")} / BOOTSTRAP_ADMIN_PASSWORD (.env)`
+    );
+    console.log("    Connexion : /agency-admin/login");
+  }
   console.log("═══════════════════════════════════════════════════════════════");
   console.log(
     `\n  Base : ${counts.tenants} tenant(s) · ${counts.users} utilisateur(s) dont ${counts.pilgrims} pèlerin(s)`
   );
   console.log("\n  ⚠️  À vérifier dans l'environnement de production :");
   console.log("     · JWT_SECRET            (signature des sessions)");
-  console.log(`     · DEV_DEFAULT_TENANT=${slug}        (déploiement mono-domaine / sans sous-domaine)`);
+  console.log(
+    `     · DEV_DEFAULT_TENANT=${agency?.slug ?? "<slug-de-la-1re-agence>"}   (mono-domaine / sans sous-domaine)`
+  );
   console.log("     · ou USE_SUBDOMAIN_TENANT=true     (multi-agences par sous-domaine)");
   console.log("     · NEXT_PUBLIC_APP_URL   (liens des e-mails / SMS)");
   console.log("     · CLOUDINARY_*          (envoi des documents)");
   console.log("     · SMTP_* / LAFRICA_SMS_* (notifications, optionnel)");
+  if (!agency) {
+    console.log("\n  👉 Prochaine étape : /superadmin/login → Agences → « Créer une agence »");
+    console.log("     (le tenant ET son admin agence sont créés dans la même transaction).");
+  }
   console.log("\n🎉 Bootstrap terminé — vous pouvez vous connecter.\n");
 }
 
