@@ -8,7 +8,11 @@ import {
   extractCloudinaryPublicId,
 } from "@/lib/cloudinary";
 import { logAction } from "@/lib/audit";
-import { isAgencyOnlyDocType, AGENCY_ONLY_ERROR } from "@/lib/documents";
+import {
+  isAgencyOnlyDocType,
+  AGENCY_ONLY_ERROR,
+  defaultDocumentLabel,
+} from "@/lib/documents";
 import { checkPilgrimPassport } from "@/lib/passport-check";
 import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 
@@ -20,7 +24,7 @@ type DocType = "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER";
 
 // syncPilgrimFlags est importé de "@/lib/pilgrim-sync" (source unique).
 
-// POST /api/pilgrim/documents/upload — multipart : file, type, label?, expiresAt?
+// POST /api/pilgrim/documents/upload — multipart : file, type, label?, expiresAt?, number?
 // Le pèlerin envoie SON document (statut RECEIVED — l'agence valide ensuite).
 export async function POST(req: Request) {
   const { session, error } = await requirePilgrimSession();
@@ -33,6 +37,7 @@ export async function POST(req: Request) {
   const type = formData.get("type") as string | null;
   const label = (formData.get("label") as string | null)?.trim() || null;
   const expiresAt = formData.get("expiresAt") as string | null;
+  const number = (formData.get("number") as string | null)?.trim() || null;
 
   if (!file || !type) {
     return NextResponse.json({ error: "Fichier et type de document requis" }, { status: 400 });
@@ -100,9 +105,11 @@ export async function POST(req: Request) {
       userId,
       type: type as DocType,
       status: "RECEIVED",
-      label,
+      // Libellé automatique : plus de champ « Libellé » dans l'interface
+      label: label ?? defaultDocumentLabel(type),
       fileUrl,
       expiresAt: expiresAt ? new Date(expiresAt) : null,
+      number,
       createdBy: session.id,
     },
   });

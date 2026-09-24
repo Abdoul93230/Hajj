@@ -1,4 +1,7 @@
 {
+  "announcement": {
+    "text": ""
+  },
   "nav": {
     "home": "Home",
     "about": "About Us",
@@ -977,6 +980,7 @@
       "PHOTO": "Photo",
       "OTHER": "Other",
       "goToDocuments": "Manage my documents",
+      "optional": "Optional",
       "upload": "Upload a document",
       "type": "Document type",
       "expiresAt": "Expiry date",
@@ -984,7 +988,7 @@
       "passportMinExpiry": "Minimum expiry date: {date}.",
       "passportExpiryRequired": "Enter the expiry date: it is checked automatically.",
       "passportRejected": "Passport rejected: it must remain valid until {date}.",
-      "label": "Label (optional)",
+      "number": "Number (optional)",
       "file": "File (image or PDF, max 10 MB)",
       "send": "Upload document",
       "uploading": "Uploading...",

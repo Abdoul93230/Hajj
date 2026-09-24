@@ -12,6 +12,7 @@ export type PortalDoc = {
   type: string;
   status: string;
   label: string | null;
+  number: string | null;
   fileUrl: string | null;
   expiresAt: string | null;
   createdAt: string;
@@ -58,7 +59,7 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
   const router = useRouter();
 
   const [type, setType] = useState("PASSPORT");
-  const [label, setLabel] = useState("");
+  const [number, setNumber] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -70,7 +71,7 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
 
   // ── Modal d'édition ──
   const [editing, setEditing] = useState<PortalDoc | null>(null);
-  const [editLabel, setEditLabel] = useState("");
+  const [editNumber, setEditNumber] = useState("");
   const [editExpiresAt, setEditExpiresAt] = useState("");
   const [editFile, setEditFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -106,7 +107,7 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
       const fd = new FormData();
       fd.append("file", file);
       fd.append("type", type);
-      if (label) fd.append("label", label);
+      if (number.trim()) fd.append("number", number.trim());
       if (expiresAt) fd.append("expiresAt", expiresAt);
 
       const res = await fetch("/api/pilgrim/documents/upload", {
@@ -127,7 +128,7 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
       } else {
         setMsg({ ok: true, text: t("success") });
         setFile(null);
-        setLabel("");
+        setNumber("");
         setExpiresAt("");
         router.refresh();
       }
@@ -161,7 +162,7 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
     // Le VISA est géré par l'agence : pas d'édition côté pèlerin.
     if (isAgencyOnlyDocType(doc.type)) return;
     setEditing(doc);
-    setEditLabel(doc.label ?? "");
+    setEditNumber(doc.number ?? "");
     setEditExpiresAt(doc.expiresAt ? doc.expiresAt.slice(0, 10) : "");
     setEditFile(null);
     setMsg(null);
@@ -179,8 +180,8 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
     setMsg(null);
     try {
       const fd = new FormData();
-      if (editLabel.trim()) fd.append("label", editLabel.trim());
-      else fd.append("label", "");
+      if (editNumber.trim()) fd.append("number", editNumber.trim());
+      else fd.append("number", "");
       if (editExpiresAt) fd.append("expiresAt", editExpiresAt);
       else fd.append("expiresAt", "");
       if (editFile) fd.append("file", editFile);
@@ -245,6 +246,7 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
               {availableTypes.map((tp) => (
                 <option key={tp} value={tp}>
                   {t(tp)}
+                  {tp === "CNI" ? ` · ${t("optional")}` : ""}
                 </option>
               ))}
             </select>
@@ -281,12 +283,13 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
         )}
 
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">{t("label")}</label>
+          <label className="block text-xs font-medium text-gray-600 mb-1">{t("number")}</label>
           <input
             type="text"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
+            placeholder={type === "PASSPORT" ? "A1234567" : undefined}
+            className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light placeholder:text-gray-300"
           />
         </div>
 
@@ -445,6 +448,11 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
                     <p className="text-xs font-semibold text-gray-700 truncate leading-tight">
                       {doc.label ?? t(doc.type)}
                     </p>
+                    {doc.number && (
+                      <p className="text-[11px] font-bold text-gray-600 font-mono mt-0.5 truncate">
+                        N° {doc.number}
+                      </p>
+                    )}
                     <p className="text-[10px] text-gray-400 mt-0.5">
                       {t("uploadedOn")} {new Date(doc.createdAt).toLocaleDateString()}
                       {doc.expiresAt && (
@@ -499,12 +507,13 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
 
             <form onSubmit={handleSaveEdit} className="p-6 space-y-4 overflow-y-auto">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">{t("label")}</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">{t("number")}</label>
                 <input
                   type="text"
-                  value={editLabel}
-                  onChange={(e) => setEditLabel(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
+                  value={editNumber}
+                  onChange={(e) => setEditNumber(e.target.value)}
+                  placeholder={editing?.type === "PASSPORT" ? "A1234567" : undefined}
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light placeholder:text-gray-300"
                 />
               </div>
 

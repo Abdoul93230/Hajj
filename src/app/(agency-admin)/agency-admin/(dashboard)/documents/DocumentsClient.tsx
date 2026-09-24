@@ -7,6 +7,7 @@ import {
   checkPassportValidity,
   formatFrDate,
   requiredPassportExpiry,
+  REQUIRED_DOC_TYPES,
 } from "@/lib/documents";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -19,6 +20,7 @@ type PilgrimDoc = {
   type: DocType;
   status: DocStatus;
   label: string | null;
+  number: string | null;
   fileUrl: string | null;
   expiresAt: string | null;
   notes: string | null;
@@ -73,7 +75,9 @@ const PILGRIM_STATUSES: Record<string, { label: string; dot: string; cls: string
   REGISTERED:  { label: "Complet",      dot: "bg-blue-400",    cls: "bg-blue-100 text-blue-600"    },
 };
 
-const REQUIRED: DocType[] = ["PASSPORT", "CNI"];
+// Documents obligatoires du dossier : le PASSEPORT uniquement — la CNI est
+// facultative (règle partagée : voir REQUIRED_DOC_TYPES dans src/lib/documents.ts).
+const REQUIRED: DocType[] = [...REQUIRED_DOC_TYPES] as DocType[];
 
 function docTypeMeta(type: DocType) {
   return DOC_TYPES.find((d) => d.value === type) ?? DOC_TYPES[DOC_TYPES.length - 1];
@@ -190,7 +194,7 @@ export default function DocumentsClient({
         {[
           { label: "Pèlerins",   value: stats.total,        sub: "inscrits",  color: "bg-gray-50",   bar: "bg-gray-400" },
           { label: "Passeports", value: stats.withPassport, sub: "déposés",   color: "bg-blue-50",   bar: "bg-blue-500" },
-          { label: "CNI",        value: stats.withCni,      sub: "déposées",  color: "bg-violet-50", bar: "bg-violet-500" },
+          { label: "CNI",        value: stats.withCni,      sub: "facultatif", color: "bg-violet-50", bar: "bg-violet-500" },
         ].map((s) => (
           <div key={s.label} className={`${s.color} rounded-xl px-4 py-3 border border-gray-100`}>
             <div className="flex items-center justify-between mb-2">
@@ -469,6 +473,9 @@ function PilgrimDetail({
             +{pilgrim.documents.filter((d) => !REQUIRED.includes(d.type)).length} autre{pilgrim.documents.filter((d) => !REQUIRED.includes(d.type)).length > 1 ? "s" : ""}
           </span>
         )}
+        <span className="ml-auto text-[10px] text-gray-400">
+          Passeport obligatoire · autres documents facultatifs
+        </span>
       </div>
 
       {/* Grille documents */}
@@ -616,6 +623,11 @@ function DocCard({ doc, returnDate, onChanged }: {
             <p className="text-xs font-semibold text-gray-700 truncate leading-tight">
               {doc.label ?? meta.label}
             </p>
+            {doc.number && (
+              <p className="text-[11px] font-bold text-gray-600 font-mono mt-0.5">
+                N° {doc.number}
+              </p>
+            )}
             {doc.expiresAt && (
               <p className="text-[10px] text-gray-400">
                 Expire le {new Date(doc.expiresAt).toLocaleDateString("fr-FR")}
@@ -763,7 +775,7 @@ function AddDocumentModal({
   const [form, setForm] = useState({
     type:      (initialType ?? "PASSPORT") as DocType,
     status:    "RECEIVED" as DocStatus,
-    label:     "",
+    number:    "",
     expiresAt: "",
     notes:     "",
   });
@@ -800,7 +812,7 @@ function AddDocumentModal({
       fd.append("userId",  pilgrim.id);
       fd.append("type",    form.type);
       fd.append("status",  form.status);
-      if (form.label.trim())  fd.append("label",     form.label.trim());
+      if (form.number.trim()) fd.append("number",    form.number.trim());
       if (form.expiresAt)     fd.append("expiresAt", form.expiresAt);
       if (form.notes.trim())  fd.append("notes",     form.notes.trim());
       setUploadProgress(40);
@@ -822,7 +834,6 @@ function AddDocumentModal({
   }
 
   const ini = initials(pilgrim.name);
-  const selectedTypeMeta = docTypeMeta(form.type);
 
   // N'afficher que les types de documents pas encore déposés (sauf rejetés)
   const availableTypes = DOC_TYPES.filter(
@@ -950,7 +961,11 @@ function AddDocumentModal({
                 onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as DocType }))}
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 cursor-pointer transition"
               >
-                {availableTypes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                {availableTypes.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}{t.value === "CNI" ? " · facultatif" : ""}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -965,27 +980,15 @@ function AddDocumentModal({
             </div>
           </div>
 
-          {/* Libellé + Expiration */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Libellé</label>
-              <input
-                type="text"
-                value={form.label}
-                onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
-                placeholder={selectedTypeMeta.label}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Expiration</label>
-              <input
-                type="date"
-                value={form.expiresAt}
-                onChange={(e) => setForm((f) => ({ ...f, expiresAt: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition"
-              />
-            </div>
+          {/* Expiration (le libellé est généré automatiquement selon le type) */}
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Expiration</label>
+            <input
+              type="date"
+              value={form.expiresAt}
+              onChange={(e) => setForm((f) => ({ ...f, expiresAt: e.target.value }))}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-gray-700 transition"
+            />
           </div>
 
           {/* Règle passeport : valide au moins 6 mois après le retour du voyage */}
@@ -1006,16 +1009,28 @@ function AddDocumentModal({
             </div>
           )}
 
-          {/* Numéro / Notes */}
-          <div>
-            <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Numéro / Notes</label>
-            <input
-              type="text"
-              value={form.notes}
-              onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-              placeholder="Ex: N° A1234567"
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
-            />
+          {/* Numéro du document + Notes */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Numéro</label>
+              <input
+                type="text"
+                value={form.number}
+                onChange={(e) => setForm((f) => ({ ...f, number: e.target.value }))}
+                placeholder={form.type === "PASSPORT" ? "Ex : A1234567" : "N° du document"}
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Notes</label>
+              <input
+                type="text"
+                value={form.notes}
+                onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+                placeholder="Remarques éventuelles"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-gray-300 transition"
+              />
+            </div>
           </div>
 
           {submitting && uploadProgress > 0 && (

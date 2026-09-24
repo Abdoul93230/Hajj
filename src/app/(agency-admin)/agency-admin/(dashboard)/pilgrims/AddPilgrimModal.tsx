@@ -551,9 +551,10 @@ export default function AddPilgrimModal({
               </p>
               <div className="space-y-2">
                 {[
-                  { flag: form.hasPassport, label: "Passeport", short: "PASS" },
-                  { flag: form.hasCni,      label: "CNI",        short: "CNI" },
-                ].map(({ flag, label, short }) => (
+                  { flag: form.hasPassport, label: "Passeport", short: "PASS", optional: false },
+                  // CNI : facultative — simple indicateur, jamais bloquante
+                  { flag: form.hasCni,      label: "CNI",       short: "CNI",  optional: true  },
+                ].map(({ flag, label, short, optional }) => (
                   <div key={short} className="flex items-center gap-2.5">
                     <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${
                       flag ? "bg-primary border-primary" : "border-gray-200 bg-gray-50"
@@ -564,7 +565,12 @@ export default function AddPilgrimModal({
                         </svg>
                       )}
                     </div>
-                    <span className={`text-sm ${flag ? "text-gray-700" : "text-gray-400"}`}>{label}</span>
+                    <span className={`text-sm ${flag ? "text-gray-700" : "text-gray-400"}`}>
+                      {label}
+                      {optional && (
+                        <span className="text-[9px] font-normal text-gray-300"> · facultatif</span>
+                      )}
+                    </span>
                     {!isEdit && !flag && (
                       <span className="text-[9px] text-gray-300 ml-auto">via Docs</span>
                     )}

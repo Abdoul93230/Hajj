@@ -9,6 +9,7 @@
     "lint": "eslint",
     "postinstall": "prisma generate",
     "seed": "tsx --env-file=.env prisma/seed.ts",
+    "bootstrap": "tsx --env-file=.env prisma/bootstrap.ts",
     "seed:programs": "tsx --env-file=.env prisma/seed-programs.ts",
     "fix:documents": "tsx --env-file=.env prisma/fix-document-extensions.ts",
     "fix:photos": "tsx --env-file=.env prisma/fix-photo-urls.ts"

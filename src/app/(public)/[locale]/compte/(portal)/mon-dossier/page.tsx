@@ -81,9 +81,10 @@ export default async function MonDossierPage({ params }: Props) {
   const agencyPhone = theme.whatsappNumber ?? tenant?.phone ?? null;
 
   const docTiles = [
-    { label: t("docs.PASSPORT"), ok: pilgrim.hasPassport || hasActiveDoc("PASSPORT") },
-    { label: t("docs.CNI"), ok: pilgrim.hasCni || hasActiveDoc("CNI") },
-    { label: t("docs.VISA"), ok: visaOk },
+    { label: t("docs.PASSPORT"), ok: pilgrim.hasPassport || hasActiveDoc("PASSPORT"), optional: false },
+    // CNI : document facultatif — jamais signalé comme manquant
+    { label: t("docs.CNI"), ok: pilgrim.hasCni || hasActiveDoc("CNI"), optional: true },
+    { label: t("docs.VISA"), ok: visaOk, optional: false },
   ];
 
   return (
@@ -331,18 +332,27 @@ export default async function MonDossierPage({ params }: Props) {
           </a>
         </div>
         <div className="grid grid-cols-4 gap-2">
-          {docTiles.map(({ label, ok }) => (
+          {docTiles.map(({ label, ok, optional }) => (
             <div
               key={label}
               className={`rounded-xl p-3 text-center border ${
-                ok ? "bg-green-50 border-green-100" : "bg-gray-50 border-gray-100"
+                ok
+                  ? "bg-green-50 border-green-100"
+                  : optional
+                    ? "bg-white border-dashed border-gray-200"
+                    : "bg-gray-50 border-gray-100"
               }`}
             >
               <p className={`text-lg mb-0.5 ${ok ? "text-green-500" : "text-gray-300"}`}>
-                {ok ? "✓" : "✗"}
+                {ok ? "✓" : optional ? "–" : "✗"}
               </p>
               <p className={`text-[10px] font-semibold ${ok ? "text-green-600" : "text-gray-400"}`}>
                 {label}
+                {optional && (
+                  <span className="block text-[9px] font-normal text-gray-300">
+                    {t("docs.optional")}
+                  </span>
+                )}
               </p>
             </div>
           ))}

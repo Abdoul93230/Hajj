@@ -187,6 +187,8 @@ export type ThemeMessages = Record<"fr" | "en" | "ar", Record<string, unknown>>;
 
 /** Libellés de groupes par namespace i18n (l'ordre de la carte = ordre d'affichage). */
 const GROUP_LABELS: Record<string, string> = {
+  // Bandeau défilant en haut du header public (texte libre par agence, fr/en/ar)
+  announcement: "Annonce défilante (bandeau)",
   nav: "Navigation",
   header: "En-tête",
   footer: "Pied de page",
@@ -260,6 +262,16 @@ export function buildThemeTextCatalog(messages: ThemeMessages): ThemeSlotGroup[]
 
 /** Slot spécial (non i18n pointé) : description SEO consommée par generateMetadata. */
 export const META_DESCRIPTION_SLOT = "metaDescription";
+
+/**
+ * Clé i18n du bandeau d'annonce défilant (header public).
+ *
+ * Vide par défaut : aucun bandeau n'est affiché tant que le superadmin n'a pas
+ * saisi de texte. Le texte est stocké comme les autres overrides du tenant
+ * (`theme.content["announcement.text"]`) → éditable en fr/en/ar, rééditable et
+ * réinitialisable depuis l'éditeur de textes du portail.
+ */
+export const ANNOUNCEMENT_SLOT = "announcement.text";
 
 /** Payload sérialisable vers l'éditeur client. */
 export type ThemeSlotPayload = {

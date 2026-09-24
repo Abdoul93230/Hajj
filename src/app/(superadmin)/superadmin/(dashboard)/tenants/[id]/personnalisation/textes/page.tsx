@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getStaticMessages } from "@/lib/static-messages";
 import {
+  ANNOUNCEMENT_SLOT,
   META_DESCRIPTION_SLOT,
   buildThemeTextCatalog,
   readMessagePath,
@@ -53,12 +54,20 @@ export default async function TextesPage({
           en: readMessagePath(enMsgs, slot.key),
           ar: readMessagePath(arMsgs, slot.key),
         };
-        if (!statics.fr && !statics.en && !statics.ar) return [];
+        // Le bandeau d'annonce reste éditable même sans texte par défaut : c'est
+        // au superadmin de le saisir (vide = aucun bandeau affiché).
+        if (slot.key !== ANNOUNCEMENT_SLOT && !statics.fr && !statics.en && !statics.ar) {
+          return [];
+        }
         return [
           {
             key: slot.key,
-            label: slot.label,
-            multiline: slot.multiline,
+            // Libellé explicite pour le bandeau (la clé brute « text » ne dit rien)
+            label:
+              slot.key === ANNOUNCEMENT_SLOT
+                ? "Annonce (texte défilé en haut du site)"
+                : slot.label,
+            multiline: slot.multiline || slot.key === ANNOUNCEMENT_SLOT,
             statics,
             override: readOverride(content[slot.key]),
           },

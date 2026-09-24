@@ -90,6 +90,9 @@ export default function Header({
 
   const tn = useTranslations("nav");
   const th = useTranslations("header");
+  // Bandeau d'annonce : texte saisi par le superadmin pour CETTE agence
+  // (éditeur « Textes du portail » → groupe « Annonce défilante »), traduit fr/en/ar.
+  const announcement = useTranslations("announcement")("text").trim();
   const branding = useTenantBranding();
   const brandName = branding?.tenantName ?? "Hajj et Oumra ZAM";
   const logoSrc = branding?.logoUrl ?? "/image ZAM/logo.png";
@@ -155,14 +158,32 @@ export default function Header({
 
   return (
     <div className="sticky top-0 z-50">
-      {/* Announcement bar */}
-      <div className="bg-primary text-white text-xs py-2 px-4 flex items-center justify-between">
-        <span className="flex items-center gap-2 font-semibold">
-          <span className="w-2 h-2 rounded-full bg-cream-dark inline-block animate-pulse" />
-          {th("announcement1")}
-        </span>
-        <span className="hidden sm:block">{th("announcement2")}</span>
-      </div>
+      {/* Bandeau d'annonce — texte propre à l'agence (défilant). Si l'agence n'a
+          rien saisi, la barre statique par défaut reste affichée. */}
+      {announcement ? (
+        <div className="bg-primary text-white text-xs py-2 overflow-hidden">
+          <div className="flex w-max animate-ticker motion-reduce:animate-none">
+            {[0, 1].map((copy) => (
+              <span
+                key={copy}
+                aria-hidden={copy === 1}
+                className="flex items-center gap-2 px-6 font-semibold whitespace-nowrap"
+              >
+                <span className="w-2 h-2 rounded-full bg-cream-dark inline-block animate-pulse flex-shrink-0" />
+                {announcement}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="bg-primary text-white text-xs py-2 px-4 flex items-center justify-between">
+          <span className="flex items-center gap-2 font-semibold">
+            <span className="w-2 h-2 rounded-full bg-cream-dark inline-block animate-pulse" />
+            {th("announcement1")}
+          </span>
+          <span className="hidden sm:block">{th("announcement2")}</span>
+        </div>
+      )}
 
       {/* Main header */}
       <header className="bg-white border-b border-gray-100 shadow-sm">

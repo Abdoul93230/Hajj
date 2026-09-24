@@ -1,4 +1,7 @@
 {
+  "announcement": {
+    "text": ""
+  },
   "nav": {
     "home": "Accueil",
     "about": "Qui sommes-nous",
@@ -977,6 +980,7 @@
       "PHOTO": "Photo",
       "OTHER": "Autre",
       "goToDocuments": "Gérer mes documents",
+      "optional": "Facultatif",
       "upload": "Envoyer un document",
       "type": "Type de document",
       "expiresAt": "Date d'expiration",
@@ -984,7 +988,7 @@
       "passportMinExpiry": "Date d'expiration minimale : {date}.",
       "passportExpiryRequired": "Renseignez la date d'expiration : elle est contrôlée automatiquement.",
       "passportRejected": "Passeport recalé : il doit rester valide jusqu'au {date}.",
-      "label": "Libellé (optionnel)",
+      "number": "Numéro (optionnel)",
       "file": "Fichier (image ou PDF, max 10 Mo)",
       "send": "Envoyer le document",
       "uploading": "Envoi...",

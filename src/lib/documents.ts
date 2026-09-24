@@ -24,6 +24,48 @@ export function isAgencyOnlyDocType(type: string | null | undefined): boolean {
 export const AGENCY_ONLY_ERROR =
   "Ce document est géré par votre agence : vous ne pouvez pas le modifier.";
 
+// ─── Libellé automatique ──────────────────────────────────────────────────────
+//
+// Le champ « Libellé » n'est plus demandé à l'utilisateur (retiré des
+// formulaires agence et pèlerin) : il est généré automatiquement à partir du
+// type de document au moment de l'upload. Moins de saisie, moins d'erreurs.
+
+/** Libellé par défaut appliqué à la création selon le type de document. */
+export const DOC_TYPE_DEFAULT_LABELS: Record<string, string> = {
+  PASSPORT: "Passeport",
+  CNI:      "Carte Nationale d'Identité",
+  VISA:     "Visa",
+  PHOTO:    "Photo d'identité",
+  OTHER:    "Autre document",
+};
+
+/** Libellé automatique d'un document (type inconnu → « Document »). */
+export function defaultDocumentLabel(type: string): string {
+  return DOC_TYPE_DEFAULT_LABELS[type] ?? "Document";
+}
+
+// ─── Documents obligatoires du dossier ───────────────────────────────────────
+//
+// Seul le PASSEPORT est obligatoire. La carte d'identité (CNI) est FACULTATIVE
+// partout : elle n'est ni exigée, ni comptée dans la progression du dossier,
+// ni signalée « manquante ». Le pèlerin peut donc déposer un dossier complet
+// avec son seul passeport.
+
+/** Types de documents obligatoires (tout le reste est facultatif). */
+export const REQUIRED_DOC_TYPES = ["PASSPORT"] as const;
+
+/** Vrai si ce type de document est obligatoire (sinon il est facultatif). */
+export function isRequiredDocType(type: string | null | undefined): boolean {
+  if (!type) return false;
+  return (REQUIRED_DOC_TYPES as readonly string[]).includes(type);
+}
+
+/** Vrai si ce type de document est facultatif (CNI, photo, autre…). */
+export function isOptionalDocType(type: string | null | undefined): boolean {
+  if (!type) return false;
+  return !isRequiredDocType(type) && !isAgencyOnlyDocType(type);
+}
+
 // ─── Règle passeport : validité minimale de 6 mois APRÈS LE RETOUR ────────────
 //
 // Un passeport n'est accepté que s'il reste valide au moins 6 mois après la

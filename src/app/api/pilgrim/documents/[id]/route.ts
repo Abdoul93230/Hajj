@@ -16,7 +16,7 @@ import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo (comme l'admin côté upload)
 
-// PATCH /api/pilgrim/documents/[id] — multipart : file?, label?, expiresAt?
+// PATCH /api/pilgrim/documents/[id] — multipart : file?, label?, expiresAt?, number?
 // Le pèlerin met à jour SON document tant qu'il n'a pas été vérifié (RECEIVED).
 // — même logique que l'admin : nouvel upload Cloudinary (publicId fixe par type),
 //   ancien fichier supprimé, ancien record remplacé, statut forcé à RECEIVED.
@@ -51,10 +51,12 @@ export async function PATCH(
   const file = formData.get("file") as File | null;
   const hasLabel = formData.has("label");
   const hasExpiresAt = formData.has("expiresAt");
+  const hasNumber = formData.has("number");
   const label = (formData.get("label") as string | null)?.trim() || null;
   const expiresAtRaw = formData.get("expiresAt") as string | null;
+  const number = (formData.get("number") as string | null)?.trim() || null;
 
-  if (!file && !hasLabel && !hasExpiresAt) {
+  if (!file && !hasLabel && !hasExpiresAt && !hasNumber) {
     return NextResponse.json({ error: "Aucune modification fournie" }, { status: 400 });
   }
 
@@ -98,6 +100,7 @@ export async function PATCH(
       ...(file ? { fileUrl, status: "RECEIVED" } : {}),
       ...(hasLabel ? { label } : {}),
       ...(hasExpiresAt ? { expiresAt: expiresAtRaw ? new Date(expiresAtRaw) : null } : {}),
+      ...(hasNumber ? { number } : {}),
     },
   });
 

@@ -10,11 +10,12 @@ import {
 } from "@/lib/cloudinary";
 import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 import { checkPilgrimPassport } from "@/lib/passport-check";
+import { defaultDocumentLabel } from "@/lib/documents";
 
 export const runtime = "nodejs";
 
 // POST /api/agency-admin/documents/upload
-// multipart/form-data : file, userId, type, status?, label?, expiresAt?, notes?
+// multipart/form-data : file, userId, type, status?, label?, expiresAt?, notes?, number?
 export async function POST(req: Request) {
   const { session, error } = await requireAgencySession();
   if (error) return error;
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
   const label    = (formData.get("label") as string | null)?.trim() || null;
   const expiresAt= formData.get("expiresAt") as string | null;
   const notes    = (formData.get("notes") as string | null)?.trim() || null;
+  const number   = (formData.get("number") as string | null)?.trim() || null;
 
   if (!file || !userId || !type) {
     return NextResponse.json({ error: "file, userId et type sont requis" }, { status: 400 });
@@ -103,10 +105,12 @@ export async function POST(req: Request) {
       userId,
       type: type as "PASSPORT" | "CNI" | "VISA" | "PHOTO" | "OTHER",
       status: status as "RECEIVED" | "VALID" | "EXPIRED" | "REJECTED",
-      label,
+      // Libellé automatique : plus de champ « Libellé » dans l'interface
+      label: label ?? defaultDocumentLabel(type),
       fileUrl,
       expiresAt: expiresAt ? new Date(expiresAt) : null,
       notes,
+      number,
       createdBy: session.id,
       createdAt,
     },

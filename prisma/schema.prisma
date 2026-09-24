@@ -177,6 +177,7 @@ model PilgrimDocument {
   type       DocumentType
   status     DocumentStatus @default(RECEIVED)
   label      String?        // nom libre optionnel (ex: "Passeport enfant")
+  number     String?        // n° du document (n° de passeport, n° de CNI…)
   fileUrl    String?        // URL du fichier uploadé
   expiresAt  DateTime?      // date d'expiration (passeport, vaccin…)
   notes      String?

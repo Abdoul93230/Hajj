@@ -38,10 +38,16 @@ type AgencyData = {
   address: string | null;
 };
 
+type PassportData = {
+  number:    string | null;
+  expiresAt: string | null;
+};
+
 interface Props {
   pilgrim:   PilgrimData;
   offer:     OfferData | null;
   agency:    AgencyData;
+  passport:  PassportData | null;
   logoUrl?:  string;
   qrDataUrl: string;
 }
@@ -92,45 +98,47 @@ function initials(name: string) {
   return ((p[0]?.[0] ?? "") + (p[p.length - 1]?.[0] ?? "")).toUpperCase();
 }
 
+// ─── Sous-composants du badge (purs — déclarés hors du render) ────────────────
+
+const Sep = () => (
+  <div style={{ borderTop: "1px solid #efefef", margin: "1.5mm 0" }} />
+);
+
+const SectionTitle = ({ t }: { t: string }) => (
+  <div style={{
+    fontSize: "1.8mm", fontWeight: 800, color: "#c0c0c0",
+    textTransform: "uppercase", letterSpacing: "0.4mm", marginBottom: "1mm",
+  }}>{t}</div>
+);
+
+// Cellule individuelle (label micro au-dessus, valeur en dessous)
+const Cell = ({ label, value }: { label: string; value: string | null | undefined }) => (
+  <div>
+    <div style={{ fontSize: "1.8mm", color: "#c0c0c0", fontWeight: 700,
+      textTransform: "uppercase", letterSpacing: "0.2mm", marginBottom: "0.3mm" }}>
+      {label}
+    </div>
+    <div style={{ fontSize: "2.6mm", fontWeight: 700, color: value ? "#111" : "#ddd", lineHeight: 1.3 }}>
+      {value ?? "—"}
+    </div>
+  </div>
+);
+
+// Ligne à 2 colonnes
+const Row2 = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1mm 3mm", marginBottom: "1.5mm" }}>
+    {children}
+  </div>
+);
+
 // ─── Badge ────────────────────────────────────────────────────────────────────
 
-function Badge({ pilgrim, offer, agency, logoUrl, qrDataUrl }: Props) {
+function Badge({ pilgrim, offer, agency, passport, logoUrl, qrDataUrl }: Props) {
   const age     = getAge(pilgrim.birthDate);
   const status  = STATUS_FR[pilgrim.pilgrimStatus] ?? pilgrim.pilgrimStatus;
   const shortId = pilgrim.id.slice(-8).toUpperCase();
   const gender  = pilgrim.gender === "M" || pilgrim.gender === "Masculin" ? "Homme"
     : pilgrim.gender === "F" || pilgrim.gender === "Féminin" ? "Femme" : null;
-
-  const Sep = () => (
-    <div style={{ borderTop: "1px solid #efefef", margin: "1.5mm 0" }} />
-  );
-
-  const SectionTitle = ({ t }: { t: string }) => (
-    <div style={{
-      fontSize: "1.8mm", fontWeight: 800, color: "#c0c0c0",
-      textTransform: "uppercase", letterSpacing: "0.4mm", marginBottom: "1mm",
-    }}>{t}</div>
-  );
-
-  // Cellule individuelle (label micro au-dessus, valeur en dessous)
-  const Cell = ({ label, value }: { label: string; value: string | null | undefined }) => (
-    <div>
-      <div style={{ fontSize: "1.8mm", color: "#c0c0c0", fontWeight: 700,
-        textTransform: "uppercase", letterSpacing: "0.2mm", marginBottom: "0.3mm" }}>
-        {label}
-      </div>
-      <div style={{ fontSize: "2.6mm", fontWeight: 700, color: value ? "#111" : "#ddd", lineHeight: 1.3 }}>
-        {value ?? "—"}
-      </div>
-    </div>
-  );
-
-  // Ligne à 2 colonnes
-  const Row2 = ({ children }: { children: React.ReactNode }) => (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1mm 3mm", marginBottom: "1.5mm" }}>
-      {children}
-    </div>
-  );
 
   return (
     <div className="badge-card" style={{
@@ -260,6 +268,18 @@ function Badge({ pilgrim, offer, agency, logoUrl, qrDataUrl }: Props) {
             <Row2>
               <Cell label="Départ" value={fmtDLong(offer.departureDate)} />
               <Cell label="Retour" value={fmtDLong(offer.returnDate)} />
+            </Row2>
+          </>
+        )}
+
+        {/* ── Passeport ── */}
+        {passport && (passport.number || passport.expiresAt) && (
+          <>
+            <Sep />
+            <SectionTitle t="Passeport" />
+            <Row2>
+              <Cell label="N° passeport" value={passport.number} />
+              <Cell label="Expiration"   value={fmtD(passport.expiresAt)} />
             </Row2>
           </>
         )}

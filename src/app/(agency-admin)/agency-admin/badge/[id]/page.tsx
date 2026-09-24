@@ -37,6 +37,13 @@ export default async function BadgePage({
 
   const res = pilgrim.reservations[0] ?? null;
 
+  // Passeport du pèlerin : n° + expiration affichés sur le badge
+  const passportDoc = await prisma.pilgrimDocument.findFirst({
+    where: { tenantId, userId: id, type: "PASSPORT" },
+    orderBy: { createdAt: "desc" },
+    select: { number: true, expiresAt: true },
+  });
+
   const qrData = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://zamvoyages.com"}/agency-admin/pilgrims/${id}`;
   const qrDataUrl = await QRCode.toDataURL(qrData, {
     width: 180, margin: 1,
@@ -79,6 +86,12 @@ export default async function BadgePage({
       phone:   tenant?.phone   ?? null,
       address: tenant?.address ?? null,
     },
+    passport: passportDoc
+      ? {
+          number:    passportDoc.number,
+          expiresAt: passportDoc.expiresAt?.toISOString() ?? null,
+        }
+      : null,
     logoUrl,
     qrDataUrl,
   };

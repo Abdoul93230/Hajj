@@ -30,6 +30,7 @@ export default async function MesDocumentsPage({
     expiresAt: d.expiresAt ? d.expiresAt.toISOString() : null,
     createdAt: d.createdAt.toISOString(),
     notes: d.notes,
+    number: d.number,
   }));
 
   // Voyage du pèlerin : sert de référence à la règle « passeport valide 6 mois

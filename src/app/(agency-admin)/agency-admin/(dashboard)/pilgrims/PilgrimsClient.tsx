@@ -554,7 +554,7 @@ function PilgrimRow({
       <td className="px-3 py-4">
         <div className="flex items-center justify-center gap-1.5 flex-wrap">
           <DocBadge label="PASS" active={pilgrim.hasPassport} />
-          <DocBadge label="CNI"  active={pilgrim.hasCni} />
+          <DocBadge label="CNI"  active={pilgrim.hasCni} optional />
         </div>
       </td>
 
@@ -643,13 +643,25 @@ function ActionBtn({
   );
 }
 
-function DocBadge({ label, active }: { label: string; active: boolean }) {
+function DocBadge({
+  label,
+  active,
+  optional = false,
+}: {
+  label: string;
+  active: boolean;
+  /** Document facultatif (ex. CNI) : affiché en pointillés, jamais « manquant ». */
+  optional?: boolean;
+}) {
   return (
     <span
+      title={optional ? `${label} — document facultatif` : label}
       className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
         active
           ? "bg-primary text-white"
-          : "bg-gray-100 text-gray-400"
+          : optional
+            ? "bg-gray-50 text-gray-300 border border-dashed border-gray-200"
+            : "bg-gray-100 text-gray-400"
       }`}
     >
       {label}

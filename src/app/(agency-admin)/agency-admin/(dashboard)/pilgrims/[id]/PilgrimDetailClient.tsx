@@ -223,6 +223,15 @@ export default function PilgrimDetailClient({
 
             {/* Contact */}
             <div className="flex flex-wrap gap-4 mt-3">
+              {pilgrim.email && (
+                <a href={`mailto:${pilgrim.email}`}
+                  className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-primary transition break-all">
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                  {pilgrim.email}
+                </a>
+              )}
               {pilgrim.phone && (
                 <a href={`tel:${pilgrim.phone}`}
                   className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-primary transition">
@@ -359,21 +368,28 @@ export default function PilgrimDetailClient({
         {/* ── Left col (3/4) ── */}
         <div className="lg:col-span-3 space-y-5">
 
-          {/* Informations personnelles */}
+          {/* Informations personnelles — toutes les données du pèlerin */}
           <Section title="Informations personnelles">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-0">
-              <InfoRow label="Genre"       value={genderLabel} />
+              <InfoRow label="Nom complet"  value={pilgrim.name} />
+              <InfoRow label="Email"        value={pilgrim.email} href={`mailto:${pilgrim.email}`} />
+              <InfoRow
+                label="Téléphone"
+                value={pilgrim.phone}
+                href={pilgrim.phone ? `tel:${pilgrim.phone.replace(/\s+/g, "")}` : undefined}
+                empty="Non renseigné"
+              />
+              <InfoRow label="Genre"        value={genderLabel} empty="Non renseigné" />
               <InfoRow label="Date de naissance" value={
                 pilgrim.birthDate
                   ? `${fmtDate(pilgrim.birthDate)}${age !== null ? ` (${age} ans)` : ""}`
                   : null
-              } />
-              <InfoRow label="Téléphone"   value={pilgrim.phone} />
-              <InfoRow label="Ville"       value={pilgrim.city} />
-              <InfoRow label="Pays"        value={pilgrim.country} />
-              <InfoRow label="Adresse"     value={pilgrim.address} />
-              <InfoRow label="Profession"  value={pilgrim.profession} />
-              <InfoRow label="Enregistré"  value={fmtDate(pilgrim.createdAt)} />
+              } empty="Non renseignée" />
+              <InfoRow label="Ville"        value={pilgrim.city} empty="Non renseignée" />
+              <InfoRow label="Pays"         value={pilgrim.country} empty="Non renseigné" />
+              <InfoRow label="Adresse"      value={pilgrim.address} empty="Non renseignée" />
+              <InfoRow label="Profession"   value={pilgrim.profession} empty="Non renseignée" />
+              <InfoRow label="Enregistré"   value={fmtDate(pilgrim.createdAt)} />
             </div>
           </Section>
 
@@ -392,9 +408,9 @@ export default function PilgrimDetailClient({
             </Section>
           )}
 
-          {/* Contact d'urgence */}
-          {(pilgrim.emergencyName || pilgrim.emergencyPhone) && (
-            <Section title="Contact d'urgence">
+          {/* Contact d'urgence — toujours affiché (état vide = donnée à récupérer) */}
+          <Section title="Contact d'urgence">
+            {pilgrim.emergencyName || pilgrim.emergencyPhone ? (
               <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
                 <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -406,8 +422,17 @@ export default function PilgrimDetailClient({
                   {pilgrim.emergencyPhone && <p className="text-sm text-gray-500 mt-0.5">{pilgrim.emergencyPhone}</p>}
                 </div>
               </div>
-            </Section>
-          )}
+            ) : (
+              <div className="flex items-center gap-3 bg-gray-50 border border-dashed border-gray-200 rounded-xl px-4 py-3">
+                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                </div>
+                <p className="text-sm italic text-gray-400">Non renseigné</p>
+              </div>
+            )}
+          </Section>
         </div>
 
         {/* ── Right col (1/3) ── */}
@@ -454,15 +479,23 @@ export default function PilgrimDetailClient({
           <Section title="Documents">
             <div className="grid grid-cols-3 gap-2">
               {[
-                { label: "Passeport", ok: pilgrim.hasPassport },
-                { label: "CNI",       ok: pilgrim.hasCni },
-                { label: "Visa",      ok: ["VISA_OK","PARTI","RETOUR"].includes(pilgrim.pilgrimStatus) },
-              ].map(({ label, ok }) => (
+                { label: "Passeport", ok: pilgrim.hasPassport, optional: false },
+                // CNI : document facultatif (voir src/lib/documents.ts)
+                { label: "CNI",       ok: pilgrim.hasCni,      optional: true  },
+                { label: "Visa",      ok: ["VISA_OK","PARTI","RETOUR"].includes(pilgrim.pilgrimStatus), optional: false },
+              ].map(({ label, ok, optional }) => (
                 <div key={label} className={`rounded-xl p-2.5 text-center border ${
-                  ok ? "bg-green-50 border-green-100" : "bg-gray-50 border-gray-100"
+                  ok
+                    ? "bg-green-50 border-green-100"
+                    : optional
+                      ? "bg-white border-dashed border-gray-200"
+                      : "bg-gray-50 border-gray-100"
                 }`}>
-                  <p className={`text-lg mb-0.5 ${ok ? "text-green-500" : "text-gray-300"}`}>{ok ? "✓" : "✗"}</p>
-                  <p className={`text-[10px] font-semibold ${ok ? "text-green-600" : "text-gray-400"}`}>{label}</p>
+                  <p className={`text-lg mb-0.5 ${ok ? "text-green-500" : "text-gray-300"}`}>{ok ? "✓" : optional ? "–" : "✗"}</p>
+                  <p className={`text-[10px] font-semibold ${ok ? "text-green-600" : "text-gray-400"}`}>
+                    {label}
+                    {optional && <span className="block text-[9px] font-normal text-gray-300">facultatif</span>}
+                  </p>
                 </div>
               ))}
             </div>
@@ -471,11 +504,14 @@ export default function PilgrimDetailClient({
           {/* Infos compte */}
           <Section title="Compte">
             <div className="space-y-0">
-              <InfoRow label="Créé le" value={fmtDate(pilgrim.createdAt)} />
-              <InfoRow label="Modifié" value={fmtDate(pilgrim.updatedAt)} />
-              {pilgrim.lastLoginAt && (
-                <InfoRow label="Connexion" value={fmtDate(pilgrim.lastLoginAt)} />
-              )}
+              <InfoRow
+                label="Statut"
+                value={pilgrim.active ? "Actif" : "Désactivé"}
+                tone={pilgrim.active ? "success" : "danger"}
+              />
+              <InfoRow label="Créé le"  value={fmtDate(pilgrim.createdAt)} />
+              <InfoRow label="Modifié"  value={fmtDate(pilgrim.updatedAt)} />
+              <InfoRow label="Connexion" value={fmtDate(pilgrim.lastLoginAt)} empty="Jamais connecté" />
             </div>
           </Section>
         </div>
@@ -528,12 +564,44 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string | null | undefined }) {
-  if (!value) return null;
+function InfoRow({
+  label,
+  value,
+  href,
+  empty,
+  tone,
+}: {
+  label: string;
+  value: string | null | undefined;
+  /** Lien (mailto:, tel:…) rendu à la place du texte brut. */
+  href?: string;
+  /** Texte affiché quand la valeur est vide — au lieu de masquer la ligne. */
+  empty?: string;
+  /** Couleur de la valeur (compte actif/désactivé…). */
+  tone?: "success" | "danger";
+}) {
+  if (!value && !empty) return null;
+  const toneCls =
+    tone === "success" ? "text-green-600" : tone === "danger" ? "text-red-500" : "text-gray-700";
   return (
     <div className="flex items-start gap-2 py-2 border-b border-gray-50 last:border-0">
       <span className="text-[10px] text-gray-400 uppercase tracking-wider w-28 flex-shrink-0 mt-0.5 leading-tight">{label}</span>
-      <span className="text-sm text-gray-700 font-medium leading-snug">{value}</span>
+      {value ? (
+        href ? (
+          <a
+            href={href}
+            className={`text-sm font-medium leading-snug break-all hover:underline ${
+              tone === "success" ? "text-green-600" : tone === "danger" ? "text-red-500" : "text-primary"
+            }`}
+          >
+            {value}
+          </a>
+        ) : (
+          <span className={`text-sm font-medium leading-snug break-words ${toneCls}`}>{value}</span>
+        )
+      ) : (
+        <span className="text-sm italic text-gray-300 leading-snug">{empty}</span>
+      )}
     </div>
   );
 }

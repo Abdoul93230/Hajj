@@ -59,6 +59,7 @@ export default async function DocumentsPage() {
       fileUrl: d.fileUrl,
       expiresAt: d.expiresAt ? d.expiresAt.toISOString() : null,
       notes: d.notes,
+      number: d.number,
       createdAt: d.createdAt.toISOString(),
     })),
   }));

@@ -19,7 +19,7 @@ export async function PATCH(
   if (!existing) return NextResponse.json({ error: "Document introuvable" }, { status: 404 });
 
   const body = await req.json();
-  const { status, label, fileUrl, expiresAt, notes } = body;
+  const { status, label, fileUrl, expiresAt, notes, number } = body;
 
   const validStatuses = ["RECEIVED", "VALID", "EXPIRED", "REJECTED"];
   if (status && !validStatuses.includes(status)) {
@@ -49,6 +49,7 @@ export async function PATCH(
       ...(fileUrl   !== undefined && { fileUrl: fileUrl?.trim() || null }),
       ...(expiresAt !== undefined && { expiresAt: expiresAt ? new Date(expiresAt) : null }),
       ...(notes     !== undefined && { notes: notes?.trim() || null }),
+      ...(number    !== undefined && { number: typeof number === "string" ? number.trim() || null : null }),
     },
     include: {
       user: { select: { id: true, name: true, photoUrl: true, pilgrimStatus: true } },
