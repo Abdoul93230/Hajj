@@ -43,3 +43,6 @@ logs-dev.txt
 # Environment variables
 .env
 .env*.local
+
+# Production environment backups
+.env.backup
