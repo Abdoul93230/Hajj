@@ -39,3 +39,7 @@ next-env.d.ts
 dev-*.log
 dev-*.err.log
 logs-dev.txt
+
+# Environment variables
+.env
+.env*.local
