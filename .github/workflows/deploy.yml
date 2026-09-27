@@ -1,0 +1,27 @@
+﻿name: Deploy ZAVO-AS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Oracle Cloud
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ vars.ZAVO_HOST }}
+          username: ${{ vars.ZAVO_USER }}
+          key: ${{ secrets.ZAVO_SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            echo "Starting ZAVO-AS deployment"
+
+            /opt/zavo-as/deploy.sh
+
+            echo "ZAVO-AS deployment completed successfully"
