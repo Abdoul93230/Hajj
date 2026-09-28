@@ -83,6 +83,9 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
   const [showCreate, setShowCreate] = useState(false);
   const [changingStatus, setChangingStatus] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<Tenant | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteInputName, setDeleteInputName] = useState("");
+
 
   const filtered = tenants.filter((t) => {
     if (filterStatus !== "ALL" && t.status !== filterStatus) return false;
@@ -122,11 +125,18 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
     }
   }
 
-  async function deleteTenant(tenant: Tenant) {
-    const res = await fetch(`/api/superadmin/tenants/${tenant.id}`, { method: "DELETE" });
-    if (res.ok) {
-      setTenants((prev) => prev.map((t) => t.id === tenant.id ? { ...t, status: "CANCELLED" } : t));
-      setConfirmDelete(null);
+  async function purgeTenant(tenant: Tenant) {
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/superadmin/tenants/${tenant.id}`, { method: "DELETE" });
+      if (res.ok) {
+        setTenants((prev) => prev.filter((t) => t.id !== tenant.id));
+        setConfirmDelete(null);
+        setDeleteInputName("");
+        router.refresh();
+      }
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -336,27 +346,59 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
         />
       )}
 
-      {/* Confirm delete */}
+      {/* Modal suppression définitive avec confirmation */}
       {confirmDelete && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-sm">
-            <h3 className="text-white font-bold text-lg mb-2">Supprimer l&apos;agence ?</h3>
-            <p className="text-gray-400 text-sm mb-6">
-              <span className="text-white font-medium">{confirmDelete.name}</span> sera marquée comme annulée.
-              Les données seront conservées.
+          <div className="bg-gray-800 border border-red-500/30 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <div className="w-12 h-12 rounded-xl bg-red-500/15 text-red-400 flex items-center justify-center mb-4">
+              <TrashIcon />
+            </div>
+            <h3 className="text-white font-bold text-lg mb-1">Supprimer définitivement l&apos;agence ?</h3>
+            <p className="text-gray-300 text-sm mb-4">
+              Cette action est <span className="text-red-400 font-semibold">irréversible</span>. Toutes les données associées à <strong className="text-white">{confirmDelete.name}</strong> seront purgées :
             </p>
+
+            <ul className="text-xs text-gray-400 space-y-1 mb-5 bg-gray-900/60 p-3 rounded-xl border border-gray-700">
+              <li>• Tous les comptes administrateurs et agents</li>
+              <li>• Tous les pèlerins inscrits et leurs dossiers</li>
+              <li>• Tous les voyages, réservations et paiements</li>
+              <li>• Tous les documents uploadés (passeports, CNI, etc.)</li>
+              <li>• Les messages, avis et historiques SMS</li>
+              <li>• Le slug <code className="text-amber-400">/{confirmDelete.slug}</code> sera libéré</li>
+            </ul>
+
+            <div className="mb-5">
+              <label className="block text-gray-400 text-xs font-semibold mb-1.5">
+                Pour confirmer, tapez le nom exact de l&apos;agence : <span className="text-white font-mono">{confirmDelete.name}</span>
+              </label>
+              <input
+                type="text"
+                value={deleteInputName}
+                onChange={(e) => setDeleteInputName(e.target.value)}
+                placeholder={confirmDelete.name}
+                className="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-xl px-3 py-2.5 placeholder-gray-600 focus:outline-none focus:border-red-500"
+              />
+            </div>
+
             <div className="flex gap-3">
               <button
-                onClick={() => setConfirmDelete(null)}
-                className="flex-1 py-2.5 rounded-xl bg-gray-700 text-gray-300 text-sm font-medium hover:bg-gray-600 transition-colors"
+                type="button"
+                disabled={deleting}
+                onClick={() => {
+                  setConfirmDelete(null);
+                  setDeleteInputName("");
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-gray-700 text-gray-300 text-sm font-medium hover:bg-gray-600 transition-colors disabled:opacity-50"
               >
                 Annuler
               </button>
               <button
-                onClick={() => deleteTenant(confirmDelete)}
-                className="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors"
+                type="button"
+                disabled={deleting || deleteInputName.trim() !== confirmDelete.name.trim()}
+                onClick={() => purgeTenant(confirmDelete)}
+                className="flex-1 py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Supprimer
+                {deleting ? "Suppression en cours…" : "Purger définitivement"}
               </button>
             </div>
           </div>

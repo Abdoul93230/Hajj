@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { isSuperAdmin } from "@/lib/permissions";
 import { mergeTenantTheme, readTenantBranding } from "@/lib/tenant-theme";
 import { logAction } from "@/lib/audit";
+import { deleteCloudinaryFile, extractCloudinaryPublicId } from "@/lib/cloudinary";
 
 // GET — branding + thème courant du tenant (pour l'éditeur superadmin)
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -104,7 +105,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   }
 }
 
-// DELETE — supprimer une agence (soft: status CANCELLED)
+// DELETE — suppression définitive d'une agence et de toutes ses données (Hard Delete)
+// Purge en cascade : fichiers Cloudinary, documents, paiements, réservations,
+// voyages/offres, avis, messages de contact, logs SMS, OTPs, utilisateurs, et le tenant lui-même.
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session || !isSuperAdmin(session)) {
@@ -118,7 +121,61 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Tenant non supprimable" }, { status: 403 });
   }
 
-  await prisma.tenant.update({ where: { id }, data: { status: "CANCELLED" } });
+  try {
+    // 1. Nettoyage des fichiers distants (Cloudinary)
+    // a) Documents des pèlerins
+    const docs = await prisma.pilgrimDocument.findMany({
+      where: { tenantId: id },
+      select: { fileUrl: true },
+    });
+    for (const d of docs) {
+      if (d.fileUrl) {
+        const publicId = extractCloudinaryPublicId(d.fileUrl);
+        if (publicId) await deleteCloudinaryFile(publicId).catch(() => {});
+      }
+    }
 
-  return NextResponse.json({ ok: true });
+    // b) Médias du thème de l'agence (logo, hero, bannières)
+    if (tenant.theme && typeof tenant.theme === "object") {
+      const themeObj = tenant.theme as Record<string, unknown>;
+      const urlsToCheck: string[] = [];
+      if (typeof themeObj.logoUrl === "string") urlsToCheck.push(themeObj.logoUrl);
+      if (typeof themeObj.heroImageUrl === "string") urlsToCheck.push(themeObj.heroImageUrl);
+      if (typeof themeObj.hajjBannerUrl === "string") urlsToCheck.push(themeObj.hajjBannerUrl);
+      if (typeof themeObj.umrahBannerUrl === "string") urlsToCheck.push(themeObj.umrahBannerUrl);
+
+      for (const url of urlsToCheck) {
+        const pid = extractCloudinaryPublicId(url);
+        if (pid) await deleteCloudinaryFile(pid).catch(() => {});
+      }
+    }
+
+    // 2. Suppression en cascade dans la base de données
+    await prisma.$transaction([
+      prisma.pilgrimDocument.deleteMany({ where: { tenantId: id } }),
+      prisma.payment.deleteMany({ where: { tenantId: id } }),
+      prisma.reservation.deleteMany({ where: { tenantId: id } }),
+      prisma.offer.deleteMany({ where: { tenantId: id } }),
+      prisma.smsMessage.deleteMany({ where: { tenantId: id } }),
+      prisma.contactMessage.deleteMany({ where: { tenantId: id } }),
+      prisma.review.deleteMany({ where: { tenantId: id } }),
+      prisma.passwordResetOtp.deleteMany({ where: { tenantId: id } }),
+      prisma.auditLog.deleteMany({ where: { tenantId: id } }),
+      prisma.user.deleteMany({ where: { tenantId: id } }),
+      prisma.tenant.delete({ where: { id } }),
+    ]);
+
+    await logAction({
+      session,
+      action: "tenant.purged",
+      resource: "tenant",
+      resourceId: id,
+      after: { name: tenant.name, slug: tenant.slug },
+    }).catch(() => {});
+
+    return NextResponse.json({ ok: true, purged: true });
+  } catch (err) {
+    console.error("Erreur lors de la suppression définitive du tenant :", err);
+    return NextResponse.json({ error: "Échec de la suppression définitive" }, { status: 500 });
+  }
 }

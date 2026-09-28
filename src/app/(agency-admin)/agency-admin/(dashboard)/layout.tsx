@@ -23,6 +23,11 @@ export default async function AgencyAdminLayout({ children }: { children: React.
   // Dédupliqué par requête (React cache) — voir lib/tenant-data.ts
   const tenant = await getTenantBySlug(tenantSlug);
   const tenantName = tenant?.name ?? tenantSlug;
+  // Si l'agence est suspendue ou annulée, l'accès au tableau de bord est bloqué
+  if (tenant && tenant.status !== "ACTIVE" && tenant.status !== "TRIAL") {
+    redirect("/agency-admin/login?error=suspended");
+  }
+
 
   // ── Système de sélection d'année ──────────────────────────────────────────
   const currentYear = new Date().getFullYear();
