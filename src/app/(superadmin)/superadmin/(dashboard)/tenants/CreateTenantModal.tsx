@@ -51,6 +51,14 @@ function slugify(str: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+/** État d'envoi d'un canal de notification (email / SMS) renvoyé par l'API. */
+type NotifyChannel = {
+  status: "SENT" | "SKIPPED" | "FAILED";
+  to: string | null;
+  error?: string;
+};
+type Notifications = { email: NotifyChannel; sms: NotifyChannel } | null;
+
 export default function CreateTenantModal({
   onClose,
   onCreated,
@@ -61,6 +69,11 @@ export default function CreateTenantModal({
   const [form, setForm] = useState<FormData>(EMPTY);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  /** Renseigné après création : récapitulatif + état des notifications envoyées. */
+  const [done, setDone] = useState<{
+    tenant: Record<string, unknown>;
+    notifications: Notifications;
+  } | null>(null);
 
   function setField(field: keyof FormData, value: string) {
     setForm((prev) => {
@@ -98,7 +111,10 @@ export default function CreateTenantModal({
         setError(data.error ?? "Erreur lors de la création");
         return;
       }
-      onCreated(data.tenant);
+      // On affiche d'abord le récapitulatif — dont l'état des notifications
+      // (email / SMS) renvoyé par l'API. La liste est rafraîchie quand le
+      // superadmin ferme le récapitulatif (« Terminer »).
+      setDone({ tenant: data.tenant, notifications: (data.notifications ?? null) as Notifications });
     } catch {
       setError("Erreur réseau");
     } finally {
@@ -127,7 +143,35 @@ export default function CreateTenantModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-6">
+        {done && (
+          <div className="px-6 py-5 space-y-5">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3.5">
+              <p className="text-green-400 text-sm font-bold">Agence créée ✓</p>
+              <p className="text-gray-300 text-sm mt-1">
+                {String(done.tenant.name)} — l&apos;administrateur peut désormais se connecter
+                sur <span className="text-white font-medium">/agency-admin/login</span>
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <NotifyLine icon="✉️" label="Email à l'agence" res={done.notifications?.email ?? null} />
+              <NotifyLine icon="📱" label="SMS à l'agence" res={done.notifications?.sms ?? null} />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onCreated(done.tenant)}
+              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-gray-900 text-sm font-bold transition-colors"
+            >
+              Terminer
+            </button>
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className={`px-6 py-5 space-y-6 ${done ? "hidden" : ""}`}
+        >
 
           {/* Section agence */}
           <div>
@@ -315,6 +359,40 @@ export default function CreateTenantModal({
         </form>
       </div>
     </div>
+  );
+}
+
+/**
+ * Ligne d'état d'un canal de notification après création d'une agence :
+ *   ✓ envoyé à <destinataire> · ⚠ non envoyé (raison) · ✕ échec (raison)
+ */
+function NotifyLine({
+  icon,
+  label,
+  res,
+}: {
+  icon: string;
+  label: string;
+  res: NotifyChannel | null;
+}) {
+  if (!res) {
+    return (
+      <p className="text-xs text-gray-500">
+        {icon} {label} : aucune notification (réponse du serveur incomplète)
+      </p>
+    );
+  }
+  const tone =
+    res.status === "SENT"
+      ? "text-green-400"
+      : res.status === "FAILED"
+        ? "text-red-400"
+        : "text-amber-400";
+  const mark = res.status === "SENT" ? "✓" : res.status === "FAILED" ? "✕" : "⚠";
+  return (
+    <p className={`text-xs ${tone} leading-relaxed`}>
+      {icon} {label} : {mark} {res.status === "SENT" ? `envoyé à ${res.to}` : (res.error ?? "non envoyé")}
+    </p>
   );
 }
 

@@ -102,6 +102,19 @@ Ensuite, **créez les agences depuis le superadmin** : `/superadmin/tenants` →
 « Créer une agence » (le tenant *et* son `AGENCY_ADMIN` sont créés dans une même
 transaction, avec le mot de passe de votre choix).
 
+À la création, l'agence est **notifiée automatiquement** (best-effort, jamais
+bloquant) :
+
+| Canal | Destinataire | Condition |
+| --- | --- | --- |
+| **Email** | adresse de l'agence (repli : celle de l'admin) | `SMTP_*` configuré |
+| **SMS** | numéro de l'agence | numéro **Niger (+227)** et `LAFRICA_SMS_*` configuré (les SMS ne partent que vers le +227) |
+
+Le message contient le **lien de connexion**, l'identifiant et le mot de passe
+choisi par le superadmin. Le récapitulatif s'affiche dans la modale (envoyé /
+non envoyé + raison). Renseignez `NEXT_PUBLIC_APP_URL` pour un lien de connexion
+correct dans les messages.
+
 Variables lues par le bootstrap (défauts entre parenthèses) :
 
 | Variable | Défaut |

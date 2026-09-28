@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { isSuperAdmin } from "@/lib/permissions";
 import bcrypt from "bcryptjs";
+import { notifyAgencyCreated } from "@/lib/agency-notify";
 
 // GET — liste toutes les agences (hors platform)
 export async function GET() {
@@ -90,10 +92,30 @@ export async function POST(req: Request) {
       return { tenant, admin };
     });
 
+    // Notification de bienvenue (email et/ou SMS) — BEST-EFFORT : un envoi raté
+    // ne doit jamais faire échouer la création. On remonte simplement l'état de
+    // chaque canal au superadmin (SENT / SKIPPED + raison / FAILED).
+    // Base du lien de connexion : NEXT_PUBLIC_APP_URL fait foi ; sinon on
+    // reconstruit depuis l'hôte public de la requête (x-forwarded-* derrière un
+    // proxy), pour ne jamais envoyer un lien interne type http://app:3000.
+    const hdrs = await headers();
+    const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host");
+    const proto = hdrs.get("x-forwarded-proto") ?? new URL(req.url).protocol.replace(":", "");
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL ?? (host ? `${proto}://${host}` : new URL(req.url).origin);
+
+    const notifications = await notifyAgencyCreated({
+      tenant: result.tenant,
+      admin: { name: result.admin.name, email: result.admin.email },
+      adminPassword,
+      appUrl,
+    }).catch(() => null);
+
     return NextResponse.json(
       {
         tenant: result.tenant,
         admin: { id: result.admin.id, email: result.admin.email, name: result.admin.name },
+        notifications,
       },
       { status: 201 }
     );
