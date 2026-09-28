@@ -69,8 +69,19 @@ aucun vestige d'une autre installation.
   détermine l'agence (recherche de l'utilisateur par email + cookie `zam_dev_tenant`
   qui route les pages suivantes).
 
-`DEV_DEFAULT_TENANT` **fait foi** sur tout le site (accueil *et* connexion) dès
-qu'il est renseigné : ne l'utilisez que pour un déploiement mono-agence.
+`DEV_DEFAULT_TENANT` **fait foi pour le portail public** dès qu'il est renseigné :
+ne l'utilisez que pour un déploiement (public) mono-agence.
+
+Pour l'**espace agence** (`/agency-admin`), l'agence est résolue dans cet ordre :
+
+1. **sous-domaine** : `dashboard.<slug>.…` puis `<slug>.…` ;
+2. **cookie de connexion** `zam_dev_tenant` (mono-domaine multi-agences) ;
+3. `DEV_DEFAULT_TENANT` — dernier recours.
+
+Un défaut de déploiement n'écrase donc jamais l'identité de l'admin connecté.
+Sinon on obtient le symptôme « connexion réussie mais on reste sur
+`/agency-admin/login` » (l'en-tête `x-tenant-slug` du middleware ne correspondait
+plus au `tenantSlug` de la session).
 
 ### 2. Structure + comptes de départ
 

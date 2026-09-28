@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
-import { resolveSingleDomainTenant, resolveSpaceFromHost } from "@/lib/tenant-slug";
+import { resolveAgencyAdminTenant, resolveSpaceFromHost } from "@/lib/tenant-slug";
 
 const intlMiddleware = createIntlMiddleware(routing);
 const PLATFORM_SLUG = "__platform__";
@@ -36,10 +36,11 @@ export default async function middleware(request: NextRequest) {
       tenantSlug = null;
     } else if (pathname.startsWith("/agency-admin")) {
       space = "agency-admin";
-      // Même règle que les routes API (src/lib/tenant-slug.ts) : DEV_DEFAULT_TENANT
-      // fait foi quand il est défini, sinon le cookie posé au login. La page et
-      // l'API doivent désigner le MÊME tenant.
-      tenantSlug = resolveSingleDomainTenant(request.cookies.get("zam_dev_tenant")?.value);
+      // MÊME règle que les routes API (src/lib/tenant-slug.ts) : le sous-domaine
+      // puis le cookie de connexion désignent l'agence ; DEV_DEFAULT_TENANT ne
+      // sert que de dernier recours. Ne JAMAIS écraser l'identité de la session
+      // par un défaut de déploiement (sinon « connecté mais renvoyé au login »).
+      tenantSlug = resolveAgencyAdminTenant(host, request.cookies.get("zam_dev_tenant")?.value);
     }
   }
 

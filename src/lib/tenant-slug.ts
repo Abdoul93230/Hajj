@@ -104,6 +104,41 @@ export function resolveSingleDomainTenant(cookieSlug?: string | null): string | 
 }
 
 /**
+ * Slug du tenant pour l'ESPACE AGENCE (« /agency-admin »).
+ *
+ * Ordre de priorité — l'identité de l'admin connecté ne doit JAMAIS être écrasée
+ * par un défaut de déploiement :
+ *   1. sous-domaine explicite : `dashboard.<slug>.<domaine>` ou `<slug>.<domaine>`
+ *      (quand USE_SUBDOMAIN_TENANT=true) ;
+ *   2. cookie « zam_dev_tenant » posé à la connexion (mono-domaine multi-agences) ;
+ *   3. `DEV_DEFAULT_TENANT` — dernier recours (déploiement dédié à une agence).
+ *
+ * 🐛 Bug historique : le middleware réutilisait `resolveSingleDomainTenant()`
+ * pour /agency-admin. Dès que DEV_DEFAULT_TENANT était renseigné, il écrasait le
+ * slug du sous-domaine/cookie ; le layout agence comparait alors
+ * `session.tenantSlug !== x-tenant-slug` → redirection vers le formulaire :
+ * « connexion réussie mais on reste sur /agency-admin/login ». Le public et le
+ * superadmin n'étaient pas touchés (le premier utilise l'agence du host, le
+ * second n'a pas de tenant).
+ */
+export function resolveAgencyAdminTenant(
+  host: string | null | undefined,
+  cookieSlug?: string | null
+): string | null {
+  if (subdomainRoutingEnabled() && host) {
+    const h = host.split(":")[0];
+    const parts = h.split(".");
+    if (parts[0] === "dashboard" && parts[1]) return parts[1];
+    // ⚠️ longueur >= 3 : « hajj-e.com » (domaine nu) n'est PAS le sous-domaine
+    // « hajj-e » — on ne devine jamais un tenant à partir d'un domaine racine.
+    if (parts[0] !== "localhost" && parts[0] !== "127" && parts.length >= 3) return parts[0];
+  }
+  const cookie = cookieSlug?.trim();
+  if (cookie) return cookie;
+  return devDefaultTenant();
+}
+
+/**
  * Tenant d'une route API d'authentification — ordre de priorité :
  *   1. `explicitSlug` : corps de la requête (ex. « __platform__ » du superadmin)
  *   2. en-tête `x-tenant-slug` (si un intermédiaire le pose)
