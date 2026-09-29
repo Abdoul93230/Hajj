@@ -148,6 +148,19 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
         const pid = extractCloudinaryPublicId(url);
         if (pid) await deleteCloudinaryFile(pid).catch(() => {});
       }
+
+    // c) Justificatifs et reçus des paiements
+    const paymentsWithReceipt = await prisma.payment.findMany({
+      where: { tenantId: id, receiptUrl: { not: null } },
+      select: { receiptUrl: true },
+    });
+    for (const p of paymentsWithReceipt) {
+      if (p.receiptUrl) {
+        const pid = extractCloudinaryPublicId(p.receiptUrl);
+        if (pid) await deleteCloudinaryFile(pid).catch(() => {});
+      }
+    }
+
     }
 
     // 2. Suppression en cascade dans la base de données

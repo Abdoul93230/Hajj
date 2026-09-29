@@ -3,9 +3,11 @@ import { headers, cookies } from "next/headers";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
 import { getTenantBySlug } from "@/lib/tenant-data";
-import { themeStyleTag } from "@/lib/tenant-theme";
+import { resolveLogoUrl, themeStyleTag } from "@/lib/tenant-theme";
 import AgencyAdminSidebar from "@/components/layout/agency-admin/Sidebar";
 import AgencyAdminTopbar from "@/components/layout/agency-admin/Topbar";
+import { prisma } from "@/lib/prisma";
+import ForcePasswordChange from "./ForcePasswordChange";
 
 export default async function AgencyAdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -28,6 +30,14 @@ export default async function AgencyAdminLayout({ children }: { children: React.
     redirect("/agency-admin/login?error=suspended");
   }
 
+
+  // ── Mot de passe provisoire imposé ─────────────────────────────────────────
+  // Lu en base à chaque requête : levé à la création du compte par le
+  // superadmin ou après réinitialisation, baissé par /api/auth/change-password.
+  const account = await prisma.user.findUnique({
+    where: { id: session.id },
+    select: { mustChangePassword: true },
+  });
 
   // ── Système de sélection d'année ──────────────────────────────────────────
   const currentYear = new Date().getFullYear();
@@ -53,6 +63,7 @@ export default async function AgencyAdminLayout({ children }: { children: React.
         user={{ name: session.name, email: session.email, role: session.role }}
         tenantName={tenantName}
         tenantSlug={tenantSlug}
+        logoUrl={resolveLogoUrl(tenant?.theme)}
       />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <AgencyAdminTopbar
@@ -65,6 +76,7 @@ export default async function AgencyAdminLayout({ children }: { children: React.
           {children}
         </main>
       </div>
+      {account?.mustChangePassword && <ForcePasswordChange />}
     </div>
   );
 }

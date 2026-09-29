@@ -60,6 +60,13 @@ model User {
   updatedAt    DateTime   @updatedAt
   createdBy    String?    @db.ObjectId
 
+  // Mot de passe provisoire (1re connexion ou reinitialisation) : tant que le
+  // drapeau est leve, l'utilisateur ne peut pas utiliser l'espace — une modale
+  // non contournable impose le changement.
+  mustChangePassword Boolean  @default(false)
+  passwordChangedAt  DateTime?
+  passwordChangedBy  String?   @db.ObjectId
+
   // Pilgrim profile fields
   gender         String?
   birthDate      DateTime?
@@ -153,6 +160,7 @@ model Payment {
   method        PaymentMethod @default(CASH)
   status        PaymentStatus @default(COMPLETED)
   reference     String?       // numéro de reçu / référence
+  receiptUrl    String?       // URL du reçu uploadé (Cloudinary)
   notes         String?
   paidAt        DateTime      @default(now())
   createdAt     DateTime      @default(now())

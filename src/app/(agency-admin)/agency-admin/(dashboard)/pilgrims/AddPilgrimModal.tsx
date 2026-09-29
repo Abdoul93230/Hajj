@@ -46,6 +46,12 @@ interface AddPilgrimModalProps {
   offers: SerializedOffer[];
   onClose: () => void;
   onSaved: () => void;
+  /**
+   * Ouvre l'onglet Documents du dossier pèlerin (page détail) au lieu de
+   * rediriger vers la page globale /agency-admin/documents.
+   * Quand non fourni (liste des pèlerins), le lien classique est conservé.
+   */
+  onManageDocs?: () => void;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -55,6 +61,7 @@ export default function AddPilgrimModal({
   offers,
   onClose,
   onSaved,
+  onManageDocs,
 }: AddPilgrimModalProps) {
   const isEdit = !!pilgrim;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -63,6 +70,9 @@ export default function AddPilgrimModal({
   const [uploading,    setUploading]    = useState(false);
   const [submitting,   setSubmitting]   = useState(false);
   const [error,        setError]        = useState("");
+  // Identifiants affichés UNE fois après création (mot de passe provisoire).
+  const [createdCreds, setCreatedCreds] = useState<{ email: string; password: string } | null>(null);
+  const [copiedField,  setCopiedField]  = useState<"email" | "password" | null>(null);
 
   const currentOfferId = useMemo(
     () => pilgrim?.reservations?.[0]?.offerId ?? "",
@@ -101,14 +111,15 @@ export default function AddPilgrimModal({
     return missing;
   }, [form.phone, form.city, form.country, form.emergencyName, form.emergencyPhone]);
 
-  // Close on Escape
+  // Close on Escape — bloqué pendant l'affichage des identifiants : les perdre
+  // en fermant obligerait à réinitialiser le mot de passe.
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape" && !createdCreds) onClose();
     }
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
+  }, [onClose, createdCreds]);
 
   function handleField(field: keyof FormData, value: string | boolean) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -121,6 +132,18 @@ export default function AddPilgrimModal({
     const reader = new FileReader();
     reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
     reader.readAsDataURL(file);
+  }
+
+  async function copyField(field: "email" | "password") {
+    const value = field === "email" ? createdCreds?.email : createdCreds?.password;
+    if (!value) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch {
+      // Presse-papiers indisponible : le texte reste sélectionnable à la main.
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -229,12 +252,109 @@ export default function AddPilgrimModal({
         }
       }
 
+      // Création : affiche les identifiants UNE seule fois avant de fermer
+      // (le mot de passe provisoire n'est jamais re-obtenable ensuite — il
+      // reste le bouton « Réinitialiser » dans la liste si besoin).
+      if (!isEdit && resData.tempPassword) {
+        setCreatedCreds({
+          email: savedPilgrim?.email ?? form.email,
+          password: resData.tempPassword,
+        });
+        return;
+      }
+
       onSaved();
     } catch {
       setError("Erreur réseau. Vérifiez votre connexion.");
     } finally {
       setSubmitting(false);
     }
+  }
+
+  // ── Écran « Identifiants » — affiché UNE fois après création ────────────────
+  if (createdCreds) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-7">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+            <div>
+              <p className="font-bold text-gray-800 text-base">Pèlerin créé ✓</p>
+              <p className="text-gray-400 text-xs mt-0.5">{form.name}</p>
+            </div>
+          </div>
+
+          <p className="text-sm text-gray-500 leading-relaxed mb-4">
+            Voici les identifiants de connexion du pèlerin. Ils ne s&apos;affichent{" "}
+            <strong>qu&apos;une seule fois</strong> — transmettez-les lui maintenant :
+          </p>
+
+          <div className="space-y-3 mb-4">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                Identifiant (email)
+              </p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-sm font-semibold text-gray-800 select-all break-all">
+                  {createdCreds.email}
+                </code>
+                <button
+                  type="button"
+                  onClick={() => copyField("email")}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition flex-shrink-0 ${
+                    copiedField === "email"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-primary/10 text-primary hover:bg-primary/20"
+                  }`}
+                >
+                  {copiedField === "email" ? "Copié ✓" : "Copier"}
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                Mot de passe provisoire
+              </p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 font-mono text-sm font-bold text-gray-800 select-all break-all">
+                  {createdCreds.password}
+                </code>
+                <button
+                  type="button"
+                  onClick={() => copyField("password")}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition flex-shrink-0 ${
+                    copiedField === "password"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-primary/10 text-primary hover:bg-primary/20"
+                  }`}
+                >
+                  {copiedField === "password" ? "Copié ✓" : "Copier"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-[11px] text-amber-600 bg-amber-50 border border-amber-100 px-3 py-2 rounded-lg mb-4 leading-snug">
+            Le changement de mot de passe sera <strong>imposé</strong> au pèlerin à
+            sa première connexion sur son portail. En cas de perte, utilisez le
+            bouton « Réinitialiser le mot de passe » dans la liste.
+          </p>
+
+          <button
+            type="button"
+            onClick={onSaved}
+            className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl transition"
+          >
+            J&apos;ai transmis les identifiants — Terminer
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -539,7 +659,16 @@ export default function AddPilgrimModal({
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2.5 flex items-center gap-1.5">
                 Documents reçus
-                {isEdit && (
+                {isEdit && (onManageDocs ? (
+                  <button
+                    type="button"
+                    onClick={onManageDocs}
+                    className="text-primary underline underline-offset-2 font-normal normal-case tracking-normal"
+                    style={{ fontSize: "10px" }}
+                  >
+                    (gérer →)
+                  </button>
+                ) : (
                   <Link
                     href="/agency-admin/documents"
                     className="text-primary underline underline-offset-2 font-normal normal-case tracking-normal"
@@ -547,7 +676,7 @@ export default function AddPilgrimModal({
                   >
                     (gérer →)
                   </Link>
-                )}
+                ))}
               </p>
               <div className="space-y-2">
                 {[

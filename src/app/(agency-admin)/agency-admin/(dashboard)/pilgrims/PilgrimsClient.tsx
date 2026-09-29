@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import AddPilgrimModal from "./AddPilgrimModal";
+import ResetPasswordModal from "./ResetPasswordModal";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -83,6 +84,8 @@ export type SerializedPilgrim = {
   hasPassport: boolean;
   hasCni: boolean;
   pilgrimStatus: string;
+  /** true = mot de passe provisoire, changement imposé à la 1re connexion. */
+  mustChangePassword?: boolean;
   reservations: SerializedReservation[];
 };
 
@@ -190,6 +193,7 @@ export default function PilgrimsClient({
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [showModal, setShowModal] = useState(false);
+  const [resetTarget, setResetTarget] = useState<SerializedPilgrim | null>(null);
   const [editPilgrim, setEditPilgrim] = useState<SerializedPilgrim | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<SerializedPilgrim | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -384,6 +388,7 @@ export default function PilgrimsClient({
                     pilgrim={pilgrim}
                     onEdit={() => openEditModal(pilgrim)}
                     onDelete={() => { setDeleteTarget(pilgrim); setDeleteError(""); }}
+                    onReset={() => setResetTarget(pilgrim)}
                     onView={() => router.push(`/agency-admin/pilgrims/${pilgrim.id}`)}
                   />
                 ))}
@@ -408,6 +413,15 @@ export default function PilgrimsClient({
           offers={offers}
           onClose={closeModal}
           onSaved={onSaved}
+        />
+      )}
+
+      {/* ── Reset password (affiche le mdp provisoire une seule fois) ── */}
+      {resetTarget && (
+        <ResetPasswordModal
+          pilgrim={resetTarget}
+          onClose={() => setResetTarget(null)}
+          onDone={() => { setResetTarget(null); router.refresh(); }}
         />
       )}
 
@@ -460,11 +474,13 @@ function PilgrimRow({
   pilgrim,
   onEdit,
   onDelete,
+  onReset,
   onView,
 }: {
   pilgrim: SerializedPilgrim;
   onEdit: () => void;
   onDelete: () => void;
+  onReset: () => void;
   onView: () => void;
 }) {
   const avatarColor = getAvatarColor(pilgrim.name);
@@ -503,6 +519,14 @@ function PilgrimRow({
             <p className="text-gray-400 text-[11px] mt-0.5">
               {[genderLabel, age !== null ? `${age} ans` : null].filter(Boolean).join(" · ") || "—"}
             </p>
+            {pilgrim.mustChangePassword && (
+              <span
+                title="Mot de passe provisoire : le pèlerin devra le changer à sa prochaine connexion"
+                className="inline-block mt-1 text-[9px] font-bold uppercase tracking-wide bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded"
+              >
+                MDP provisoire
+              </span>
+            )}
           </div>
         </div>
       </td>
@@ -603,6 +627,17 @@ function PilgrimRow({
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </button>
+
+          {/* Réinitialiser le mot de passe */}
+          <button
+            onClick={onReset}
+            title="Réinitialiser le mot de passe"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-amber-500 hover:bg-amber-50 transition"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
             </svg>
           </button>
 

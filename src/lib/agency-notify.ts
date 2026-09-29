@@ -50,7 +50,7 @@ export async function notifyAgencyCreated(opts: {
     `Identifiant : ${opts.admin.email}`,
     `Mot de passe : ${opts.adminPassword}`,
     ``,
-    `Nous vous recommandons de modifier ce mot de passe après votre première connexion.`,
+    `IMPORTANT : ce mot de passe est provisoire. Vous devrez impérativement le changer à votre première connexion avant d'accéder à votre espace.`,
     ``,
     `— La plateforme Hajj & Oumra`,
   ].join("\n");
@@ -58,7 +58,7 @@ export async function notifyAgencyCreated(opts: {
   // SMS : texte sans accents composés → reste en GSM-7 (moins de segments facturés)
   const smsBody =
     `${opts.tenant.name} : votre espace agence est pret. ` +
-    `${loginUrl} - identifiant ${opts.admin.email} - mot de passe ${opts.adminPassword}`;
+    `${loginUrl} - identifiant ${opts.admin.email} - mot de passe ${opts.adminPassword} (provisoire : changement obligatoire a la premiere connexion)`;
 
   // ── Canal 1 : EMAIL (agence, sinon admin) ─────────────────────────────────
   const agencyEmail = String(opts.tenant.email ?? "").trim();

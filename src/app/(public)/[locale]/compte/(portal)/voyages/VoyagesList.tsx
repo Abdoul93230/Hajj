@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Calendar, Users, X, Check, Plane, Landmark } from "lucide-react";
 
@@ -53,12 +53,13 @@ export default function VoyagesList({ offers }: { offers: VoyageOffer[] }) {
       if (!res.ok) {
         setMsg({ ok: false, text: data.error ?? t("errorGeneric") });
       } else {
+        // Succès → message brièvement affiché, puis redirection vers l'onglet
+        // Documents du portail pour que le pèlerin dépose ses pièces.
         setMsg({ ok: true, text: t("modal.success") });
-        router.refresh();
         setTimeout(() => {
           setBooking(null);
           setNotes("");
-          setMsg(null);
+          router.push("/compte/mes-documents");
         }, 1400);
       }
     } catch {

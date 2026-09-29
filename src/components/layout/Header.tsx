@@ -9,6 +9,7 @@ import { Menu, X, ShoppingCart, Globe, ChevronDown } from "lucide-react";
 import UserMenu from "./UserMenu";
 import { spaceHomeForRole, spaceLabelForRole, isLocaleAwareSpace } from "@/lib/space";
 import { useTenantBranding } from "@/components/tenant/TenantBranding";
+import { DEFAULT_LOGO_URL } from "@/lib/tenant-theme";
 
 const locales = ["fr", "en", "ar"] as const;
 const localeNames: Record<string, string> = { fr: "FR", en: "EN", ar: "AR" };
@@ -95,7 +96,7 @@ export default function Header({
   const announcement = useTranslations("announcement")("text").trim();
   const branding = useTenantBranding();
   const brandName = branding?.tenantName ?? "Hajj et Oumra ZAM";
-  const logoSrc = branding?.logoUrl ?? "/image ZAM/logo.png";
+  const logoSrc = branding?.logoUrl ?? DEFAULT_LOGO_URL;
 
   const NAV: NavItem[] = [
     { label: tn("home"), href: "/" },

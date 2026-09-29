@@ -7,7 +7,7 @@ import { MapPin, Phone, Mail, Clock, ArrowRight, CheckCircle } from "lucide-reac
 import Image from "next/image";
 import IconWhatsApp from "@/components/ui/IconWhatsApp";
 import { useTenantBranding } from "@/components/tenant/TenantBranding";
-import type { TenantBranding } from "@/lib/tenant-theme";
+import { DEFAULT_LOGO_URL, type TenantBranding } from "@/lib/tenant-theme";
 import { contactDigits } from "@/lib/contact";
 
 function IconFacebook({ size = 16 }: { size?: number }) {
@@ -54,7 +54,7 @@ export default function Footer() {
   const [subscribed, setSubscribed] = useState(false);
   const branding = useTenantBranding();
   const brandName = branding?.tenantName ?? "Hajj et Oumra ZAM";
-  const logoSrc = branding?.logoUrl ?? "/image ZAM/logo.png";
+  const logoSrc = branding?.logoUrl ?? DEFAULT_LOGO_URL;
   const SOCIAL = buildSocials(branding);
   const accreditations = [
     { ...ACCREDITATION_FALLBACKS[0], src: branding?.partnerIataUrl || ACCREDITATION_FALLBACKS[0].src },

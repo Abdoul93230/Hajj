@@ -56,9 +56,26 @@ export default function CompteClient() {
       if (!res.ok) {
         setError(data.error ?? t("registerError"));
       } else {
-        setError("");
-        setTab("login");
-        setForm({ name: "", email: form.email, password: "", phone: "" });
+        // Compte créé → connexion automatique puis redirection tout de suite
+        // vers l'onglet Documents du portail (le pèlerin doit déposer ses
+        // pièces : passeport, photo…). L'API register ne crée pas de session,
+        // d'où ce login immédiat avec les identifiants saisis.
+        const loginRes = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: form.email, password: form.password }),
+        });
+        const loginData = await loginRes.json().catch(() => ({}) as { role?: string });
+        if (loginRes.ok && loginData.role === "PILGRIM") {
+          setForm({ name: "", email: "", password: "", phone: "" });
+          router.push("/compte/mes-documents");
+          router.refresh();
+        } else {
+          // Fallback : retour à l'onglet connexion (l'adresse email est conservée)
+          setError("");
+          setTab("login");
+          setForm({ name: "", email: form.email, password: "", phone: "" });
+        }
       }
     } finally {
       setLoading(false);

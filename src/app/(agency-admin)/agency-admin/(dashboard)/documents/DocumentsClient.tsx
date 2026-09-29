@@ -545,20 +545,69 @@ function DocCard({ doc, returnDate, onChanged }: {
   const [removing, setRemoving] = useState(false);
   const [viewer, setViewer] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [statusError, setStatusError] = useState("");
+  // Rejet avec motif : modale dédiée (le pèlerin doit voir pourquoi).
+  const [rejecting, setRejecting] = useState(false);
+  const [rejectReason, setRejectReason] = useState(doc.notes ?? "");
+  const [rejectError, setRejectError] = useState("");
 
   const isPdf   = doc.fileUrl?.toLowerCase().includes(".pdf") || doc.fileUrl?.includes("/raw/");
   const isImage = doc.fileUrl && !isPdf;
   const docTitle = doc.label ?? meta.label;
 
   async function changeStatus(status: DocStatus) {
+    // Rejet : le motif est obligatoire (le pèlerin doit voir pourquoi) → modale.
+    if (status === "REJECTED") {
+      setRejectReason(doc.notes ?? "");
+      setRejectError("");
+      setRejecting(true);
+      return;
+    }
+    setStatusError("");
     setUpdating(true);
     try {
-      await fetch(`/api/agency-admin/documents/${doc.id}`, {
+      const res = await fetch(`/api/agency-admin/documents/${doc.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setStatusError(d.error ?? "Erreur lors de la mise à jour.");
+        return;
+      }
       onChanged();
+    } catch {
+      setStatusError("Erreur réseau.");
+    } finally {
+      setUpdating(false);
+    }
+  }
+
+  /** Confirmation du rejet : PATCH avec statut + motif (notes) — cf. modale ci-dessous. */
+  async function confirmReject() {
+    const reason = rejectReason.trim();
+    if (!reason) {
+      setRejectError("Indiquez le motif : le pèlerin doit voir pourquoi le document est rejeté.");
+      return;
+    }
+    setRejectError("");
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/agency-admin/documents/${doc.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "REJECTED", notes: reason }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setRejectError(d.error ?? "Erreur lors du rejet.");
+        return;
+      }
+      setRejecting(false);
+      onChanged();
+    } catch {
+      setRejectError("Erreur réseau.");
     } finally {
       setUpdating(false);
     }
@@ -660,8 +709,14 @@ function DocCard({ doc, returnDate, onChanged }: {
           ))}
         </div>
 
+        {statusError && (
+          <p className="mt-2 text-[10px] font-semibold text-red-500">{statusError}</p>
+        )}
+
         {doc.notes && (
-          <p className="mt-2 text-[10px] text-gray-400 italic truncate">{doc.notes}</p>
+          <p className="mt-2 text-[10px] text-gray-400 italic truncate" title={doc.notes}>
+            {doc.status === "REJECTED" ? `Motif : ${doc.notes}` : doc.notes}
+          </p>
         )}
 
         {/* Actions fichier */}
@@ -722,6 +777,52 @@ function DocCard({ doc, returnDate, onChanged }: {
           }}
           onClose={() => setViewer(false)}
         />
+      )}
+
+      {/* Rejet avec motif — obligatoire : le pèlerin doit voir pourquoi */}
+      {rejecting && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) setRejecting(false); }}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <p className="font-bold text-gray-800 text-sm mb-1">Rejeter ce document ?</p>
+            <p className="text-gray-500 text-sm mb-1">{docTitle} — {meta.label}</p>
+            <p className="text-gray-400 text-xs mb-3">
+              Le motif sera affiché dans l&apos;espace du pèlerin : il pourra corriger le
+              document puis le renvoyer pour une nouvelle vérification.
+            </p>
+            <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+              Motif du rejet <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              rows={3}
+              autoFocus
+              placeholder="Ex. : photo illisible, document tronqué, date d'expiration trop courte…"
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-200 resize-none"
+            />
+            {rejectError && (
+              <p className="text-xs text-red-500 mt-1.5">{rejectError}</p>
+            )}
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => setRejecting(false)}
+                className="flex-1 py-2 px-4 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmReject}
+                disabled={updating}
+                className="flex-1 py-2 px-4 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 rounded-xl transition disabled:opacity-60"
+              >
+                {updating ? "Rejet…" : "Rejeter"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Confirmation de suppression */}

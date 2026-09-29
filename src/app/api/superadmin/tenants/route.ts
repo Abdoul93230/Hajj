@@ -86,6 +86,9 @@ export async function POST(req: Request) {
           role: "AGENCY_ADMIN",
           permissions: [],
           active: true,
+          // Mot de passe provisoire : l'admin de l'agence DOIT le changer à sa
+          // première connexion (modale bloquante dans le dashboard).
+          mustChangePassword: true,
         },
       });
 

@@ -21,6 +21,7 @@ const PAGE_TITLES: Record<string, string> = {
   "voyages":    "Planification des Voyages & Forfaits",
   "documents":  "Documents Pèlerins",
   "payments":   "Paiements",
+  "change-password": "Changer mon mot de passe",
 };
 
 function getPageTitle(pathname: string): string {

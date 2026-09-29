@@ -24,10 +24,12 @@ export default function AgencyAdminSidebar({
   user,
   tenantName,
   tenantSlug,
+  logoUrl,
 }: {
   user: { name: string; email: string; role: UserRole };
   tenantName: string;
   tenantSlug: string;
+  logoUrl?: string | null;
 }) {
   const pathname = usePathname();
   const base = "/agency-admin";
@@ -44,11 +46,23 @@ export default function AgencyAdminSidebar({
       {/* ── Logo ── */}
       <div className="px-5 py-5 border-b border-white/10 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gold-light flex items-center justify-center flex-shrink-0">
-            <span className="text-brand-deep font-black text-sm leading-none">
-              {tenantSlug.slice(0, 2).toUpperCase()}
-            </span>
-          </div>
+          {logoUrl ? (
+            // Même logo que le portail public (tenant.theme.logoUrl → défaut ZAM)
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={logoUrl}
+                alt={tenantName}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          ) : (
+            <div className="w-10 h-10 rounded-xl bg-gold-light flex items-center justify-center flex-shrink-0">
+              <span className="text-brand-deep font-black text-sm leading-none">
+                {tenantSlug.slice(0, 2).toUpperCase()}
+              </span>
+            </div>
+          )}
           <div className="min-w-0">
             <p className="text-white font-bold text-sm leading-tight truncate">{tenantName}</p>
             <p className="text-gold-light text-[9px] font-bold uppercase tracking-widest mt-0.5">
@@ -84,11 +98,36 @@ export default function AgencyAdminSidebar({
 
       {/* ── Footer ── */}
       <div className="border-t border-white/10 flex-shrink-0">
-        <div className="px-3 pt-2 pb-1 flex items-center justify-around">
-          <LogoutButton
-            className="p-2 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-all"
-            title="Se déconnecter"
-          />
+        <div className="px-3 pt-2 pb-1 space-y-1">
+          {/* Changement volontaire du mot de passe → page dédiée (la modale
+              forcée du 1re connexion reste gérée par ForcePasswordChange) */}
+          <Link
+            href={`${base}/change-password`}
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
+              isActive("/change-password")
+                ? "bg-gold-light/15 text-gold-light"
+                : "text-white/55 hover:text-white hover:bg-white/5"
+            }`}
+            title="Changer mon mot de passe"
+          >
+            <svg
+              className="w-[15px] h-[15px] flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            <span className="truncate">Changer mon mot de passe</span>
+          </Link>
+
+          <div className="flex items-center justify-around">
+            <LogoutButton
+              className="p-2 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-all"
+              title="Se déconnecter"
+            />
+          </div>
         </div>
 
         {/* Branding */}

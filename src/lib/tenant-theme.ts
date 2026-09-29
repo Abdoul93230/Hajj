@@ -17,6 +17,19 @@
 export const DEFAULT_BRAND = "#0f5132"; // vert ZAM
 export const DEFAULT_ACCENT = "#b8860b"; // or ZAM
 
+// Logo par défaut — même fichier que le portail public (Header, Footer, favicon).
+export const DEFAULT_LOGO_URL = "/image ZAM/logo.png";
+
+/**
+ * Résout l'URL du logo du tenant à partir de `Tenant.theme`, avec repli sur le
+ * logo ZAM par défaut. Source unique utilisée par le portail public ET le
+ * portail agency-admin (sidebar, reçus, badges…) pour un rendu identique.
+ */
+export function resolveLogoUrl(raw: unknown): string {
+  const t = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+  return typeof t.logoUrl === "string" && t.logoUrl.trim() ? t.logoUrl.trim() : DEFAULT_LOGO_URL;
+}
+
 const HEX_RE = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
 
 /** Normalise une couleur saisie (#abc, #AABBCC, invalide…) en #rrggbb, sinon fallback. */

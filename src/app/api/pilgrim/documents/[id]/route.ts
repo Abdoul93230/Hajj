@@ -17,7 +17,9 @@ import { syncPilgrimFlags } from "@/lib/pilgrim-sync";
 const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo (comme l'admin côté upload)
 
 // PATCH /api/pilgrim/documents/[id] — multipart : file?, label?, expiresAt?, number?
-// Le pèlerin met à jour SON document tant qu'il n'a pas été vérifié (RECEIVED).
+// Le pèlerin met à jour SON document tant qu'il n'a pas été vérifié (RECEIVED) ou
+// après un rejet (REJECTED) : corriger = renvoyer pour vérification (statut forcé
+// à RECEIVED et motif de rejet effacé).
 // — même logique que l'admin : nouvel upload Cloudinary (publicId fixe par type),
 //   ancien fichier supprimé, ancien record remplacé, statut forcé à RECEIVED.
 export async function PATCH(
@@ -40,7 +42,9 @@ export async function PATCH(
   if (isAgencyOnlyDocType(doc.type)) {
     return NextResponse.json({ error: AGENCY_ONLY_ERROR }, { status: 403 });
   }
-  if (doc.status !== "RECEIVED") {
+  // RECEIVED : déjà modifiable ; REJECTED : correction = resoumission.
+  // VALID / EXPIRED : vérifiés par l'agence, plus modifiables par le pèlerin.
+  if (doc.status !== "RECEIVED" && doc.status !== "REJECTED") {
     return NextResponse.json(
       { error: "Ce document a été vérifié par l'agence et ne peut plus être modifié." },
       { status: 403 }
@@ -101,6 +105,8 @@ export async function PATCH(
       ...(hasLabel ? { label } : {}),
       ...(hasExpiresAt ? { expiresAt: expiresAtRaw ? new Date(expiresAtRaw) : null } : {}),
       ...(hasNumber ? { number } : {}),
+      // Document rejeté corrigé → de nouveau en vérification, motif effacé.
+      ...(doc.status === "REJECTED" && { status: "RECEIVED", notes: null }),
     },
   });
 

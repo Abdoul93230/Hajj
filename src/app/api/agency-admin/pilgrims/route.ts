@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { notifyAccountCreated } from "@/lib/sms-service";
+import { generateTempPassword } from "@/lib/password";
 
 // ─── GET /api/agency-admin/pilgrims ──────────────────────────────────────────
 export async function GET() {
@@ -105,9 +106,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Un pèlerin avec cet email existe déjà" }, { status: 409 });
   }
 
-  // Hash random password
-  const randomPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-  const hashedPassword = await bcrypt.hash(randomPassword, 10);
+  // Mot de passe PROVISOIRE : fort, affiché une seule fois à l'agence dans la
+  // modale de création (jamais stocké en clair, jamais envoyé par SMS/email).
+  // Le pèlerin devra le changer à sa première connexion (drapeau ci-dessous).
+  const tempPassword = generateTempPassword();
+  const hashedPassword = await bcrypt.hash(tempPassword, 12);
 
   const pilgrim = await prisma.user.create({
     data: {
@@ -128,6 +131,7 @@ export async function POST(req: Request) {
       hasPassport: hasPassport ?? false,
       hasCni: hasCni ?? false,
       pilgrimStatus: pilgrimStatus || "PENDING",
+      mustChangePassword: true,
       createdBy: session.id,
       createdAt,
     },
@@ -151,5 +155,6 @@ export async function POST(req: Request) {
     actor: { id: session.id, name: session.name },
   });
 
-  return NextResponse.json({ pilgrim }, { status: 201 });
+  // `tempPassword` n'est renvoyé qu'une seule fois (affiché dans la modale).
+  return NextResponse.json({ pilgrim, tempPassword }, { status: 201 });
 }

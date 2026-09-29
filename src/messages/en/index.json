@@ -940,6 +940,19 @@
       "saved": "Profile updated ✓",
       "error": "Something went wrong"
     },
+    "security": {
+      "title": "Change your password",
+      "subtitle": "For your security, you must set your own password before continuing. The temporary password provided by your agency must no longer be used.",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "rule": "At least 8 characters, and different from your current password.",
+      "submit": "Save and continue",
+      "saving": "Saving...",
+      "success": "Password updated! Welcome.",
+      "errorMatch": "Passwords do not match",
+      "error": "Something went wrong. Please try again."
+    },
     "trips": {
       "title": "My trips",
       "empty": "No trip yet",
@@ -1007,6 +1020,13 @@
       "uploadedOn": "Uploaded on",
       "expires": "Expires on",
       "rejectedReason": "Rejection reason",
+      "noRejectReason": "No reason provided — please contact your agency.",
+      "rejectedBanner": "{count} rejected document(s)",
+      "rejectedGuidance": "Check the reason below, fix the document, then save to send it back to the agency.",
+      "resubmit": "Fix and send back to the agency",
+      "resubmitTitle": "Fix and resend the document",
+      "resubmitHint": "Saving will send this document back to the agency for a new review.",
+      "resubmitSaved": "Document sent again ✓ The agency will review it.",
       "expiringSoon": "Expiring soon",
       "docStatus": {
         "RECEIVED": "Under review",
@@ -1070,7 +1090,7 @@
         "cancel": "Cancel",
         "booking": "Booking...",
         "confirm": "Confirm booking",
-        "success": "Booking confirmed ✓ Find it in « My file »."
+        "success": "Booking confirmed ✓ Head to « My documents » to complete your file."
       },
       "closed": "Booking closed"
     },

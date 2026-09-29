@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { requireAgencySession } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { computePilgrimStatus } from "@/lib/computePilgrimStatus";
+import { extractCloudinaryPublicId, deleteCloudinaryFile } from "@/lib/cloudinary";
+
 
 // ─── Helper : recalcule et persiste le pilgrimStatus après tout changement ────
 async function syncPilgrimStatus(pilgrimId: string, tenantId: string) {
@@ -49,17 +51,30 @@ export async function PATCH(
   if (!existing) return NextResponse.json({ error: "Paiement introuvable" }, { status: 404 });
 
   const body = await req.json();
-  const { amount, type, method, reference, notes, paidAt } = body;
+  const {
+    amount,
+    type,
+    method,
+    reference,
+    checkNumber,
+    transferRef,
+    receiptUrl,
+    notes,
+    paidAt,
+  } = body;
 
   const payment = await db.payment.update({
     where: { id },
     data: {
-      ...(amount    !== undefined && { amount:    parseFloat(String(amount)) }),
-      ...(type      !== undefined && { type }),
-      ...(method    !== undefined && { method }),
-      ...(reference !== undefined && { reference: reference?.trim() || null }),
-      ...(notes     !== undefined && { notes:     notes?.trim()     || null }),
-      ...(paidAt    !== undefined && { paidAt:    new Date(paidAt)  }),
+      ...(amount      !== undefined && { amount:      parseFloat(String(amount)) }),
+      ...(type        !== undefined && { type }),
+      ...(method      !== undefined && { method }),
+      ...(reference   !== undefined && { reference:   reference?.trim()   || null }),
+      ...(checkNumber !== undefined && { checkNumber: checkNumber?.trim() || null }),
+      ...(transferRef !== undefined && { transferRef: transferRef?.trim() || null }),
+      ...(receiptUrl  !== undefined && { receiptUrl:  receiptUrl?.trim()  || null }),
+      ...(notes       !== undefined && { notes:       notes?.trim()       || null }),
+      ...(paidAt      !== undefined && { paidAt:      new Date(paidAt) }),
     },
     include: {
       reservation: { include: { offer: true } },
@@ -86,6 +101,11 @@ export async function DELETE(
   const db = prisma as any;
   const existing = await db.payment.findFirst({ where: { id, tenantId } });
   if (!existing) return NextResponse.json({ error: "Paiement introuvable" }, { status: 404 });
+
+  if (existing.receiptUrl) {
+    const publicId = extractCloudinaryPublicId(existing.receiptUrl);
+    if (publicId) await deleteCloudinaryFile(publicId).catch(() => {});
+  }
 
   await db.payment.delete({ where: { id } });
 

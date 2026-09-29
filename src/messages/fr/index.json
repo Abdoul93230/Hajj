@@ -940,6 +940,19 @@
       "saved": "Profil mis à jour ✓",
       "error": "Une erreur est survenue"
     },
+    "security": {
+      "title": "Changez votre mot de passe",
+      "subtitle": "Pour votre sécurité, vous devez définir votre propre mot de passe avant de poursuivre. Le mot de passe provisoire communiqué par votre agence ne doit plus être utilisé.",
+      "current": "Mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe",
+      "rule": "8 caractères minimum, et différent du mot de passe actuel.",
+      "submit": "Enregistrer et continuer",
+      "saving": "Enregistrement...",
+      "success": "Mot de passe mis à jour ! Bienvenue.",
+      "errorMatch": "Les mots de passe ne correspondent pas",
+      "error": "Une erreur est survenue. Réessayez."
+    },
     "trips": {
       "title": "Mes voyages",
       "empty": "Aucun voyage pour le moment",
@@ -1007,6 +1020,13 @@
       "uploadedOn": "Envoyé le",
       "expires": "Expire le",
       "rejectedReason": "Motif du rejet",
+      "noRejectReason": "Motif non renseigné — contactez votre agence.",
+      "rejectedBanner": "{count} document(s) rejeté(s)",
+      "rejectedGuidance": "Consultez le motif ci-dessous, corrigez le document puis enregistrez pour le renvoyer à l'agence.",
+      "resubmit": "Corriger et renvoyer à l'agence",
+      "resubmitTitle": "Corriger et renvoyer le document",
+      "resubmitHint": "Enregistrer renverra ce document à l'agence pour une nouvelle vérification.",
+      "resubmitSaved": "Document renvoyé ✓ Il sera revérifié par l'agence.",
       "expiringSoon": "Expire bientôt",
       "docStatus": {
         "RECEIVED": "En vérification",
@@ -1070,7 +1090,7 @@
         "cancel": "Annuler",
         "booking": "Réservation...",
         "confirm": "Confirmer la réservation",
-        "success": "Réservation confirmée ✓ Retrouvez-la dans « Mon dossier »."
+        "success": "Réservation confirmée ✓ Direction « Mes documents » pour compléter votre dossier."
       },
       "closed": "Inscriptions fermées"
     },

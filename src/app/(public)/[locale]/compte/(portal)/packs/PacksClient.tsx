@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Plane, Calendar, Users, X, Check, Landmark, MoonStar } from "lucide-react";
 
@@ -67,12 +67,13 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
       if (!res.ok) {
         setMsg({ ok: false, text: data.error ?? t("errorGeneric") });
       } else {
-        setMsg({ ok: true, text: t("modal.success") });
-        router.refresh();
+        // Succès → message brièvement affiché, puis redirection vers l'onglet
+        // Documents du portail pour que le pèlerin dépose ses pièces.
+        setMsg({ ok: true, text: tv("modal.success") });
         setTimeout(() => {
           setBooking(null);
           setNotes("");
-          setMsg(null);
+          router.push("/compte/mes-documents");
         }, 1400);
       }
     } catch {
@@ -162,7 +163,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                 <div className="grid grid-cols-2 gap-1.5 mt-3">
                   {CATEGORIES.map((cat) => (
                     <div key={cat} className="rounded-lg bg-gray-50 px-2.5 py-1.5 flex items-center justify-between">
-                      <span className="text-[10px] font-semibold text-gray-500">{t(`category.${cat}`)}</span>
+                      <span className="text-[10px] font-semibold text-gray-500">{tv(`category.${cat}`)}</span>
                       <span className="text-xs font-bold text-gray-800">
                         {fmtMoney(priceOf(o, cat), o.currency)}
                       </span>
@@ -228,7 +229,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">{t("modal.title")}</h2>
+                <h2 className="text-lg font-bold text-gray-900">{tv("modal.title")}</h2>
                 <p className="text-sm text-gray-500">{booking.titleFr}</p>
               </div>
               <button onClick={() => setBooking(null)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400">
@@ -248,7 +249,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
               </div>
             )}
 
-            <p className="text-xs font-semibold text-gray-600 mt-5 mb-2">{t("modal.category")}</p>
+            <p className="text-xs font-semibold text-gray-600 mt-5 mb-2">{tv("modal.category")}</p>
             <div className="grid grid-cols-2 gap-2">
               {CATEGORIES.map((cat) => (
                 <button
@@ -261,7 +262,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
-                  <p className="text-xs font-semibold text-gray-700">{t(`category.${cat}`)}</p>
+                  <p className="text-xs font-semibold text-gray-700">{tv(`category.${cat}`)}</p>
                   <p className="text-sm font-bold text-primary">
                     {fmtMoney(priceOf(booking, cat), booking.currency)}
                   </p>
@@ -270,7 +271,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
             </div>
 
             <div className="mt-4">
-              <label className="block text-xs font-medium text-gray-600 mb-1">{t("modal.notes")}</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{tv("modal.notes")}</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -285,7 +286,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                 onClick={() => setBooking(null)}
                 className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition"
               >
-                {t("modal.cancel")}
+                {tv("modal.cancel")}
               </button>
               <button
                 type="button"
@@ -293,7 +294,7 @@ export default function PacksClient({ offers }: { offers: PackOffer[] }) {
                 disabled={loading}
                 className="flex-[2] bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 text-sm"
               >
-                {loading ? t("modal.booking") : t("modal.confirm")}
+                {loading ? tv("modal.booking") : tv("modal.confirm")}
               </button>
             </div>
           </div>

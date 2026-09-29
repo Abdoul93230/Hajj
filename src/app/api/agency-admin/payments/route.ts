@@ -103,7 +103,19 @@ export async function POST(req: Request) {
   const tenantId = session.tenantId;
 
   const body = await req.json();
-  const { reservationId, pilgrimId, amount, type, method, reference, notes, paidAt } = body;
+  const {
+    reservationId,
+    pilgrimId,
+    amount,
+    type,
+    method,
+    reference,
+    checkNumber,
+    transferRef,
+    receiptUrl,
+    notes,
+    paidAt,
+  } = body;
 
   if (!reservationId)         return NextResponse.json({ error: "reservationId requis" },    { status: 400 });
   if (!amount || amount <= 0) return NextResponse.json({ error: "Montant invalide" },         { status: 400 });
@@ -123,15 +135,18 @@ export async function POST(req: Request) {
     data: {
       tenantId,
       reservationId,
-      pilgrimId:  resolvedPilgrimId,
-      amount:     parseFloat(String(amount)),
+      pilgrimId:   resolvedPilgrimId,
+      amount:      parseFloat(String(amount)),
       type,
-      method:     method    || "CASH",
-      status:     "COMPLETED",
-      reference:  finalReference,
-      notes:      notes?.trim()     || null,
-      paidAt:     paidAt ? new Date(paidAt) : new Date(),
-      createdBy:  session.id,
+      method:      method || "CASH",
+      status:      "COMPLETED",
+      reference:   finalReference,
+      checkNumber: checkNumber?.trim() || null,
+      transferRef: transferRef?.trim() || null,
+      receiptUrl:  receiptUrl?.trim()  || null,
+      notes:       notes?.trim()       || null,
+      paidAt:      paidAt ? new Date(paidAt) : new Date(),
+      createdBy:   session.id,
     },
     include: {
       reservation: { include: { offer: true } },

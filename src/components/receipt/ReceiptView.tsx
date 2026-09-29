@@ -1,5 +1,7 @@
 "use client";
 
+import { resolveLogoUrl } from "@/lib/tenant-theme";
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type PaymentData = {
@@ -9,6 +11,9 @@ type PaymentData = {
   method: string;
   status: string;
   reference: string | null;
+  checkNumber?: string | null;
+  transferRef?: string | null;
+  receiptUrl?: string | null;
   notes: string | null;
   paidAt: string;
   reservation: {
@@ -70,6 +75,20 @@ function recNum(id: string, ref: string | null) {
   return ref ?? "N°" + id.slice(-8).toUpperCase();
 }
 
+function HR() {
+  return <div style={{ borderTop: "1px solid #000", margin: "8px 0" }} />;
+}
+
+function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline",
+      padding: "2px 0", fontSize: 11 }}>
+      <span style={{ color: "#555" }}>{label}</span>
+      <span style={{ fontWeight: bold ? 700 : 500, textAlign: "right" }}>{value}</span>
+    </div>
+  );
+}
+
 // ─── Single receipt block ─────────────────────────────────────────────────────
 
 function Receipt({ payment, tenant, totalAmount, paidBefore, totalPaid, remaining }: Props) {
@@ -81,20 +100,8 @@ function Receipt({ payment, tenant, totalAmount, paidBefore, totalPaid, remainin
   const isSolde       = remaining === 0 && totalPaid > 0;
   const remainBefore  = Math.max(0, totalAmount - paidBefore);
 
-  // Logo from theme JSON if present
-  const logoUrl  = (tenant.theme as Record<string, unknown> | null)?.logoUrl as string | undefined;
-
-  const HR = () => (
-    <div style={{ borderTop: "1px solid #000", margin: "8px 0" }} />
-  );
-
-  const Row = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline",
-      padding: "2px 0", fontSize: 11 }}>
-      <span style={{ color: "#555" }}>{label}</span>
-      <span style={{ fontWeight: bold ? 700 : 500, textAlign: "right" }}>{value}</span>
-    </div>
-  );
+  // Logo de marque — même résolution que le portail public (theme → défaut ZAM)
+  const logoUrl  = resolveLogoUrl(tenant.theme);
 
   return (
     <div className="receipt-block" style={{
@@ -173,7 +180,19 @@ function Receipt({ payment, tenant, totalAmount, paidBefore, totalPaid, remainin
         </div>
         <Row label="Type"             value={TYPE_LABEL[payment.type] ?? payment.type} />
         <Row label="Mode de paiement" value={METHOD_LABEL[payment.method] ?? payment.method} />
-        {payment.reference && <Row label="Référence" value={payment.reference} bold />}
+        {payment.method === "CHECK" && payment.checkNumber && (
+          <Row label="N° de Chèque" value={payment.checkNumber} bold />
+        )}
+        {payment.method === "BANK_TRANSFER" && payment.transferRef && (
+          <Row label="Réf. / Bordereau" value={payment.transferRef} bold />
+        )}
+        {payment.reference && <Row label="N° de Reçu" value={payment.reference} bold />}
+        {payment.receiptUrl && (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "2px 0", fontSize: 10 }}>
+            <span style={{ color: "#555" }}>Justificatif</span>
+            <span style={{ color: "#2563eb", fontWeight: 600 }}>Pièce jointe archivée</span>
+          </div>
+        )}
       </div>
 
       <HR />

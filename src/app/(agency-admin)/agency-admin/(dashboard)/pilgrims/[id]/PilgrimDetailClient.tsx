@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import AddPilgrimModal from "../AddPilgrimModal";
+import ResetPasswordModal from "../ResetPasswordModal";
 import FinancesClient, { type SerializedPayment, type SimplePilgrim } from "../../payments/FinancesClient";
 import DocumentsClient, { type PilgrimRow } from "../../documents/DocumentsClient";
 import type { SerializedPilgrim, SerializedOffer, SerializedReservation } from "../PilgrimsClient";
@@ -91,6 +92,7 @@ export default function PilgrimDetailClient({
 }: Props) {
   const router        = useRouter();
   const [showEdit, setShowEdit] = useState(false);
+  const [showReset, setShowReset] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
   const [visaUploading, setVisaUploading] = useState(false);
   const [tab, setTab] = useState<Tab>(initialTab);
@@ -176,6 +178,15 @@ export default function PilgrimDetailClient({
             <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
           Modifier le dossier
+        </button>
+
+        {/* Réinitialiser le mot de passe */}
+        <button onClick={() => setShowReset(true)}
+          className="flex items-center gap-2 text-amber-600 border border-amber-200 bg-amber-50 hover:bg-amber-100 text-sm font-semibold px-4 py-2 rounded-xl shadow-sm transition active:scale-95">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+          </svg>
+          Réinitialiser le mot de passe
         </button>
       </div>
 
@@ -509,6 +520,15 @@ export default function PilgrimDetailClient({
                 value={pilgrim.active ? "Actif" : "Désactivé"}
                 tone={pilgrim.active ? "success" : "danger"}
               />
+              <InfoRow
+                label="Mot de passe"
+                value={
+                  pilgrim.mustChangePassword
+                    ? "Provisoire — changement imposé"
+                    : "Personnalisé"
+                }
+                tone={pilgrim.mustChangePassword ? "danger" : "success"}
+              />
               <InfoRow label="Créé le"  value={fmtDate(pilgrim.createdAt)} />
               <InfoRow label="Modifié"  value={fmtDate(pilgrim.updatedAt)} />
               <InfoRow label="Connexion" value={fmtDate(pilgrim.lastLoginAt)} empty="Jamais connecté" />
@@ -547,6 +567,16 @@ export default function PilgrimDetailClient({
           offers={offers}
           onClose={() => setShowEdit(false)}
           onSaved={() => { setShowEdit(false); router.refresh(); }}
+          onManageDocs={() => { setShowEdit(false); openTab("documents"); }}
+        />
+      )}
+
+      {/* Reset password modal */}
+      {showReset && (
+        <ResetPasswordModal
+          pilgrim={{ id: pilgrim.id, name: pilgrim.name }}
+          onClose={() => setShowReset(false)}
+          onDone={() => { setShowReset(false); router.refresh(); }}
         />
       )}
     </div>

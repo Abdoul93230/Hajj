@@ -28,7 +28,6 @@ type OfferData = {
   currency:      string;
   departureDate: string | null;
   returnDate:    string | null;
-  category:      string;
 };
 
 type AgencyData = {
@@ -72,10 +71,6 @@ const STATUS_FR: Record<string, string> = {
 const OFFER_TYPE_FR: Record<string, string> = {
   HAJJ: "Hajj", OMRA: "Oumra", OMRA_RAMADAN: "Oumra Ramadan",
   COMBINED: "Hajj + Oumra", OTHER: "Autre",
-};
-
-const CAT_FR: Record<string, string> = {
-  ADULT: "Adulte", CHILD: "Enfant", BABY: "Bébé", COUPLE: "Couple",
 };
 
 function fmtD(iso: string | null | undefined) {
@@ -258,13 +253,19 @@ function Badge({ pilgrim, offer, agency, passport, logoUrl, qrDataUrl }: Props) 
           <>
             <Sep />
             <SectionTitle t="Voyage" />
-            <div style={{ fontSize: "2.8mm", fontWeight: 900, lineHeight: 1.2, marginBottom: "1mm" }}>
-              {offer.titleFr}
+            <div style={{ display: "flex", alignItems: "center", gap: "2mm", flexWrap: "wrap", marginBottom: "1.2mm" }}>
+              <div style={{ fontSize: "2.8mm", fontWeight: 900, lineHeight: 1.2 }}>
+                {offer.titleFr}
+              </div>
+              <span style={{
+                fontSize: "1.9mm", fontWeight: 800, letterSpacing: "0.2mm",
+                background: "#111", color: "#fff",
+                padding: "0.4mm 2.2mm", borderRadius: "3mm",
+                whiteSpace: "nowrap",
+              }}>
+                {OFFER_TYPE_FR[offer.type] ?? offer.type}
+              </span>
             </div>
-            <Row2>
-              <Cell label="Type"      value={OFFER_TYPE_FR[offer.type] ?? offer.type} />
-              <Cell label="Catégorie" value={CAT_FR[offer.category] ?? offer.category} />
-            </Row2>
             <Row2>
               <Cell label="Départ" value={fmtDLong(offer.departureDate)} />
               <Cell label="Retour" value={fmtDLong(offer.returnDate)} />

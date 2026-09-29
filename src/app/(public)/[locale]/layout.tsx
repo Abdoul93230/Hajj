@@ -12,7 +12,7 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { getTenantBySlug } from "@/lib/tenant-data";
-import { applyTenantOverrides, readTenantBranding, themeStyleTag } from "@/lib/tenant-theme";
+import { applyTenantOverrides, readTenantBranding, themeStyleTag, DEFAULT_LOGO_URL } from "@/lib/tenant-theme";
 import { TenantBrandingProvider } from "@/components/tenant/TenantBranding";
 import "../../globals.css";
 
@@ -41,7 +41,7 @@ export async function generateMetadata({
     : null;
   const name = tenant?.name ?? FALLBACK_NAME;
   const branding = readTenantBranding(tenant?.theme, locale, name);
-  const logoUrl = branding.logoUrl ?? "/image ZAM/logo.png";
+  const logoUrl = branding.logoUrl ?? DEFAULT_LOGO_URL;
   const description = branding.metaDescription ?? FALLBACK_DESCRIPTION;
 
   return {

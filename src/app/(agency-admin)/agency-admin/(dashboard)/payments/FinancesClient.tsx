@@ -19,6 +19,9 @@ export type SerializedPayment = {
   method: PMethod;
   status: PStatus;
   reference: string | null;
+  checkNumber?: string | null;
+  transferRef?: string | null;
+  receiptUrl?: string | null;
   notes: string | null;
   paidAt: string;
   reservation: {
@@ -486,31 +489,28 @@ function PilgrimFinancePanel({
 }) {
   const { pilgrim, reservation, payments, paid, total, remaining, pct, payStatus, currency } = summary;
 
-  const [showModal,        setShowModal]        = useState(false);
+  const shouldOpenAction = Boolean(
+    initialAction && reservation && (
+      (initialAction === "payment" && payStatus !== "paid") ||
+      (initialAction === "refund" && payments.length > 0)
+    )
+  );
+
+  const [showModal,        setShowModal]        = useState(shouldOpenAction);
   const [editPayment,      setEditPayment]      = useState<SerializedPayment | null>(null);
-  const [modalDefaultType, setModalDefaultType] = useState<PType>("DEPOSIT");
+  const [modalDefaultType, setModalDefaultType] = useState<PType>(
+    initialAction === "refund" ? "REFUND" : "DEPOSIT"
+  );
   const [presetAmount,     setPresetAmount]     = useState<number | null>(null);
   const [deleteTarget,     setDeleteTarget]     = useState<SerializedPayment | null>(null);
   const [deleting,         setDeleting]         = useState(false);
   const [typeFilter,       setTypeFilter]       = useState("ALL");
 
-  // Auto-open modal when navigating from another page with an action param
   useEffect(() => {
-    if (!initialAction || !reservation) return;
-    if (initialAction === "payment" && payStatus !== "paid") {
-      setEditPayment(null);
-      setPresetAmount(null);
-      setModalDefaultType("DEPOSIT");
-      setShowModal(true);
-    } else if (initialAction === "refund" && payments.length > 0) {
-      setEditPayment(null);
-      setPresetAmount(null);
-      setModalDefaultType("REFUND");
-      setShowModal(true);
+    if (initialAction) {
+      onActionConsumed?.();
     }
-    onActionConsumed?.();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initialAction, onActionConsumed]);
 
   function openPayment(preset: number | null = null) {
     setEditPayment(null);
@@ -853,8 +853,27 @@ function PaymentItem({ payment: p, currency, onEdit, onDelete }: {
         <p className="text-[11px] text-gray-400 mt-0.5">
           {fmtDate(p.paidAt)}
           {" · "}{METHOD_LABEL[p.method]}
+          {p.method === "CHECK" && p.checkNumber && (
+            <span className="text-gray-600 font-mono"> · Chèque n°{p.checkNumber}</span>
+          )}
+          {p.method === "BANK_TRANSFER" && p.transferRef && (
+            <span className="text-gray-600 font-mono"> · Réf: {p.transferRef}</span>
+          )}
           {p.reference && <span className="font-mono"> · {p.reference}</span>}
         </p>
+        {p.receiptUrl && (
+          <a
+            href={p.receiptUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-[11px] text-blue-600 hover:text-blue-800 font-medium mt-1 bg-blue-50/80 hover:bg-blue-100 px-2 py-0.5 rounded transition"
+          >
+            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+            </svg>
+            Voir le justificatif joint
+          </a>
+        )}
         {p.notes && <p className="text-[11px] text-gray-400 italic mt-0.5">{p.notes}</p>}
       </div>
       <div className="flex items-center gap-1 flex-shrink-0">
@@ -908,9 +927,13 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
   );
   const [type,      setType]      = useState<PType>(payment?.type ?? defaultType);
   const [method,    setMethod]    = useState<PMethod>(payment?.method ?? "CASH");
-  const [status,    setStatus]    = useState<PStatus>(payment?.status ?? "COMPLETED");
   const [reference] = useState(payment?.reference ?? "");
   const [notes,     setNotes]     = useState(payment?.notes ?? "");
+  const [checkNumber, setCheckNumber] = useState(payment?.checkNumber ?? "");
+  const [transferRef, setTransferRef] = useState(payment?.transferRef ?? "");
+  const [receiptUrl,  setReceiptUrl]  = useState(payment?.receiptUrl ?? "");
+  const [uploadingReceipt, setUploadingReceipt] = useState(false);
+
   const [paidAt,    setPaidAt]    = useState(
     payment ? new Date(payment.paidAt).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
   );
@@ -918,6 +941,31 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
   const [err,    setErr]    = useState("");
 
   const currency = reservation.offer.currency;
+
+  async function handleFileUpload(file: File) {
+    setErr("");
+    setUploadingReceipt(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      if (receiptUrl) fd.append("previousUrl", receiptUrl);
+
+      const res = await fetch("/api/agency-admin/payments/upload-receipt", {
+        method: "POST",
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErr(data.error || "Erreur upload reçu");
+        return;
+      }
+      setReceiptUrl(data.url);
+    } catch {
+      setErr("Erreur de connexion lors de l'upload");
+    } finally {
+      setUploadingReceipt(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -930,8 +978,11 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
         reservationId: reservation.id,
         pilgrimId:     pilgrim.id,
         amount: amt, type, method, status: "COMPLETED",
-        reference: reference || null,
-        notes:     notes     || null,
+        reference:   reference   || null,
+        checkNumber: method === "CHECK" ? (checkNumber.trim() || null) : null,
+        transferRef: method === "BANK_TRANSFER" ? (transferRef.trim() || null) : null,
+        receiptUrl:  receiptUrl  || null,
+        notes:       notes       || null,
         paidAt,
       };
       const url    = isEdit ? `/api/agency-admin/payments/${payment!.id}` : "/api/agency-admin/payments";
@@ -1048,6 +1099,94 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
               ))}
             </div>
           </div>
+          {/* Références spécifiques selon le mode de règlement */}
+          {method === "CHECK" && (
+            <div className="bg-amber-50/60 border border-amber-200/80 rounded-xl p-3 space-y-2">
+              <label className="block text-xs font-bold text-amber-900">
+                Numéro de chèque <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={checkNumber}
+                onChange={(e) => setCheckNumber(e.target.value)}
+                placeholder="Ex : CHQ-984321 / 0012345"
+                className="w-full px-3 py-2 text-sm bg-white border border-amber-200 rounded-xl font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+              />
+              <p className="text-[11px] text-amber-700">Ce numéro apparaîtra directement sur le reçu imprimable.</p>
+            </div>
+          )}
+
+          {method === "BANK_TRANSFER" && (
+            <div className="bg-blue-50/60 border border-blue-200/80 rounded-xl p-3 space-y-2">
+              <label className="block text-xs font-bold text-blue-900">
+                Détails du virement / N° Bordereau <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={transferRef}
+                onChange={(e) => setTransferRef(e.target.value)}
+                placeholder="Ex : VIR-BNDA-2026-89741 ou Réf bordereau"
+                className="w-full px-3 py-2 text-sm bg-white border border-blue-200 rounded-xl font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              />
+              <p className="text-[11px] text-blue-700">Identifiant bancaire ou référence du bordereau pour traçabilité.</p>
+            </div>
+          )}
+
+          {/* Upload du reçu / bordereau (optionnel ou fortement recommandé pour virement/chèque) */}
+          <div className="border border-dashed border-gray-300 rounded-xl p-3 bg-gray-50/50">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-gray-700 flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                </svg>
+                Bordereau / Reçu scanné (justificatif)
+              </label>
+              <span className="text-[10px] text-gray-400">PDF, JPG, PNG &lt; 8Mo</span>
+            </div>
+
+            {receiptUrl ? (
+              <div className="flex items-center justify-between bg-white border border-green-200 rounded-lg p-2 text-xs">
+                <a
+                  href={receiptUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-700 font-semibold hover:underline truncate max-w-[240px] flex items-center gap-1.5"
+                >
+                  <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Justificatif enregistré (cliquer pour voir)
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setReceiptUrl("")}
+                  className="text-red-500 hover:text-red-700 text-[11px] font-bold px-1.5 py-0.5 rounded hover:bg-red-50"
+                  title="Supprimer la pièce jointe"
+                >
+                  Retirer
+                </button>
+              </div>
+            ) : (
+              <div>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,application/pdf"
+                  disabled={uploadingReceipt}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleFileUpload(f);
+                  }}
+                  className="w-full text-xs text-gray-500 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+                />
+                {uploadingReceipt && (
+                  <p className="text-[11px] text-primary font-medium mt-1 animate-pulse">
+                    Téléchargement du justificatif en cours…
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
 
           {/* Date + référence (auto-générée par le système) */}
           <div className="grid grid-cols-2 gap-3">

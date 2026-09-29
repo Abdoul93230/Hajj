@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { Upload, Trash2, Pencil, X, Download, Lock } from "lucide-react";
+import { Upload, Trash2, Pencil, X, Download, Lock, AlertTriangle } from "lucide-react";
 import DocumentViewer from "@/components/ui/DocumentViewer";
 import { isAgencyOnlyDocType, checkPassportValidity, requiredPassportExpiry } from "@/lib/documents";
 
@@ -80,6 +80,9 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
   const availableTypes = TYPES.filter(
     (tp) => !docs.some((d) => d.type === tp && d.status !== "REJECTED")
   );
+
+  // Documents rejetés : bannière de rappel + parcours de resoumission
+  const rejectedCount = docs.filter((d) => d.status === "REJECTED").length;
 
   // ── Règle passeport : valide au moins 6 mois après le retour du voyage ─────
   const tripDates     = { returnDate };
@@ -201,7 +204,10 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
             : data.error ?? t("errorGeneric"),
         });
       } else {
-        setMsg({ ok: true, text: t("saved") });
+        setMsg({
+          ok: true,
+          text: editing.status === "REJECTED" ? t("resubmitSaved") : t("saved"),
+        });
         closeEdit();
         router.refresh();
       }
@@ -214,6 +220,23 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
 
   return (
     <div className="space-y-6">
+      {/* ── Documents rejetés : rappel + guidance de resoumission ── */}
+      {rejectedCount > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4 flex items-start gap-3">
+          <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <AlertTriangle size={16} className="text-red-500" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-red-600">
+              {t("rejectedBanner", { count: rejectedCount })}
+            </p>
+            <p className="text-xs text-red-500 mt-0.5 leading-snug">
+              {t("rejectedGuidance")}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ── Upload ── */}
       <form
         onSubmit={handleUpload}
@@ -415,9 +438,19 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
                         ) : (
                           <button
                             onClick={() => openEdit(doc)}
-                            disabled={doc.status !== "RECEIVED"}
-                            title={doc.status !== "RECEIVED" ? t("cannotDelete") : t("edit")}
-                            className="w-8 h-8 rounded-lg flex items-center justify-center text-primary hover:bg-primary/10 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                            disabled={doc.status !== "RECEIVED" && doc.status !== "REJECTED"}
+                            title={
+                              doc.status === "REJECTED"
+                                ? t("resubmit")
+                                : doc.status !== "RECEIVED"
+                                  ? t("cannotDelete")
+                                  : t("edit")
+                            }
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed ${
+                              doc.status === "REJECTED"
+                                ? "text-red-500 hover:bg-red-50"
+                                : "text-primary hover:bg-primary/10"
+                            }`}
                           >
                             <Pencil size={15} />
                           </button>
@@ -467,10 +500,15 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
                         {t("passportRejected", { date: requiredLabel ?? "" })}
                       </p>
                     )}
-                    {doc.status === "REJECTED" && doc.notes && (
-                      <p className="text-xs text-red-500 mt-1.5">
-                        <span className="font-semibold">{t("rejectedReason")} :</span> {doc.notes}
-                      </p>
+                    {doc.status === "REJECTED" && (
+                      <div className="mt-1.5 rounded-lg border border-red-100 bg-red-50 px-2.5 py-2">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-red-500">
+                          {t("rejectedReason")}
+                        </p>
+                        <p className="text-xs text-red-500 mt-0.5 leading-snug">
+                          {doc.notes || t("noRejectReason")}
+                        </p>
+                      </div>
                     )}
                     {isAgencyOnlyDocType(doc.type) && (
                       <p className="text-[10px] text-gray-400 mt-1.5 flex items-center gap-1">
@@ -495,7 +533,9 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[92vh] flex flex-col">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
               <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
-                <Pencil size={15} /> {t("editTitle")} — {t(editing.type)}
+                <Pencil size={15} />{" "}
+                {editing.status === "REJECTED" ? t("resubmitTitle") : t("editTitle")} —{" "}
+                {t(editing.type)}
               </h3>
               <button
                 onClick={closeEdit}
@@ -506,6 +546,17 @@ export default function DocumentsPortalClient({ docs, returnDate }: {
             </div>
 
             <form onSubmit={handleSaveEdit} className="p-6 space-y-4 overflow-y-auto">
+              {/* Document rejeté : motif + rappel du processus de resoumission */}
+              {editing.status === "REJECTED" && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5">
+                  <p className="text-xs font-semibold text-red-600">
+                    {t("rejectedReason")} : {editing.notes || t("noRejectReason")}
+                  </p>
+                  <p className="text-xs text-red-500 mt-1 leading-snug">
+                    {t("resubmitHint")}
+                  </p>
+                </div>
+              )}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">{t("number")}</label>
                 <input

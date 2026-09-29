@@ -3,7 +3,7 @@ import QRCode from "qrcode";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { isAgencyMember } from "@/lib/permissions";
-import { themeStyleTag } from "@/lib/tenant-theme";
+import { resolveLogoUrl, themeStyleTag } from "@/lib/tenant-theme";
 import BadgeView from "./BadgeView";
 
 export default async function BadgePage({
@@ -50,8 +50,8 @@ export default async function BadgePage({
     color: { dark: "#000000", light: "#ffffff" },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const logoUrl = (tenant?.theme as any)?.logoUrl as string | undefined;
+  // Même résolution de logo que le portail public (theme → défaut ZAM)
+  const logoUrl = resolveLogoUrl(tenant?.theme);
 
   const data = {
     pilgrim: {
@@ -78,7 +78,6 @@ export default async function BadgePage({
       currency:      res.offer.currency,
       departureDate: res.offer.departureDate?.toISOString() ?? null,
       returnDate:    res.offer.returnDate?.toISOString()    ?? null,
-      category:      res.category,
     } : null,
     agency: {
       name:    tenant?.name    ?? "Agence",
