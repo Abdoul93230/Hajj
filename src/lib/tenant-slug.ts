@@ -13,8 +13,12 @@
 //   • sous-domaine « dashboard.<slug>.<domaine> »  → espace agence, tenant <slug>
 //   • sous-domaine « <slug>.<domaine> »            → portail public, tenant <slug>
 //   • « admin.* » / « superadmin.* »               → plateforme (tenant null)
-//   • sinon (localhost, 127.*, single-domain)      → DEV_DEFAULT_TENANT, puis
-//     cookie de login ; jamais de valeur en dur.
+//   • domaines racine de la plateforme (PLATFORM_ROOT_DOMAINS, ex. hajj-e.com)
+//     → espace « platform » : la LANDING de la plateforme, jamais le portail
+//     d'une agence ;
+//   • sinon (localhost, 127.*, domaine nu inconnu, single-domain) → espace public
+//     avec DEV_DEFAULT_TENANT s'il est défini, sinon la landing ;
+//     jamais de valeur en dur.
 //
 // IMPORTANT : DEV_DEFAULT_TENANT, quand il est défini, fait FOI sur les
 // déploiements single-domain. En dev il désigne l'agence courante : changer la
@@ -27,7 +31,15 @@
 // inscriptions/connexions dans la mauvaise agence. On renvoie désormais null :
 // chacun décide (404 « Agence introuvable », recherche globale héritée, …).
 
-export type Space = "superadmin" | "agency-admin" | "public";
+export type Space = "superadmin" | "agency-admin" | "public" | "platform";
+
+/**
+ * Bascule de DÉVELOPPEMENT : cookie « zam_dev_mode=platform|tenant ».
+ * Le middleware ne la lit QUE hors production (elle sert à basculer entre la
+ * landing plateforme et le portail d'agence sur un même host type localhost).
+ * En production, seul le host décide — voir platformRootDomains().
+ */
+export type DevMode = "platform" | "tenant";
 
 /** DEV_DEFAULT_TENANT si renseigné (trim), sinon null. */
 export function devDefaultTenant(): string | null {
@@ -53,18 +65,77 @@ export function subdomainRoutingEnabled(): boolean {
 }
 
 /**
+ * Domaines RACINE de la plateforme — ceux qui affichent la LANDING (vitrine de
+ * la plateforme) et jamais le portail d'une agence :
+ *
+ *   PLATFORM_ROOT_DOMAINS="hajj-e.com,www.hajj-e.com"
+ *
+ * Repli : le host de `NEXT_PUBLIC_APP_URL` (racine + www) si la variable est
+ * absente. `localhost` / IP ne sont JAMAIS des domaines plateforme : en dev la
+ * bascule se fait par le cookie « zam_dev_mode » (voir DevMode).
+ */
+export function platformRootDomains(): string[] {
+  const raw = (process.env.PLATFORM_ROOT_DOMAINS ?? "").trim();
+  const declared = raw
+    .split(",")
+    .map((d) => d.trim().toLowerCase())
+    .filter(Boolean);
+  if (declared.length > 0) return declared;
+
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").trim();
+  if (appUrl) {
+    try {
+      const host = new URL(appUrl).hostname.toLowerCase();
+      if (host && host !== "localhost" && !host.startsWith("127.")) {
+        const bare = host.startsWith("www.") ? host.slice(4) : host;
+        return bare === host ? [host, `www.${host}`] : [bare, host];
+      }
+    } catch {
+      // URL invalide : aucun domaine plateforme déclaré (on ne devine rien)
+    }
+  }
+  return [];
+}
+
+/** Le host (sans port) est-il un domaine racine de la plateforme ? */
+export function isPlatformHost(host: string | null | undefined): boolean {
+  if (!host) return false;
+  return platformRootDomains().includes(host.split(":")[0].toLowerCase());
+}
+
+/** Valeur exploitable du cookie « zam_dev_mode » (sinon null). */
+export function devModeFromCookie(value: string | null | undefined): DevMode | null {
+  const v = (value ?? "").trim().toLowerCase();
+  return v === "platform" || v === "tenant" ? v : null;
+}
+
+/**
  * Espace + tenant déduits du host de la requête.
  *
  *   USE_SUBDOMAIN_TENANT=true :
- *     dashboard.zam.hajj-…     → { agency-admin, "zam" }
- *     zam.hajj-platform.com    → { public, "zam" }
- *     admin.hajj-platform.com  → { superadmin, null }
- *     localhost:3000           → { public, DEV_DEFAULT_TENANT ?? null }
+ *     hajj-e.com / www.hajj-e.com → { platform, null }      ← landing
+ *     dashboard.zam.hajj-e.com    → { agency-admin, "zam" }
+ *     zam.hajj-e.com              → { public, "zam" }
+ *     admin.hajj-e.com            → { superadmin, null }
+ *     localhost:3000              → { public, DEV_DEFAULT_TENANT ?? null }
+ *     domaine nu inconnu / www    → { public, DEV_DEFAULT_TENANT } s'il est
+ *                                   défini (déploiement mono-agence), sinon
+ *                                   { platform, null } (multi-agences : la
+ *                                   landing, jamais un tenant inventé)
  *
  *   USE_SUBDOMAIN_TENANT=false (ou absent) :
  *     n'importe quel host      → { public, DEV_DEFAULT_TENANT ?? null }
+ *
+ * `opts.devMode` (cookie « zam_dev_mode ») force la LANDING en développement :
+ * le middleware ne le transmet jamais en production.
  */
-export function resolveSpaceFromHost(host: string): { space: Space; tenantSlug: string | null } {
+export function resolveSpaceFromHost(
+  host: string,
+  opts: { devMode?: DevMode | null } = {}
+): { space: Space; tenantSlug: string | null } {
+  // Bascule de développement : la landing sur n'importe quel host (localhost).
+  if (opts.devMode === "platform") return { space: "platform", tenantSlug: null };
+
   // Mode mono-tenant : la valeur .env fait foi, le sous-domaine est ignoré.
   if (!subdomainRoutingEnabled()) {
     return { space: "public", tenantSlug: devDefaultTenant() };
@@ -73,16 +144,33 @@ export function resolveSpaceFromHost(host: string): { space: Space; tenantSlug: 
   const h = host.split(":")[0];
   const parts = h.split(".");
 
+  // Domaine racine de la plateforme (hajj-e.com, www.hajj-e.com) → landing.
+  if (isPlatformHost(h)) return { space: "platform", tenantSlug: null };
+
   if (parts[0] === "superadmin" || parts[0] === "admin") {
     return { space: "superadmin", tenantSlug: null };
   }
   if (parts[0] === "dashboard" && parts.length >= 2) {
     return { space: "agency-admin", tenantSlug: parts[1] ?? null };
   }
-  if (parts[0] !== "localhost" && parts[0] !== "127" && parts.length >= 2) {
+  // ⚠️ longueur >= 3 : « hajj-e.com » (domaine nu) n'est PAS le sous-domaine
+  // « hajj-e » — même garde-fou que resolveAgencyAdminTenant(). « www » n'est
+  // jamais un slug d'agence non plus.
+  if (
+    parts[0] !== "localhost" &&
+    parts[0] !== "127" &&
+    parts[0] !== "www" &&
+    parts.length >= 3
+  ) {
     return { space: "public", tenantSlug: parts[0] };
   }
-  return { space: "public", tenantSlug: devDefaultTenant() };
+
+  // Domaine nu / www / localhost : mono-agence si DEV_DEFAULT_TENANT est défini,
+  // sinon PLATEFORME — un tenant ne se devine jamais.
+  const fallback = devDefaultTenant();
+  return fallback
+    ? { space: "public", tenantSlug: fallback }
+    : { space: "platform", tenantSlug: null };
 }
 
 /**

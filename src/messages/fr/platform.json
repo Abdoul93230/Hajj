@@ -1,0 +1,217 @@
+{
+  "meta": {
+    "title": "HajjManager Pro — La plateforme de gestion des agences Hadj & Oumra",
+    "description": "Registre des pèlerins, voyages et forfaits, paiements et reçus, vérification des documents, badges QR, SMS et portail pèlerin : HajjManager Pro équipe les agences Hadj & Oumra qui digitalisent leur organisation."
+  },
+  "nav": {
+    "features": "Fonctionnalités",
+    "how": "Comment ça marche",
+    "audiences": "Pour qui",
+    "domains": "Marque blanche",
+    "plans": "Formules",
+    "faq": "FAQ",
+    "agencySpace": "Espace agence",
+    "superadmin": "Superadmin",
+    "home": "Accueil plateforme"
+  },
+  "hero": {
+    "badge": "Plateforme multi-agences · Hadj & Oumra",
+    "title": "Pilotez toute votre agence",
+    "titleAccent": "Hadj & Oumra",
+    "titleSuffix": "au même endroit",
+    "subtitle": "Registre des pèlerins, forfaits et voyages, encaissements et reçus, vérification des documents, badges QR, SMS et portail pèlerin : une seule plateforme, avec le domaine et les couleurs de chaque agence.",
+    "ctaPrimary": "Espace agence",
+    "ctaSecondary": "Découvrir les fonctionnalités",
+    "note": "Chaque agence partenaire garde son identité : son logo, ses couleurs, ses textes et son domaine."
+  },
+  "trust": {
+    "multiTitle": "Multi-agences",
+    "multiDesc": "Une agence = un domaine, un espace, une équipe.",
+    "brandTitle": "Marque blanche",
+    "brandDesc": "Logo, couleurs et textes propres à chaque agence.",
+    "i18nTitle": "Trilingue",
+    "i18nDesc": "Français, anglais et arabe sur le portail public et pèlerin.",
+    "dataTitle": "Données isolées",
+    "dataDesc": "Chaque agence ne voit que ses propres pèlerins."
+  },
+  "features": {
+    "title": "Tout le cycle de la saison, du premier contact au retour",
+    "subtitle": "Les outils que les agences utilisent au quotidien, réunis dans un même tableau de bord.",
+    "items": [
+      {
+        "title": "Registre des pèlerins",
+        "desc": "Dossiers complets (passeport, CNI, contacts d'urgence, ville), statut d'inscription et historique par année."
+      },
+      {
+        "title": "Voyages, forfaits et programmes",
+        "desc": "Offres Hadj et Oumra, dates de départ, tarifs, formule de chambre et programme jour par jour."
+      },
+      {
+        "title": "Paiements et reçus",
+        "desc": "Encaissements, échéances, reçus imprimables et justificatifs téléversés, avec l'historique par pèlerin."
+      },
+      {
+        "title": "Documents et vérification",
+        "desc": "Passeports, visas, photos, vaccins : statut par document, motif de rejet, correction et renvoi par le pèlerin."
+      },
+      {
+        "title": "Badges QR et check-in",
+        "desc": "Badges imprimables avec QR code, répartition des pèlerins par voyage et contrôle à l'embarquement."
+      },
+      {
+        "title": "Portail pèlerin et SMS",
+        "desc": "Chaque pèlerin suit son dossier en ligne ; l'agence notifie les étapes par SMS et par e-mail."
+      }
+    ]
+  },
+  "how": {
+    "title": "De l'agence créée à la saison pilotée",
+    "subtitle": "Pas d'installation, pas de serveur à gérer : on ouvre un navigateur et on travaille.",
+    "steps": [
+      {
+        "title": "L'agence est créée",
+        "desc": "Depuis la console plateforme, le superadmin crée l'agence en un écran : son domaine, son administrateur et son mot de passe provisoire."
+      },
+      {
+        "title": "L'agence se personnalise",
+        "desc": "Logo, couleurs, textes du site, forfaits, voyages et membres de l'équipe : l'admin agence configure son espace."
+      },
+      {
+        "title": "La saison se pilote",
+        "desc": "Inscriptions, documents, paiements, badges et notifications : le suivi complet depuis un tableau de bord unique."
+      }
+    ]
+  },
+  "audiences": {
+    "title": "Pensé pour toute la chaîne",
+    "subtitle": "Trois espaces distincts, une seule plateforme : chacun voit exactement ce qui le concerne.",
+    "agency": {
+      "title": "Agences de voyage",
+      "desc": "Le poste de pilotage quotidien de l'équipe.",
+      "points": [
+        "Registre et dossiers pèlerins par année",
+        "Suivi des paiements, reçus et impayés",
+        "Documents vérifiés avant le départ",
+        "Équipe, rôles et historique des actions",
+        "Statistiques de la saison en un écran"
+      ]
+    },
+    "pilgrim": {
+      "title": "Pèlerins",
+      "desc": "Un espace personnel, dans leur langue.",
+      "points": [
+        "Portail personnel en français, anglais ou arabe",
+        "Suivi du dossier et des paiements",
+        "Envoi des documents demandés par l'agence",
+        "Badge et QR code pour le check-in"
+      ]
+    },
+    "platform": {
+      "title": "Administration plateforme",
+      "desc": "La console qui gère toutes les agences.",
+      "points": [
+        "Création, suspension et suppression d'agences",
+        "Thème et textes personnalisables par agence",
+        "Journal d'audit des actions sensibles",
+        "Vue globale sur l'activité"
+      ]
+    }
+  },
+  "domains": {
+    "title": "Chaque agence sur son propre domaine",
+    "subtitle": "Le même produit, servi sous l'identité de l'agence : vitrine, espace de gestion et portail pèlerin.",
+    "publicTitle": "Vitrine de l'agence",
+    "publicDesc": "Le site public de l'agence, avec son logo, ses couleurs et ses forfaits Hadj & Oumra.",
+    "adminTitle": "Espace de gestion",
+    "adminDesc": "Le tableau de bord de l'équipe : pèlerins, voyages, paiements, documents et SMS.",
+    "customTitle": "Domaine déjà existant",
+    "customDesc": "Une agence déjà installée sur son propre domaine peut y être déployée : sa vitrine reste la sienne.",
+    "note": "Le domaine principal de la plateforme présente, lui, cette page : les agences, les formules et l'accès aux espaces."
+  },
+  "plans": {
+    "title": "Des formules qui suivent votre croissance",
+    "subtitle": "De l'agence qui démarre à la plateforme qui fédère plusieurs agences.",
+    "badge": "Recommandé",
+    "cta": "Nous contacter",
+    "items": [
+      {
+        "name": "Découverte",
+        "tagline": "Pour lancer une première saison sereinement.",
+        "points": [
+          "1 agence sur son domaine",
+          "Registre, voyages, paiements et documents",
+          "Portail pèlerin trilingue",
+          "Support par e-mail"
+        ]
+      },
+      {
+        "name": "Partenaire",
+        "tagline": "Pour les agences qui montent en charge.",
+        "points": [
+          "Marque blanche complète (logo, couleurs, textes)",
+          "Badges QR, SMS et modèles de messages",
+          "Comptes d'équipe et rôles",
+          "Statistiques par année et export"
+        ]
+      },
+      {
+        "name": "Réseau",
+        "tagline": "Pour les groupes qui fédèrent plusieurs agences.",
+        "points": [
+          "Plusieurs agences, chacune sur son domaine",
+          "Console plateforme et supervision globale",
+          "Accompagnement à la mise en service",
+          "Évolutions dédiées"
+        ]
+      }
+    ]
+  },
+  "faq": {
+    "title": "Questions fréquentes",
+    "items": [
+      {
+        "q": "Faut-il installer quelque chose ?",
+        "a": "Non. La plateforme est en ligne : l'agence se connecte depuis un navigateur, sur ordinateur comme sur mobile."
+      },
+      {
+        "q": "Chaque agence a-t-elle son propre site ?",
+        "a": "Oui. Chaque agence dispose de son domaine (par exemple agence.hajj-e.com) avec son logo, ses couleurs et ses textes personnalisés."
+      },
+      {
+        "q": "Les données des agences sont-elles séparées ?",
+        "a": "Oui. Chaque requête est limitée à l'agence de l'utilisateur connecté : une agence ne voit que ses propres pèlerins, paiements et documents."
+      },
+      {
+        "q": "Quelles langues sont disponibles ?",
+        "a": "Français, anglais et arabe, sur la vitrine publique comme sur l'espace pèlerin."
+      },
+      {
+        "q": "Comment un pèlerin suit-il son dossier ?",
+        "a": "Il se connecte à son espace personnel : avancement du dossier, paiements, documents à fournir ou à corriger, et son badge avec QR code."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Prêt à digitaliser votre saison ?",
+    "subtitle": "Créez l'agence, importez vos pèlerins et suivez les paiements dès aujourd'hui.",
+    "primary": "Nous contacter",
+    "secondary": "Accéder à mon espace"
+  },
+  "footer": {
+    "tagline": "La plateforme des agences Hadj & Oumra.",
+    "platformTitle": "Plateforme",
+    "spacesTitle": "Espaces",
+    "contactTitle": "Contact",
+    "contactDesc": "Une question sur la plateforme ou une demande de démonstration ? Écrivez-nous.",
+    "agencySpace": "Espace agence",
+    "superadminSpace": "Administration plateforme",
+    "contactLink": "Écrire à l'équipe",
+    "rights": "Tous droits réservés.",
+    "editor": "HajjManager Pro"
+  },
+  "notFound": {
+    "title": "Cette page n'existe pas sur le site de la plateforme",
+    "desc": "Le portail d'une agence se trouve sur son propre domaine (par exemple agence.hajj-e.com).",
+    "home": "Retour à l'accueil"
+  }
+}

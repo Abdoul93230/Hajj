@@ -1,0 +1,217 @@
+{
+  "meta": {
+    "title": "HajjManager Pro — The management platform for Hajj & Umrah agencies",
+    "description": "Pilgrim registry, packages and trips, payments and receipts, document review, QR badges, SMS and a pilgrim portal: HajjManager Pro equips Hajj & Umrah agencies with a complete digital back office."
+  },
+  "nav": {
+    "features": "Features",
+    "how": "How it works",
+    "audiences": "Who it's for",
+    "domains": "White label",
+    "plans": "Plans",
+    "faq": "FAQ",
+    "agencySpace": "Agency area",
+    "superadmin": "Superadmin",
+    "home": "Platform home"
+  },
+  "hero": {
+    "badge": "Multi-agency platform · Hajj & Umrah",
+    "title": "Run your entire",
+    "titleAccent": "Hajj & Umrah agency",
+    "titleSuffix": "in one place",
+    "subtitle": "Pilgrim registry, packages and departures, payments and receipts, document review, QR badges, SMS and a pilgrim portal: one platform, with each agency's own domain and colours.",
+    "ctaPrimary": "Agency area",
+    "ctaSecondary": "See the features",
+    "note": "Every partner agency keeps its identity: its logo, its colours, its texts and its domain."
+  },
+  "trust": {
+    "multiTitle": "Multi-agency",
+    "multiDesc": "One agency = one domain, one workspace, one team.",
+    "brandTitle": "White label",
+    "brandDesc": "Logo, colours and texts owned by each agency.",
+    "i18nTitle": "Trilingual",
+    "i18nDesc": "French, English and Arabic on the public and pilgrim portals.",
+    "dataTitle": "Isolated data",
+    "dataDesc": "An agency only ever sees its own pilgrims."
+  },
+  "features": {
+    "title": "The whole season, from first enquiry to safe return",
+    "subtitle": "The tools agencies use every day, brought together in a single dashboard.",
+    "items": [
+      {
+        "title": "Pilgrim registry",
+        "desc": "Complete files (passport, ID, emergency contacts, city), registration status and year-by-year history."
+      },
+      {
+        "title": "Trips, packages and programmes",
+        "desc": "Hajj and Umrah offers, departure dates, prices, room options and a day-by-day programme."
+      },
+      {
+        "title": "Payments and receipts",
+        "desc": "Instalments, due dates, printable receipts and uploaded proofs of payment, with history per pilgrim."
+      },
+      {
+        "title": "Documents and review",
+        "desc": "Passports, visas, photos, vaccinations: status per document, rejection reason, correction and resubmission by the pilgrim."
+      },
+      {
+        "title": "QR badges and check-in",
+        "desc": "Printable badges with QR codes, pilgrim lists per trip and check-in on departure day."
+      },
+      {
+        "title": "Pilgrim portal and SMS",
+        "desc": "Every pilgrim follows their file online; the agency sends updates by SMS and email."
+      }
+    ]
+  },
+  "how": {
+    "title": "From a brand-new agency to a fully managed season",
+    "subtitle": "Nothing to install, no server to run: open a browser and get to work.",
+    "steps": [
+      {
+        "title": "The agency is created",
+        "desc": "From the platform console, the superadmin creates the agency in one screen: its domain, its administrator and a temporary password."
+      },
+      {
+        "title": "The agency makes it its own",
+        "desc": "Logo, colours, website texts, packages, trips and team members: the agency admin configures its workspace."
+      },
+      {
+        "title": "The season runs",
+        "desc": "Registrations, documents, payments, badges and notifications: everything tracked from a single dashboard."
+      }
+    ]
+  },
+  "audiences": {
+    "title": "Built for the whole chain",
+    "subtitle": "Three separate workspaces, one platform: everyone sees exactly what concerns them.",
+    "agency": {
+      "title": "Travel agencies",
+      "desc": "The team's day-to-day control room.",
+      "points": [
+        "Registry and pilgrim files by year",
+        "Payments, receipts and outstanding balances",
+        "Documents checked before departure",
+        "Team, roles and action history",
+        "Season statistics on one screen"
+      ]
+    },
+    "pilgrim": {
+      "title": "Pilgrims",
+      "desc": "A personal space, in their own language.",
+      "points": [
+        "Personal portal in French, English or Arabic",
+        "File and payment tracking",
+        "Upload the documents the agency requests",
+        "Badge and QR code for check-in"
+      ]
+    },
+    "platform": {
+      "title": "Platform administration",
+      "desc": "The console that manages every agency.",
+      "points": [
+        "Create, suspend and delete agencies",
+        "Per-agency theme and texts",
+        "Audit log of sensitive actions",
+        "Global view of the activity"
+      ]
+    }
+  },
+  "domains": {
+    "title": "Every agency on its own domain",
+    "subtitle": "The same product, served under the agency's identity: website, back office and pilgrim portal.",
+    "publicTitle": "Agency website",
+    "publicDesc": "The agency's public site, with its logo, its colours and its Hajj & Umrah packages.",
+    "adminTitle": "Back office",
+    "adminDesc": "The team dashboard: pilgrims, trips, payments, documents and SMS.",
+    "customTitle": "Existing domain",
+    "customDesc": "An agency already installed on its own domain can be deployed there: its website stays its own.",
+    "note": "The platform's main domain shows this page instead: agencies, plans and access to the workspaces."
+  },
+  "plans": {
+    "title": "Plans that grow with you",
+    "subtitle": "From an agency starting out to a network federating several agencies.",
+    "badge": "Recommended",
+    "cta": "Contact us",
+    "items": [
+      {
+        "name": "Starter",
+        "tagline": "To run a first season with peace of mind.",
+        "points": [
+          "One agency on its domain",
+          "Registry, trips, payments and documents",
+          "Trilingual pilgrim portal",
+          "Email support"
+        ]
+      },
+      {
+        "name": "Partner",
+        "tagline": "For agencies scaling up.",
+        "points": [
+          "Full white label (logo, colours, texts)",
+          "QR badges, SMS and message templates",
+          "Team accounts and roles",
+          "Yearly statistics and export"
+        ]
+      },
+      {
+        "name": "Network",
+        "tagline": "For groups federating several agencies.",
+        "points": [
+          "Several agencies, each on its own domain",
+          "Platform console and global oversight",
+          "Onboarding support",
+          "Dedicated features"
+        ]
+      }
+    ]
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "items": [
+      {
+        "q": "Do we need to install anything?",
+        "a": "No. The platform runs online: the agency logs in from a browser, on desktop or mobile."
+      },
+      {
+        "q": "Does every agency get its own website?",
+        "a": "Yes. Each agency has its own domain (for example agency.hajj-e.com) with its logo, its colours and its own texts."
+      },
+      {
+        "q": "Is agency data kept separate?",
+        "a": "Yes. Every request is scoped to the logged-in user's agency: an agency only sees its own pilgrims, payments and documents."
+      },
+      {
+        "q": "Which languages are available?",
+        "a": "French, English and Arabic, both on the public website and in the pilgrim area."
+      },
+      {
+        "q": "How does a pilgrim follow their file?",
+        "a": "They log into their personal area: file progress, payments, documents to submit or correct, and their badge with a QR code."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to digitalise your season?",
+    "subtitle": "Create the agency, import your pilgrims and track payments today.",
+    "primary": "Contact us",
+    "secondary": "Open my workspace"
+  },
+  "footer": {
+    "tagline": "The platform for Hajj & Umrah agencies.",
+    "platformTitle": "Platform",
+    "spacesTitle": "Workspaces",
+    "contactTitle": "Contact",
+    "contactDesc": "A question about the platform or a demo request? Write to us.",
+    "agencySpace": "Agency area",
+    "superadminSpace": "Platform administration",
+    "contactLink": "Email the team",
+    "rights": "All rights reserved.",
+    "editor": "HajjManager Pro"
+  },
+  "notFound": {
+    "title": "This page does not exist on the platform website",
+    "desc": "An agency portal lives on its own domain (for example agency.hajj-e.com).",
+    "home": "Back to home"
+  }
+}

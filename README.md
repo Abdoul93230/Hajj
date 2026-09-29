@@ -57,6 +57,8 @@ aucun vestige d'une autre installation.
 | `JWT_SECRET` | Signature des sessions (`zam_session`) — **obligatoire** |
 | `DEV_DEFAULT_TENANT` | Slug de l'agence **si le domaine est dédié à UNE seule agence** (ex. `zam`). À laisser **vide** pour une plateforme multi-agences mono-domaine |
 | `USE_SUBDOMAIN_TENANT` | `true` = une agence par sous-domaine (`zam.mondomaine.com`, `dashboard.zam.mondomaine.com`, `admin.mondomaine.com`) |
+| `PLATFORM_ROOT_DOMAINS` | Domaines **racine** de la plateforme (landing) : `hajj-e.com,www.hajj-e.com`. Vide → host de `NEXT_PUBLIC_APP_URL` (racine + www) |
+| `NEXT_PUBLIC_PLATFORM_CONTACT_EMAIL` | Adresse affichée sur la landing (défaut `contact@hajj-e.com`) |
 | `NEXT_PUBLIC_APP_URL` | URL publique (liens e-mails / SMS) |
 | `CLOUDINARY_*` | Envoi des documents / photos (sinon l'upload échoue) |
 | `SMTP_*`, `LAFRICA_SMS_*` | Notifications (optionnel) |
@@ -82,6 +84,38 @@ Un défaut de déploiement n'écrase donc jamais l'identité de l'admin connect�
 Sinon on obtient le symptôme « connexion réussie mais on reste sur
 `/agency-admin/login` » (l'en-tête `x-tenant-slug` du middleware ne correspondait
 plus au `tenantSlug` de la session).
+
+### Landing de la plateforme (domaine racine)
+
+Le domaine **racine** de la plateforme (par ex. `hajj-e.com`, `www.hajj-e.com`)
+n'affiche **pas** la vitrine d'une agence : il sert la **landing de la
+plateforme** (vitrine du produit, formules, FAQ, accès aux espaces). Les
+domaines d'agence, eux, ne changent pas.
+
+| Host | Espace servi |
+| --- | --- |
+| `hajj-e.com`, `www.hajj-e.com` | **Landing plateforme** (`PLATFORM_ROOT_DOMAINS`) |
+| `zam.hajj-e.com` | Portail public de l'agence `zam` (inchangé) |
+| `dashboard.zam.hajj-e.com` | Tableau de bord de l'agence `zam` (inchangé) |
+| `admin.hajj-e.com` (ou `/superadmin`) | Console plateforme |
+| Domaine nu inconnu + `DEV_DEFAULT_TENANT` renseigné | Portail de cette agence (déploiement mono-agence) |
+| Domaine nu inconnu + `DEV_DEFAULT_TENANT` vide | Landing plateforme |
+
+Détails techniques :
+
+- `src/lib/tenant-slug.ts` → `platformRootDomains()` / `isPlatformHost()` ;
+  un domaine nu n'est **jamais** converti en slug d'agence (`parts.length >= 3`
+  requis, `www` exclu) ;
+- la landing vit **physiquement** sous `/<locale>/platform` et le middleware la
+  masque par un `rewrite` : les URLs publiques restent `/fr`, `/en`, `/ar`
+  (locale en 1er segment → `<html lang/dir>` correct côté serveur, même en arabe) ;
+- les contenus de la landing sont dans `src/messages/<locale>/platform.json`
+  (namespace `platform`, chargé par `src/i18n/request.ts`).
+
+**Bascule en développement** (jamais active en production) : un badge « Dev » en
+bas de page permet de passer de la landing au portail d'agence et inversement.
+Il pose le cookie `zam_dev_mode` (`platform` / `tenant`) via `?__mode=…`.
+En production, le middleware ignore totalement ce paramètre et ce cookie.
 
 ### 2. Structure + comptes de départ
 

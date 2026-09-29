@@ -14,6 +14,7 @@ import { headers } from "next/headers";
 import { getTenantBySlug } from "@/lib/tenant-data";
 import { applyTenantOverrides, readTenantBranding, themeStyleTag, DEFAULT_LOGO_URL } from "@/lib/tenant-theme";
 import { TenantBrandingProvider } from "@/components/tenant/TenantBranding";
+import DevModeSwitch from "@/components/dev/DevModeSwitch";
 import "../../globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -152,6 +153,8 @@ export default async function LocaleLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <WhatsAppButton />
+          {/* Bascule dev (landing ⇄ portail agence) : jamais rendue en production */}
+          {process.env.NODE_ENV !== "production" && <DevModeSwitch current="tenant" />}
         </NextIntlClientProvider>
       </TenantBrandingProvider>
     </div>
