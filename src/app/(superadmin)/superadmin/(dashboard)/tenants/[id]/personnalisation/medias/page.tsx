@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import ThemeMediaEditor from "./ThemeMediaEditor";
+import ThemeMediaEditor from "@/components/tenant-editors/ThemeMediaEditor";
 
 export default async function MediasPage({
   params,

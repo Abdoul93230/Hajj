@@ -26,6 +26,10 @@ model Tenant {
   plan          Plan         @default(STARTER)
   status        TenantStatus @default(ACTIVE)
   trialEndsAt   DateTime?
+  // Personnalisation autonome : autorise l'admin de CETTE agence à modifier
+  // lui-même couleurs, logo, images et textes depuis /agency-admin/personalisation
+  // (activé agence par agence par le superadmin). Jamais vrai pour la plateforme.
+  selfPersonalization Boolean @default(false)
   theme         Json?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt

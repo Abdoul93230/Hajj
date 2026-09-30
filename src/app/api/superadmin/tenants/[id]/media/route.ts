@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import cloudinary from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/session";
-import { isSuperAdmin } from "@/lib/permissions";
+import { requireThemeEditor } from "@/lib/permissions";
 
 export const runtime = "nodejs";
 
@@ -36,17 +35,14 @@ type MediaKind = keyof typeof KINDS;
 
 // POST — téléverse une image de marque (hero, bannières) vers Cloudinary
 // et l'attache au thème du tenant (clé plate, même mécanique que le logo).
+// Superadmin, ou admin de l'agence elle-même si la personnalisation autonome
+// est activée par la plateforme (voir requireThemeEditor).
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession();
-  if (!session || !isSuperAdmin(session)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
   const { id } = await params;
 
-  const tenant = await prisma.tenant.findUnique({ where: { id } });
-  if (!tenant || tenant.status === "PLATFORM") {
-    return NextResponse.json({ error: "Tenant non modifiable" }, { status: 403 });
-  }
+  const access = await requireThemeEditor(id);
+  if (access.error) return access.error;
+  const theme = (access.theme ?? {}) as Record<string, unknown>;
 
   const form = await req.formData();
   const file = form.get("file");
@@ -76,13 +72,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       invalidate: true,
     });
 
-    const existing = (tenant.theme ?? {}) as Record<string, unknown>;
-    const theme = { ...existing, [target.key]: String(result.secure_url) };
+    const nextTheme = { ...theme, [target.key]: String(result.secure_url) };
 
     await prisma.tenant.update({
       where: { id },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      data: { theme: theme as any },
+      data: { theme: nextTheme as any },
     });
 
     return NextResponse.json({ url: result.secure_url });

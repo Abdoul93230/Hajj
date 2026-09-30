@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import ThemeColorEditor from "./ThemeColorEditor";
+import ThemeColorEditor from "@/components/tenant-editors/ThemeColorEditor";
 
 export default async function CouleursPage({
   params,

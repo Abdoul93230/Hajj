@@ -73,6 +73,57 @@ export async function requireAgencySession(): Promise<
   return { session };
 }
 
+/**
+ * Garde des ÉDITEURS DE THÈME (couleurs, logo, images, textes).
+ *
+ * Autorise :
+ *   1. le superadmin — sur n'importe quelle agence ;
+ *   2. l'admin de l'agence PROPRIÉTAIRE, uniquement si le superadmin a ouvert
+ *      la personnalisation autonome (`Tenant.selfPersonalization === true`).
+ *
+ * Les routes `/api/superadmin/tenants/[id]{,/logo,/media}` l'utilisent : les
+ * éditeurs sont donc partagés entre l'espace superadmin et l'espace agence
+ * (même écriture du thème, même audit) sans dupliquer la logique.
+ */
+export async function requireThemeEditor(tenantId: string): Promise<
+  | { session: SessionPayload; theme: unknown; error?: never }
+  | { session?: never; theme?: never; error: NextResponse }
+> {
+  const session = await getSession();
+  if (!session) {
+    return { error: NextResponse.json({ error: "Non autorisé" }, { status: 403 }) };
+  }
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: { id: true, status: true, theme: true, selfPersonalization: true },
+  });
+  if (!tenant || tenant.status === "PLATFORM") {
+    return { error: NextResponse.json({ error: "Tenant non modifiable" }, { status: 403 }) };
+  }
+
+  if (isSuperAdmin(session)) return { session, theme: tenant.theme };
+
+  // Espace agence : sa propre agence, et seulement si la plateforme a activé
+  // la personnalisation autonome (jamais accordée à un agent).
+  if (!isAgencyAdmin(session) || session.tenantId !== tenant.id) {
+    return { error: NextResponse.json({ error: "Non autorisé" }, { status: 403 }) };
+  }
+  if (tenant.selfPersonalization !== true) {
+    return {
+      error: NextResponse.json(
+        {
+          error:
+            "La personnalisation n'est pas activée pour votre agence. Contactez la plateforme.",
+        },
+        { status: 403 }
+      ),
+    };
+  }
+
+  return { session, theme: tenant.theme };
+}
+
 // Vérifie la session PÈLERIN (role PILGRIM) + statut actif du tenant.
 // Utilisé par les routes /api/pilgrim/* — toutes les requêtes sont scopées sur
 // session.id + session.tenantId : un pèlerin ne peut accéder qu'à SES données.

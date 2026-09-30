@@ -22,6 +22,7 @@ const PAGE_TITLES: Record<string, string> = {
   "documents":  "Documents Pèlerins",
   "payments":   "Paiements",
   "change-password": "Changer mon mot de passe",
+  "personalisation": "Personnalisation",
 };
 
 function getPageTitle(pathname: string): string {

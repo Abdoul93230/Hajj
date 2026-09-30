@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import ThemeLogoContactEditor from "./ThemeLogoContactEditor";
+import ThemeLogoContactEditor from "@/components/tenant-editors/ThemeLogoContactEditor";
 
 export default async function LogoContactPage({
   params,

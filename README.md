@@ -117,6 +117,33 @@ bas de page permet de passer de la landing au portail d'agence et inversement.
 Il pose le cookie `zam_dev_mode` (`platform` / `tenant`) via `?__mode=…`.
 En production, le middleware ignore totalement ce paramètre et ce cookie.
 
+### Personnalisation par l'agence (self-personalization)
+
+Chaque agence peut se voir ouvrir la **personnalisation de son propre espace**
+(couleurs, logo, contact, images, textes) — la décision se prend **agence par
+agence** depuis le superadmin.
+
+- **Activation** : fiche de l'agence dans le superadmin → carte
+  « ✍️ Personnalisation par l'agence » (interrupteur) → écrit
+  `Tenant.selfPersonalization` (audit :
+  `tenant.self_personalization_enabled` / `tenant.self_personalization_disabled`).
+- **Côté agence** : l'onglet **Personnalisation** apparaît dans la sidebar
+  (`/agency-admin/personalisation/couleurs` · `logo-contact` · `medias` · `textes`).
+  Il n'est visible que pour un rôle `AGENCY_ADMIN` **et** si le flag est actif ;
+  une URL directe sans activation renvoie vers le tableau de bord.
+- **Sécurité** : une garde unique, `requireThemeEditor(tenantId)`
+  (`src/lib/permissions.ts`) — superadmin sur n'importe quelle agence, **ou** admin
+  de l'agence propriétaire quand le flag est actif. Les routes
+  `/api/superadmin/tenants/[id]{,/logo,/media}` l'utilisent : les deux espaces
+  partagent la même écriture du thème et le même audit (`tenant.theme_updated`),
+  sans duplication de code.
+- **Éditeurs partagés** : `src/components/tenant-editors/*` (couleurs, logo &
+  contact, images, textes) et `buildThemeTextEditorData()`
+  (`src/lib/tenant-theme-catalog.ts`) : une seule définition des slots de textes
+  pour les deux espaces.
+- MongoDB : champ à défaut `false` ; les documents antérieurs (champ absent) sont
+  traités comme désactivés — le code teste toujours `=== true`.
+
 ### 2. Structure + comptes de départ
 
 ```bash

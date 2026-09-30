@@ -10,9 +10,17 @@ const TABS = [
   { href: "textes", label: "✍️ Textes" },
 ];
 
-export default function PersonnalisationNav({ tenantId }: { tenantId: string }) {
+export default function PersonnalisationNav({
+  tenantId,
+  basePath,
+}: {
+  /** Id de l'agence (espace superadmin). */
+  tenantId?: string;
+  /** Base des onglets — par défaut l'espace superadmin de cette agence. */
+  basePath?: string;
+}) {
   const pathname = usePathname();
-  const base = `/superadmin/tenants/${tenantId}/personnalisation`;
+  const base = basePath ?? `/superadmin/tenants/${tenantId}/personnalisation`;
 
   return (
     <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">

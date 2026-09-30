@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import PersonnalisationNav from "./PersonnalisationNav";
+import PersonnalisationNav from "@/components/tenant-editors/PersonnalisationNav";
 
 export const metadata: Metadata = { title: "Personnalisation agence" };
 

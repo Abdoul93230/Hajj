@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TenantInspectClient from "./TenantInspectClient";
+import SelfPersonalizationToggle from "./SelfPersonalizationToggle";
 
 export const metadata: Metadata = { title: "Inspection agence" };
 
@@ -140,6 +141,13 @@ export default async function TenantInspectPage({
           <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">Ouvrir →</span>
         </div>
       </Link>
+
+      {/* Personnalisation autonome : ouvre (ou non) l'onglet Personnalisation
+          dans la sidebar de CETTE agence (Tenant.selfPersonalization). */}
+      <SelfPersonalizationToggle
+        tenantId={tenant.id}
+        enabled={tenant.selfPersonalization === true}
+      />
     </div>
   );
 }

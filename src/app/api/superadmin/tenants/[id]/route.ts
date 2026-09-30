@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
-import { isSuperAdmin } from "@/lib/permissions";
+import { isSuperAdmin, requireThemeEditor } from "@/lib/permissions";
 import { mergeTenantTheme, readTenantBranding } from "@/lib/tenant-theme";
 import { logAction } from "@/lib/audit";
 import { deleteCloudinaryFile, extractCloudinaryPublicId } from "@/lib/cloudinary";
@@ -27,22 +27,20 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   });
 }
 
-// PUT — met à jour le thème (couleurs, logo, réseaux, textes) via merge non destructif
+// PUT — met à jour le thème (couleurs, logo, réseaux, textes) via merge non destructif.
+// Accessible au SUPERADMIN et, si la plateforme l'a activé pour l'agence
+// (`Tenant.selfPersonalization`), à l'admin de cette agence (voir requireThemeEditor).
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession();
-  if (!session || !isSuperAdmin(session)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
   const { id } = await params;
 
-  const tenant = await prisma.tenant.findUnique({ where: { id } });
-  if (!tenant || tenant.status === "PLATFORM") {
-    return NextResponse.json({ error: "Tenant non modifiable" }, { status: 403 });
-  }
+  const access = await requireThemeEditor(id);
+  if (access.error) return access.error;
+  const { session } = access;
 
   try {
     const patch = (await req.json()) as Record<string, unknown>;
-    const nextTheme = mergeTenantTheme(tenant.theme, patch);
+    const tenant = await prisma.tenant.findUnique({ where: { id }, select: { theme: true } });
+    const nextTheme = mergeTenantTheme(tenant?.theme ?? null, patch);
     const updated = await prisma.tenant.update({
       where: { id },
       data: {
@@ -78,7 +76,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   try {
     const body = await req.json();
-    const { name, email, phone, address, country, plan, status } = body;
+    const { name, email, phone, address, country, plan, status, selfPersonalization } = body;
 
     // Vérifier que ce n'est pas le tenant platform
     const tenant = await prisma.tenant.findUnique({ where: { id } });
@@ -96,8 +94,23 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         ...(country && { country }),
         ...(plan && { plan }),
         ...(status && { status }),
+        // Personnalisation autonome (couleurs, logo, images, textes) accordée à
+        // cette agence. On n'accepte qu'un booléen explicite.
+        ...(typeof selfPersonalization === "boolean" && { selfPersonalization }),
       },
     });
+
+    if (typeof selfPersonalization === "boolean") {
+      await logAction({
+        session,
+        action: selfPersonalization
+          ? "tenant.self_personalization_enabled"
+          : "tenant.self_personalization_disabled",
+        resource: "tenant",
+        resourceId: id,
+        after: { selfPersonalization },
+      });
+    }
 
     return NextResponse.json(updated);
   } catch {
