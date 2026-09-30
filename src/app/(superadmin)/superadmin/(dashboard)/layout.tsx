@@ -11,7 +11,7 @@ export default async function SuperAdminLayout({ children }: { children: React.R
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-950 text-white">
+    <div className="dark-form flex min-h-screen bg-gray-950 text-white">
       <SuperAdminSidebar user={{ name: session.name, email: session.email }} />
       <main className="flex-1 flex flex-col">
         <div className="p-8">{children}</div>

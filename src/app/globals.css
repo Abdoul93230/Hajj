@@ -59,29 +59,71 @@ body {
 
 /* ── Champs de saisie ─────────────────────────────────────────────────────
  * Couleur explicite : un champ ne doit JAMAIS dépendre de la couleur héritée
- * du conteneur (sinon le texte saisi disparaît selon le thème / le fond). */
-input,
-textarea,
-select {
-  color: var(--text);
-}
+ * du conteneur (sinon le texte saisi disparaît selon le thème / le fond).
+ *
+ * ⚠️ Ces règles vivent dans `@layer base`. En Tailwind v4, une règle HORS
+ * couche l'emporte sur les utilitaires (`text-white`, `placeholder-*`…) quel
+ * que soit l'ordre : sans la couche, `color: var(--text)` écrasait le
+ * `text-white` des formulaires sur fond sombre (console + login superadmin) →
+ * texte saisi noir sur fond noir, invisible. En base, un utilitaire gagne, et
+ * un champ sans classe de couleur garde le défaut du thème (protection
+ * conservée). */
+@layer base {
+  input,
+  textarea,
+  select {
+    color: var(--text);
+  }
 
-input::placeholder,
-textarea::placeholder {
-  color: var(--text-soft);
-  opacity: 1;
-}
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-soft);
+    opacity: 1;
+  }
 
-select option {
-  color: var(--text);
-  background-color: var(--surface);
-}
+  select option {
+    color: var(--text);
+    background-color: var(--surface);
+  }
 
-/* Corrige le remplissage automatique du navigateur (Chrome/Edge) qui
- * réapplique un texte noir sur fond clair forcé. */
-input:-webkit-autofill,
-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--text);
+  /* Corrige le remplissage automatique du navigateur (Chrome/Edge) qui
+   * réapplique un texte noir sur fond clair forcé. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text);
+  }
+
+  /* ── Formulaires sur FOND SOMBRE (console et connexion superadmin) ────────
+   * Mêmes règles, plus spécifiques : un champ SANS classe de couleur devient
+   * blanc (lisible sur fond sombre), mais un utilitaire explicite repris dans
+   * une carte CLAIRE (ex. `text-gray-900` des éditeurs de personnalisation)
+   * continue de gagner — c'est la couche « base » qui l'exige.
+   * ⚠️ Ne PAS sortir ces règles de la couche : hors couche, elles écraseraient
+   * les utilitaires et rendraient blanc-sur-blanc les cartes claires. */
+  .dark-form input,
+  .dark-form textarea,
+  .dark-form select {
+    color: #ffffff;
+  }
+
+  .dark-form input::placeholder,
+  .dark-form textarea::placeholder {
+    color: #9ca3af; /* gray-400 */
+    opacity: 1;
+  }
+
+  .dark-form select option {
+    color: #ffffff;
+    background-color: #111827; /* gray-900 */
+  }
+
+  /* Autofill : Chrome impose son propre fond clair + texte sombre */
+  .dark-form input:-webkit-autofill,
+  .dark-form input:-webkit-autofill:focus,
+  .dark-form textarea:-webkit-autofill {
+    -webkit-text-fill-color: #ffffff;
+    -webkit-box-shadow: 0 0 0 1000px #1f2937 inset; /* gray-800 */
+  }
 }
 
 .font-playfair {
