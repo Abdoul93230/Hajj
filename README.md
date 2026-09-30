@@ -158,6 +158,30 @@ agence** depuis le superadmin.
 - MongoDB : champ à défaut `false` ; les documents antérieurs (champ absent) sont
   traités comme désactivés — le code teste toujours `=== true`.
 
+### Suppression définitive d'une agence
+
+`DELETE /api/superadmin/tenants/[id]` purge **toutes** les données de l'agence :
+
+- **Cloudinary — deux passes complémentaires** :
+  1. *par préfixe* `hajj-platform/<tenantId>/` — documents pèlerins (images et
+     PDF « raw »), reçus de paiement et images de marque. C'est le filet de
+     sécurité : il attrape aussi les fichiers **orphelins** (téléversés mais dont
+     la ligne en base a disparu) et tout futur dossier d'upload, sans liste de
+     clés à maintenir ;
+  2. *par référence* — documents, reçus, photos de profil et **toutes** les URLs
+     Cloudinary du thème, collectées **récursivement** (`collectCloudinaryPublicIds`)
+     au lieu d'une liste figée de 4 clés.
+- **Base** (transaction unique) : `PilgrimDocument`, `Payment`, `Reservation`,
+  `Offer`, `SmsMessage`, `ContactMessage`, `Review`, `PasswordResetOtp`,
+  `AuditLog`, `User`, puis le tenant — soit **les 11 collections** liées.
+- La réponse renvoie un rapport `cloudinary: { deleted, errors, referenced }` et
+  l'action est journalisée (`tenant.purged`). Un échec Cloudinary **n'empêche pas**
+  la suppression en base, mais il est compté et visible par le superadmin.
+
+Vérifié en réel (agence jetable, vrais uploads) : base purgée sur les 11
+collections, 5 fichiers supprimés sur 5 (dont un orphelin), dossier Cloudinary
+vidé ; cas « agence sans thème » (où les reçus n'étaient jamais purgés) corrigé.
+
 ### 2. Structure + comptes de départ
 
 ```bash

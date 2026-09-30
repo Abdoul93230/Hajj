@@ -4,7 +4,12 @@ import { getSession } from "@/lib/session";
 import { isSuperAdmin, requireThemeEditor } from "@/lib/permissions";
 import { mergeTenantTheme, readTenantBranding } from "@/lib/tenant-theme";
 import { logAction } from "@/lib/audit";
-import { deleteCloudinaryFile, extractCloudinaryPublicId } from "@/lib/cloudinary";
+import {
+  collectCloudinaryPublicIds,
+  deleteCloudinaryFile,
+  deleteCloudinaryTenantAssets,
+  extractCloudinaryPublicId,
+} from "@/lib/cloudinary";
 
 // GET — branding + thème courant du tenant (pour l'éditeur superadmin)
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -135,45 +140,52 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   }
 
   try {
-    // 1. Nettoyage des fichiers distants (Cloudinary)
-    // a) Documents des pèlerins
-    const docs = await prisma.pilgrimDocument.findMany({
-      where: { tenantId: id },
-      select: { fileUrl: true },
-    });
-    for (const d of docs) {
-      if (d.fileUrl) {
-        const publicId = extractCloudinaryPublicId(d.fileUrl);
-        if (publicId) await deleteCloudinaryFile(publicId).catch(() => {});
-      }
+    // ── 1. Nettoyage des fichiers distants (Cloudinary) ──────────────────────
+    // Deux passes complémentaires. Un échec Cloudinary n'empêche JAMAIS la purge
+    // en base, mais il est compté et remonté au superadmin.
+    let cloudinaryDeleted = 0;
+    let cloudinaryErrors = 0;
+
+    // a) PAR PRÉFIXE (filet de sécurité) — tout ce qu'une agence téléverse vit
+    //    sous `hajj-platform/<tenantId>/` : documents pèlerins (images ET PDF
+    //    « raw »), reçus de paiement, images de marque. Couvre aussi les fichiers
+    //    dont la ligne en base a déjà disparu — sans liste de clés à maintenir.
+    const byPrefix = await deleteCloudinaryTenantAssets(id);
+    cloudinaryDeleted += byPrefix.deleted;
+    cloudinaryErrors += byPrefix.errors;
+
+    // b) PAR RÉFÉRENCE (ceinture) — chaque URL enregistrée en base est purgée
+    //    individuellement, y compris TOUTES les URLs Cloudinary du thème
+    //    collectées récursivement (logo, hero, bannières, galeries, partenaires…).
+    const [docs, users, payments] = await Promise.all([
+      prisma.pilgrimDocument.findMany({ where: { tenantId: id }, select: { fileUrl: true } }),
+      prisma.user.findMany({
+        where: { tenantId: id, photoUrl: { not: null } },
+        select: { photoUrl: true },
+      }),
+      prisma.payment.findMany({
+        where: { tenantId: id, receiptUrl: { not: null } },
+        select: { receiptUrl: true },
+      }),
+    ]);
+
+    const publicIds = new Set<string>(collectCloudinaryPublicIds(tenant.theme));
+    for (const url of [
+      ...docs.map((d) => d.fileUrl),
+      ...users.map((u) => u.photoUrl),
+      ...payments.map((p) => p.receiptUrl),
+    ]) {
+      if (typeof url !== "string") continue;
+      const pid = extractCloudinaryPublicId(url);
+      if (pid) publicIds.add(pid);
     }
 
-    // b) Médias du thème de l'agence (logo, hero, bannières)
-    if (tenant.theme && typeof tenant.theme === "object") {
-      const themeObj = tenant.theme as Record<string, unknown>;
-      const urlsToCheck: string[] = [];
-      if (typeof themeObj.logoUrl === "string") urlsToCheck.push(themeObj.logoUrl);
-      if (typeof themeObj.heroImageUrl === "string") urlsToCheck.push(themeObj.heroImageUrl);
-      if (typeof themeObj.hajjBannerUrl === "string") urlsToCheck.push(themeObj.hajjBannerUrl);
-      if (typeof themeObj.umrahBannerUrl === "string") urlsToCheck.push(themeObj.umrahBannerUrl);
-
-      for (const url of urlsToCheck) {
-        const pid = extractCloudinaryPublicId(url);
-        if (pid) await deleteCloudinaryFile(pid).catch(() => {});
+    for (const pid of publicIds) {
+      try {
+        await deleteCloudinaryFile(pid);
+      } catch {
+        cloudinaryErrors++;
       }
-
-    // c) Justificatifs et reçus des paiements
-    const paymentsWithReceipt = await prisma.payment.findMany({
-      where: { tenantId: id, receiptUrl: { not: null } },
-      select: { receiptUrl: true },
-    });
-    for (const p of paymentsWithReceipt) {
-      if (p.receiptUrl) {
-        const pid = extractCloudinaryPublicId(p.receiptUrl);
-        if (pid) await deleteCloudinaryFile(pid).catch(() => {});
-      }
-    }
-
     }
 
     // 2. Suppression en cascade dans la base de données
@@ -196,10 +208,25 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
       action: "tenant.purged",
       resource: "tenant",
       resourceId: id,
-      after: { name: tenant.name, slug: tenant.slug },
+      after: {
+        name: tenant.name,
+        slug: tenant.slug,
+        cloudinaryDeleted,
+        cloudinaryFilesReferenced: publicIds.size,
+      },
     }).catch(() => {});
 
-    return NextResponse.json({ ok: true, purged: true });
+    return NextResponse.json({
+      ok: true,
+      purged: true,
+      // Rapport de purge des fichiers : le superadmin voit ce qui a été nettoyé
+      // (un échec Cloudinary ne bloque pas la suppression, mais se voit ici).
+      cloudinary: {
+        deleted: cloudinaryDeleted,
+        errors: cloudinaryErrors,
+        referenced: publicIds.size,
+      },
+    });
   } catch (err) {
     console.error("Erreur lors de la suppression définitive du tenant :", err);
     return NextResponse.json({ error: "Échec de la suppression définitive" }, { status: 500 });
