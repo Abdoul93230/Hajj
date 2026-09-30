@@ -112,6 +112,20 @@ Détails techniques :
 - les contenus de la landing sont dans `src/messages/<locale>/platform.json`
   (namespace `platform`, chargé par `src/i18n/request.ts`).
 
+**Sous-domaine SANS agence** (ex. `test2.hajj-e.com` alors que `test2` n'existe
+pas) : le portail ne sert **jamais** un « portail fantôme » (branding de repli).
+La requête est redirigée (307) vers la landing :
+
+- `PLATFORM_ROOT_DOMAINS` déclaré (production) → URL absolue du domaine
+  plateforme (`https://hajj-e.com/fr`) ;
+- développement (aucun domaine plateforme) → bascule `?__mode=platform` sur le
+  même host, qui affiche la landing ;
+- production non configurée → 404 du portail (`(public)/[locale]/not-found.tsx`),
+  donc **aucune boucle de redirection possible**.
+
+Un slug **absent** (`x-tenant-slug` vide : déploiement mono-domaine) n'est pas
+concerné — c'est le comportement historique (portail par défaut).
+
 **Bascule en développement** (jamais active en production) : un badge « Dev » en
 bas de page permet de passer de la landing au portail d'agence et inversement.
 Il pose le cookie `zam_dev_mode` (`platform` / `tenant`) via `?__mode=…`.

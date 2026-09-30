@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -12,6 +12,7 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { getTenantBySlug } from "@/lib/tenant-data";
+import { platformLandingUrl } from "@/lib/tenant-slug";
 import { applyTenantOverrides, readTenantBranding, themeStyleTag, DEFAULT_LOGO_URL } from "@/lib/tenant-theme";
 import { TenantBrandingProvider } from "@/components/tenant/TenantBranding";
 import DevModeSwitch from "@/components/dev/DevModeSwitch";
@@ -97,6 +98,21 @@ export default async function LocaleLayout({
   const tenantSlug = (await headers()).get("x-tenant-slug") ?? "";
   // Dédupliqué par requête (React cache) — voir lib/tenant-data.ts
   const tenantForTheme = tenantSlug ? await getTenantBySlug(tenantSlug) : null;
+
+  // ── Sous-domaine SANS agence (ex. test2.hajj-e.com) ─────────────────────────
+  // On ne sert JAMAIS un portail « fantôme » (branding de repli) : le visiteur
+  // est envoyé sur la landing de la plateforme.
+  //   • PLATFORM_ROOT_DOMAINS déclaré (prod) → URL absolue du domaine plateforme ;
+  //   • développement (aucun domaine plateforme) → bascule dev ?__mode=platform ;
+  //   • production non configurée → 404 explicite (aucune boucle possible).
+  // Un slug ABSENT (`x-tenant-slug` vide) n'est pas concerné : c'est un
+  // déploiement mono-domaine, pas une agence inexistante.
+  if (tenantSlug && !tenantForTheme) {
+    const landing = platformLandingUrl(locale);
+    if (landing) redirect(landing);
+    if (process.env.NODE_ENV !== "production") redirect(`/${locale}?__mode=platform`);
+    notFound();
+  }
 
   // Textes personnalisés du tenant : les overrides (clés pointées localisées)
   // écrasent les messages statiques — les autres restent la base de repli.

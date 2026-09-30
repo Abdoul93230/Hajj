@@ -103,6 +103,24 @@ export function isPlatformHost(host: string | null | undefined): boolean {
   return platformRootDomains().includes(host.split(":")[0].toLowerCase());
 }
 
+/**
+ * URL ABSOLUE de la landing pour une locale donnée.
+ *
+ * Sert à rediriger un sous-domaine SANS agence (ex. `test2.hajj-e.com`) vers la
+ * page de la plateforme : voir `(public)/[locale]/layout.tsx`.
+ *
+ * Le protocole est déduit de `NEXT_PUBLIC_APP_URL` (https en production, http en
+ * dev). Renvoie `null` si aucun domaine plateforme n'est déclaré : l'appelant
+ * décide alors (bascule de dev, 404) — on n'invente jamais d'URL.
+ */
+export function platformLandingUrl(locale: string): string | null {
+  const root = platformRootDomains()[0];
+  if (!root) return null;
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").trim();
+  const proto = appUrl.startsWith("http://") ? "http" : "https";
+  return `${proto}://${root}/${locale}`;
+}
+
 /** Valeur exploitable du cookie « zam_dev_mode » (sinon null). */
 export function devModeFromCookie(value: string | null | undefined): DevMode | null {
   const v = (value ?? "").trim().toLowerCase();
