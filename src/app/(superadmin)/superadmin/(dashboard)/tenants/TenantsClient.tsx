@@ -85,6 +85,15 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
   const [confirmDelete, setConfirmDelete] = useState<Tenant | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteInputName, setDeleteInputName] = useState("");
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  /** Rapport renvoyé par la purge (fichiers Cloudinary nettoyés) — affiché
+      après coup dans la modale, qui reste ouverte. */
+  const [purgeReport, setPurgeReport] = useState<{
+    name: string;
+    deleted: number;
+    errors: number;
+    referenced: number;
+  } | null>(null);
 
 
   const filtered = tenants.filter((t) => {
@@ -127,14 +136,34 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
 
   async function purgeTenant(tenant: Tenant) {
     setDeleting(true);
+    setDeleteError(null);
     try {
       const res = await fetch(`/api/superadmin/tenants/${tenant.id}`, { method: "DELETE" });
-      if (res.ok) {
-        setTenants((prev) => prev.filter((t) => t.id !== tenant.id));
-        setConfirmDelete(null);
-        setDeleteInputName("");
-        router.refresh();
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        cloudinary?: { deleted?: number; errors?: number; referenced?: number };
+      };
+
+      if (!res.ok) {
+        // Avant : l'échec était silencieux (la modale se fermait sans rien dire).
+        setDeleteError(
+          typeof data.error === "string" ? data.error : `Échec de la suppression (HTTP ${res.status}).`
+        );
+        return;
       }
+
+      setTenants((prev) => prev.filter((t) => t.id !== tenant.id));
+      setDeleteInputName("");
+      // La modale reste ouverte pour montrer ce qui a été purgé (base + fichiers).
+      setPurgeReport({
+        name: tenant.name,
+        deleted: Number(data.cloudinary?.deleted ?? 0),
+        errors: Number(data.cloudinary?.errors ?? 0),
+        referenced: Number(data.cloudinary?.referenced ?? 0),
+      });
+      router.refresh();
+    } catch {
+      setDeleteError("Erreur réseau : la suppression n'a pas pu être confirmée.");
     } finally {
       setDeleting(false);
     }
@@ -320,7 +349,12 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
                           </button>
                           {/* Supprimer */}
                           <button
-                            onClick={() => setConfirmDelete(t)}
+                            onClick={() => {
+                              setDeleteInputName("");
+                              setDeleteError(null);
+                              setPurgeReport(null);
+                              setConfirmDelete(t);
+                            }}
                             disabled={t.status === "CANCELLED"}
                             title="Supprimer"
                             className="w-8 h-8 rounded-lg bg-gray-700 text-gray-400 hover:bg-red-500/15 hover:text-red-400 flex items-center justify-center transition-colors disabled:opacity-40"
@@ -350,6 +384,16 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
       {confirmDelete && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-gray-800 border border-red-500/30 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            {purgeReport ? (
+              <PurgeReportView
+                report={purgeReport}
+                onClose={() => {
+                  setConfirmDelete(null);
+                  setPurgeReport(null);
+                }}
+              />
+            ) : (
+              <>
             <div className="w-12 h-12 rounded-xl bg-red-500/15 text-red-400 flex items-center justify-center mb-4">
               <TrashIcon />
             </div>
@@ -380,6 +424,15 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
               />
             </div>
 
+            {deleteError && (
+              <p
+                role="alert"
+                className="text-xs text-red-300 bg-red-500/10 border border-red-500/30 px-3 py-2 rounded-xl mb-4"
+              >
+                {deleteError}
+              </p>
+            )}
+
             <div className="flex gap-3">
               <button
                 type="button"
@@ -387,6 +440,7 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
                 onClick={() => {
                   setConfirmDelete(null);
                   setDeleteInputName("");
+                  setDeleteError(null);
                 }}
                 className="flex-1 py-2.5 rounded-xl bg-gray-700 text-gray-300 text-sm font-medium hover:bg-gray-600 transition-colors disabled:opacity-50"
               >
@@ -401,6 +455,8 @@ export default function TenantsClient({ initialTenants }: { initialTenants: Tena
                 {deleting ? "Suppression en cours…" : "Purger définitivement"}
               </button>
             </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -450,6 +506,65 @@ function TrashIcon() {
   return (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+  );
+}
+
+/**
+ * Écran de FIN de suppression : la modale reste ouverte et montre ce qui a été
+ * purgé (base + fichiers Cloudinary) au lieu de disparaître silencieusement.
+ */
+function PurgeReportView({
+  report,
+  onClose,
+}: {
+  report: { name: string; deleted: number; errors: number; referenced: number };
+  onClose: () => void;
+}) {
+  return (
+    <>
+      <div className="w-12 h-12 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-4">
+        <CheckIcon />
+      </div>
+      <h3 className="text-white font-bold text-lg mb-1">Agence supprimée définitivement</h3>
+      <p className="text-gray-300 text-sm mb-4">
+        <strong className="text-white">{report.name}</strong> et toutes ses données ont été purgées :
+        comptes, pèlerins, voyages, réservations, paiements, documents, messages et journaux.
+      </p>
+
+      <div className="text-xs space-y-1.5 bg-gray-900/60 p-3 rounded-xl border border-gray-700 mb-5">
+        <p className="text-gray-300">
+          🗂️ Fichiers Cloudinary supprimés :{" "}
+          <strong className="text-white">{report.deleted}</strong>
+          {report.referenced > 0 && (
+            <span className="text-gray-500"> ({report.referenced} référencé(s) en base)</span>
+          )}
+        </p>
+        {report.errors > 0 ? (
+          <p className="text-amber-400">
+            ⚠️ {report.errors} lot(s) de fichiers n&apos;ont pas pu être purgés — vérifiez le compte
+            Cloudinary.
+          </p>
+        ) : (
+          <p className="text-emerald-400">✔️ Aucun fichier résiduel signalé sur Cloudinary.</p>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={onClose}
+        className="w-full py-2.5 rounded-xl bg-gray-700 text-gray-200 text-sm font-semibold hover:bg-gray-600 transition-colors"
+      >
+        Fermer
+      </button>
+    </>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
     </svg>
   );
 }
