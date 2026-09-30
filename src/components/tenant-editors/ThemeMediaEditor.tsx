@@ -4,15 +4,18 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Check, Loader2, RotateCcw, Upload } from "lucide-react";
+import { PLACEHOLDER_ASSETS, usesPlaceholderAssets, type PortalImageKey } from "@/lib/tenant-assets";
 
 type ThemeObj = Record<string, unknown>;
 
 type MediaSlot = {
   kind: string;
-  key: string;
+  /** Clé du thème — identique à celle de `PORTAL_IMAGE_KEYS`. */
+  key: PortalImageKey;
   group: string;
   label: string;
   hint: string;
+  /** Aperçu du repli historique (mode « configuration actuelle »). */
   fallback: string;
 };
 
@@ -177,6 +180,14 @@ export default function ThemeMediaEditor({
 }) {
   const t = theme && typeof theme === "object" ? (theme as ThemeObj) : {};
   const router = useRouter();
+  /**
+   * Mode d'images du portail (tenant.theme.assetMode) :
+   *   PLACEHOLDER → sans image, le portail affiche le visuel neutre de la
+   *                 plateforme : c'est l'aperçu montré ci-dessous ;
+   *   TEMPLATE    → sans image, le portail garde la configuration actuelle
+   *                 (photos historiques) : c'est ce repli qui est prévisualisé.
+   */
+  const placeholderMode = usesPlaceholderAssets(theme);
 
   const [urls, setUrls] = useState<Record<string, string>>(() =>
     Object.fromEntries(
@@ -212,7 +223,8 @@ export default function ThemeMediaEditor({
     setUploading(null);
   };
 
-  /** Supprime l'image du thème → retour au visuel par défaut de la plateforme. */
+  /** Supprime l'image du thème → retour au visuel par défaut du portail
+   *  (visuel neutre en mode placeholders, configuration actuelle sinon). */
   const reset = async (slot: MediaSlot) => {
     setSaving(true);
     setError("");
@@ -255,8 +267,9 @@ export default function ThemeMediaEditor({
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Images du portail</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Personnalisez les visuels de fond. Sans image, le visuel par défaut de la plateforme
-            est utilisé.
+            {placeholderMode
+              ? "Personnalisez les visuels de fond. Sans image, le portail affiche le visuel neutre de la plateforme (aperçu ci-dessous) — remplaçable à tout moment ici."
+              : "Personnalisez les visuels de fond. Sans image, le portail garde la configuration actuelle de référence."}
           </p>
         </div>
         <button
@@ -285,6 +298,8 @@ export default function ThemeMediaEditor({
           <div className="grid gap-4 md:grid-cols-2">
             {slots.map((slot) => {
               const url = urls[slot.key] ?? "";
+              // Aperçu = exactement ce que le portail affiche quand le tenant n'a pas d'image.
+              const preview = url || (placeholderMode ? PLACEHOLDER_ASSETS[slot.key] : slot.fallback);
               return (
             <section
               key={slot.key}
@@ -297,7 +312,7 @@ export default function ThemeMediaEditor({
 
               <div className="relative h-36 overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
                 <Image
-                  src={url || slot.fallback}
+                  src={preview}
                   alt={slot.label}
                   fill
                   className={`object-cover ${url ? "" : "opacity-60"}`}
@@ -305,7 +320,7 @@ export default function ThemeMediaEditor({
                 />
                 {!url && (
                   <span className="absolute top-2 right-2 rounded-full bg-gray-900/70 px-2 py-0.5 text-[10px] font-medium text-white">
-                    visuel par défaut
+                    {placeholderMode ? "visuel neutre" : "visuel par défaut"}
                   </span>
                 )}
               </div>

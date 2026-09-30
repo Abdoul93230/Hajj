@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "HajjManager Pro — La plateforme de gestion des agences Hadj & Oumra",
-    "description": "Registre des pèlerins, voyages et forfaits, paiements et reçus, vérification des documents, badges QR, SMS et portail pèlerin : HajjManager Pro équipe les agences Hadj & Oumra qui digitalisent leur organisation."
+    "title": "hajj-e.com — La plateforme de gestion des agences Hadj & Oumra",
+    "description": "Registre des pèlerins, voyages et forfaits, paiements et reçus, vérification des documents, badges QR, SMS et portail pèlerin : hajj-e.com équipe les agences Hadj & Oumra qui digitalisent leur organisation."
   },
   "nav": {
     "features": "Fonctionnalités",
@@ -207,7 +207,7 @@
     "superadminSpace": "Administration plateforme",
     "contactLink": "Écrire à l'équipe",
     "rights": "Tous droits réservés.",
-    "editor": "HajjManager Pro"
+    "editor": "hajj-e.com"
   },
   "notFound": {
     "title": "Cette page n'existe pas sur le site de la plateforme",

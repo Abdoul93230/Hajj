@@ -18,6 +18,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import NextLink from "next/link";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { PLATFORM_NAME } from "@/lib/platform-brand";
 
 /*
  * LANDING DE LA PLATEFORME (page unique, ancrée).
@@ -128,7 +129,7 @@ export default async function PlatformLandingPage({
                 <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
                 <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
                 <span className="ml-auto text-[10px] font-black uppercase tracking-[0.18em] text-gold-light">
-                  HajjManager Pro
+                  {PLATFORM_NAME}
                 </span>
               </div>
 

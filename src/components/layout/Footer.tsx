@@ -173,8 +173,11 @@ export default function Footer() {
           {/* Brand col */}
           <div>
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-[48px] h-[48px] overflow-hidden relative flex-shrink-0">
-                <Image src={logoSrc} alt={brandName} fill className="object-cover scale-x-[1.5]" />
+              {/* Pastille blanche : le lockup hajj-e (vert/or, fond transparent,
+                  ~3:1) se lit sur fond clair — le footer est sombre — et la
+                  boîte large évite de le recadrer comme l'ancien carré 48×48. */}
+              <div className="h-12 w-[132px] flex-shrink-0 bg-white rounded-lg px-2.5 flex items-center justify-center">
+                <Image src={logoSrc} alt={brandName} width={124} height={44} className="h-full w-full object-contain" />
               </div>
               <div>
                 <p className="font-bold text-xl leading-none" style={{ fontFamily: "var(--font-playfair, serif)" }}>{brandName}</p>

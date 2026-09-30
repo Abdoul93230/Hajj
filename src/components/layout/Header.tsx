@@ -192,12 +192,17 @@ export default function Header({
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 flex items-center gap-2">
-              <div className="w-[52px] h-[52px] overflow-hidden relative flex-shrink-0">
+              {/* Slot logo : le lockup hajj-e est horizontal (~3:1) — boîte large
+                  + object-contain pour l'afficher entier (l'ancien object-cover
+                  + scale-x[1.5] le recadrait dans un carré). Les logos carrés
+                  d'agences restent alignés à gauche, sans déformation. */}
+              <div className="h-[52px] w-[124px] sm:w-[156px] flex-shrink-0">
                 <Image
                   src={logoSrc}
                   alt={brandName}
-                  fill
-                  className="object-cover scale-x-[1.5]"
+                  width={156}
+                  height={52}
+                  className="h-full w-full object-contain object-left"
                 />
               </div>
               <div className="flex flex-col leading-none">

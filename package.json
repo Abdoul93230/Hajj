@@ -7,6 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
+    "brand:assets": "node scripts/build-brand-assets.mjs",
     "postinstall": "prisma generate",
     "seed": "tsx --env-file=.env prisma/seed.ts",
     "bootstrap": "tsx --env-file=.env prisma/bootstrap.ts",

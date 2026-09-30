@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getTenantBySlug } from "@/lib/tenant-data";
 import { resolveTenantSlugFromHost } from "@/lib/tenant-slug";
 import { waLink } from "@/lib/contact";
+import { resolvePortalImage } from "@/lib/tenant-assets";
 
 // Inscriptions fermées dès que la date de départ est atteinte (départ aujourd'hui inclus)
 function isBookingClosed(departureDate: Date | null): boolean {
@@ -29,6 +30,16 @@ export default async function OffresPage() {
   // Lien WhatsApp du tenant (masqué si non configuré — jamais un autre numéro)
   const theme = (tenant?.theme ?? {}) as Record<string, unknown>;
   const waHref = waLink(typeof theme.whatsappNumber === "string" ? theme.whatsappNumber : null);
+
+  // Bannière : thème → visuel neutre (agence en mode placeholders) → repli actuel
+  const offersBanner =
+    resolvePortalImage(
+      theme,
+      "offersBannerUrl",
+      typeof theme.offersBannerUrl === "string" && theme.offersBannerUrl.trim()
+        ? theme.offersBannerUrl
+        : null
+    ) ?? "/images/kaaba.jpg";
 
   const dbOffers = tenant
     ? await prisma.offer.findMany({
@@ -101,7 +112,7 @@ export default async function OffresPage() {
     <>
       {/* Hero */}
       <section className="relative bg-brand-deep py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url('${typeof theme.offersBannerUrl === "string" && theme.offersBannerUrl ? theme.offersBannerUrl : "/images/kaaba.jpg"}')` }} />
+        <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url('${offersBanner}')` }} />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-deep/80 to-brand-deep" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="section-label text-amber-400 mb-3">{t("heroLabel2")}</p>

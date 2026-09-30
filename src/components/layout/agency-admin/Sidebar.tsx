@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { UserRole } from "@/types";
 import LogoutButton from "@/components/ui/LogoutButton";
+import { PLATFORM_NAME } from "@/lib/platform-brand";
 
 // Seules les pages réellement implémentées sont listées ici — les entrées sans
 // page (Groupes, Billets d'avion, Hôtels, Transports, Guides, Crédits & Soldes,
@@ -57,9 +58,11 @@ export default function AgencyAdminSidebar({
       {/* ── Logo ── */}
       <div className="px-5 py-5 border-b border-white/10 flex-shrink-0">
         <div className="flex items-center gap-3">
+          {/* Même logo que le portail public (tenant.theme.logoUrl → défaut
+              plateforme hajj-e). Boîte large : le lockup horizontal (~3:1)
+              serait illisible dans l'ancien carré 40×40. */}
           {logoUrl ? (
-            // Même logo que le portail public (tenant.theme.logoUrl → défaut ZAM)
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
+            <div className="h-10 w-[72px] rounded-xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden px-1.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={logoUrl}
@@ -144,7 +147,7 @@ export default function AgencyAdminSidebar({
         {/* Branding */}
         <div className="px-4 pb-3 text-center">
           <p className="text-white/25 text-[9px] font-bold tracking-widest uppercase">
-            HajjManager Pro • v1.0
+            {PLATFORM_NAME} • v1.0
           </p>
           <p className="text-white/15 text-[9px] mt-0.5">
             {tenantName} © {currentYear}

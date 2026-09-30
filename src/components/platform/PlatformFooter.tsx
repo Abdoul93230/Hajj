@@ -1,6 +1,8 @@
-import { Compass, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import Image from "next/image";
 import NextLink from "next/link";
 import { getTranslations } from "next-intl/server";
+import { PLATFORM_LOGO_URL, PLATFORM_NAME } from "@/lib/platform-brand";
 
 /** Adresse de contact de la plateforme (surchargeable par .env). */
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_PLATFORM_CONTACT_EMAIL ?? "contact@hajj-e.com";
@@ -23,12 +25,16 @@ export default async function PlatformFooter({ locale }: { locale: string }) {
       <div className="max-w-6xl mx-auto px-5 py-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         {/* Marque */}
         <div>
-          <div className="flex items-center gap-2.5 mb-3">
-            <span className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
-              <Compass className="w-5 h-5 text-gold-light" strokeWidth={2} />
-            </span>
-            <span className="font-black text-white text-sm tracking-tight">
-              HajjManager <span className="text-gold-light">Pro</span>
+          <div className="mb-3">
+            {/* Logo officiel hajj-e — pastille blanche : le lockup est conçu pour fond clair */}
+            <span className="inline-flex items-center rounded-xl bg-white px-3 py-2">
+              <Image
+                src={PLATFORM_LOGO_URL}
+                alt={PLATFORM_NAME}
+                width={120}
+                height={32}
+                className="h-8 w-auto"
+              />
             </span>
           </div>
           <p className="text-sm leading-relaxed">{t("tagline")}</p>
@@ -90,7 +96,7 @@ export default async function PlatformFooter({ locale }: { locale: string }) {
           <p>
             {t("editor")} © {year} — {t("rights")}
           </p>
-          <p className="font-bold tracking-widest uppercase text-[10px]">HajjManager Pro • v1.0</p>
+          <p className="font-bold tracking-widest uppercase text-[10px]">{PLATFORM_NAME} • v1.0</p>
         </div>
       </div>
     </footer>

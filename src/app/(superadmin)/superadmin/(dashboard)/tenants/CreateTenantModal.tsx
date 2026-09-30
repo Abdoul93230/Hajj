@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import PhoneInput from "@/components/ui/PhoneInput";
+import { ASSET_MODE_LABEL, type PortalAssetMode } from "@/lib/tenant-assets";
 
 const COUNTRIES = [
   { code: "NE", label: "Niger" },
@@ -69,6 +70,12 @@ export default function CreateTenantModal({
   const [form, setForm] = useState<FormData>(EMPTY);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  /**
+   * Point de départ des visuels du portail (booléen envoyé à l'API) :
+   *   false (défaut) → visuels neutres (placeholders) à personnaliser ;
+   *   true           → configuration actuelle (photos de l'agence de référence).
+   */
+  const [useTemplateConfig, setUseTemplateConfig] = useState(false);
   /** Renseigné après création : récapitulatif + état des notifications envoyées. */
   const [done, setDone] = useState<{
     tenant: Record<string, unknown>;
@@ -77,6 +84,8 @@ export default function CreateTenantModal({
     publicUrl: string | null;
     /** Adresse de l'espace de gestion (admin). */
     loginUrl: string | null;
+    /** Visuels effectivement appliqués au portail. */
+    assetMode: PortalAssetMode | null;
   } | null>(null);
 
   function setField(field: keyof FormData, value: string) {
@@ -108,7 +117,7 @@ export default function CreateTenantModal({
       const res = await fetch("/api/superadmin/tenants", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, useTemplateConfig }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -124,6 +133,10 @@ export default function CreateTenantModal({
         notifications: (data.notifications ?? null) as Notifications,
         publicUrl: typeof data.publicUrl === "string" ? data.publicUrl : null,
         loginUrl: typeof data.loginUrl === "string" ? data.loginUrl : null,
+        assetMode:
+          data.assetMode === "TEMPLATE" || data.assetMode === "PLACEHOLDER"
+            ? (data.assetMode as PortalAssetMode)
+            : null,
       });
     } catch {
       setError("Erreur réseau");
@@ -172,6 +185,15 @@ export default function CreateTenantModal({
               <NotifyLine icon="✉️" label="Email à l'agence" res={done.notifications?.email ?? null} />
               <NotifyLine icon="📱" label="SMS à l'agence" res={done.notifications?.sms ?? null} />
             </div>
+
+            {done.assetMode && (
+              <p className="text-xs text-gray-400 leading-relaxed">
+                🖼️ Visuels du portail :{" "}
+                <span className="text-gray-200">{ASSET_MODE_LABEL[done.assetMode]}</span>
+                {done.assetMode === "PLACEHOLDER" &&
+                  " — l'agence les remplace dans Personnalisation → Médias."}
+              </p>
+            )}
 
             <button
               type="button"
@@ -292,6 +314,35 @@ export default function CreateTenantModal({
 
           {/* Séparateur */}
           <div className="border-t border-gray-700" />
+
+          {/* Visuels du portail — booléen de point de départ */}
+          <div>
+            <h3 className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-4">
+              Visuels du portail
+            </h3>
+            <label className="flex items-start gap-3 bg-gray-900 border border-gray-600 rounded-xl px-4 py-3.5 cursor-pointer hover:border-gray-500 transition-colors">
+              <input
+                type="checkbox"
+                checked={useTemplateConfig}
+                onChange={(e) => setUseTemplateConfig(e.target.checked)}
+                className="mt-0.5 w-4 h-4 flex-shrink-0 accent-amber-500"
+              />
+              <span className="text-sm">
+                <span className="block text-white font-semibold">
+                  Utiliser la configuration actuelle
+                </span>
+                <span className="block text-gray-400 text-xs mt-1 leading-relaxed">
+                  Reprend les photos de l&apos;agence de référence (rendu actuel des portails).
+                  Décoché, l&apos;agence démarre avec des <strong>visuels neutres</strong>
+                  qu&apos;elle remplace dans Personnalisation → Médias.
+                </span>
+              </span>
+            </label>
+            <p className="text-xs text-gray-500 mt-2">
+              Dans les deux cas, le logo par défaut est celui de la plateforme (hajj-e.com) :
+              l&apos;agence met le sien dans Personnalisation → Logo &amp; contact.
+            </p>
+          </div>
 
           {/* Section admin */}
           <div>

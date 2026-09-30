@@ -14,11 +14,18 @@
 // volontairement globales : un thème change l'identité, pas la sémantique.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const DEFAULT_BRAND = "#0f5132"; // vert ZAM
-export const DEFAULT_ACCENT = "#b8860b"; // or ZAM
+import { PLATFORM_LOGO_URL } from "@/lib/platform-brand";
+import { resolvePortalImage, type PortalImageKey } from "@/lib/tenant-assets";
 
-// Logo par défaut — même fichier que le portail public (Header, Footer, favicon).
-export const DEFAULT_LOGO_URL = "/image ZAM/logo.png";
+export const DEFAULT_BRAND = "#0f5132"; // vert hajj-e
+export const DEFAULT_ACCENT = "#b8860b"; // or hajj-e
+
+// Logo par défaut de TOUTE agence : le logo de la plateforme (hajj-e.com).
+// Une agence qui n'a pas encore téléversé le sien (theme.logoUrl) affiche donc
+// la marque de la plateforme — remplaçable dans Personnalisation → Logo & contact.
+// ⚠️ L'agence de référence (ZAM) porte son propre logo dans son thème : c'est une
+// donnée de tenant, jamais un défaut codé.
+export const DEFAULT_LOGO_URL = PLATFORM_LOGO_URL;
 
 /**
  * Résout l'URL du logo du tenant à partir de `Tenant.theme`, avec repli sur le
@@ -369,12 +376,19 @@ export type TenantBranding = {
  * Construit l'objet branding (textes résolus pour `locale`) sérialisable
  * vers le provider client. Source : Tenant.theme = {
  *   logoUrl, whatsappNumber, phone, facebookUrl, tiktokUrl,
- *   content: { heroTitle: {fr,en,ar}, heroSubtitle, footerDescription, metaDescription }
+ *   assetMode, heroImageUrl…, content: { heroTitle: {fr,en,ar}, … }
  * }
+ *
+ * Les images absentes du thème sont résolues par `resolvePortalImage` : visuels
+ * neutres (placeholders) pour une agence créée en mode "PLACEHOLDER", `null`
+ * pour une agence en mode "TEMPLATE" (les pages gardent alors leurs visuels de
+ * repli historiques = la configuration actuelle).
  */
 export function readTenantBranding(raw: unknown, locale: string, tenantName: string): TenantBranding {
   const t = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
   const c = t.content && typeof t.content === "object" ? (t.content as Record<string, unknown>) : {};
+  /** Image d'un emplacement : valeur du thème → placeholder éventuel. */
+  const img = (key: PortalImageKey) => resolvePortalImage(raw, key, str(t[key]));
   return {
     tenantName,
     logoUrl: str(t.logoUrl),
@@ -382,28 +396,28 @@ export function readTenantBranding(raw: unknown, locale: string, tenantName: str
     facebookUrl: str(t.facebookUrl),
     tiktokUrl: str(t.tiktokUrl),
     phone: str(t.phone),
-    heroImageUrl: str(t.heroImageUrl),
-    offersBannerUrl: str(t.offersBannerUrl),
-    guideBannerUrl: str(t.guideBannerUrl),
-    coranBannerUrl: str(t.coranBannerUrl),
-    founderImageUrl: str(t.founderImageUrl),
-    oumraRamadanImageUrl: str(t.oumraRamadanImageUrl),
-    hajjImageUrl: str(t.hajjImageUrl),
-    makkahImageUrl: str(t.makkahImageUrl),
-    medineImageUrl: str(t.medineImageUrl),
-    menuIhramImageUrl: str(t.menuIhramImageUrl),
-    menuMosqueUrl: str(t.menuMosqueUrl),
-    historyGallery1Url: str(t.historyGallery1Url),
-    historyGallery2Url: str(t.historyGallery2Url),
-    historyGallery3Url: str(t.historyGallery3Url),
-    historyGallery4Url: str(t.historyGallery4Url),
-    historyGallery5Url: str(t.historyGallery5Url),
-    historyGallery6Url: str(t.historyGallery6Url),
-    historyTeam1Url: str(t.historyTeam1Url),
-    historyTeam2Url: str(t.historyTeam2Url),
-    partnerIataUrl: str(t.partnerIataUrl),
-    partnerCohoUrl: str(t.partnerCohoUrl),
-    partnerMinistryUrl: str(t.partnerMinistryUrl),
+    heroImageUrl: img("heroImageUrl"),
+    offersBannerUrl: img("offersBannerUrl"),
+    guideBannerUrl: img("guideBannerUrl"),
+    coranBannerUrl: img("coranBannerUrl"),
+    founderImageUrl: img("founderImageUrl"),
+    oumraRamadanImageUrl: img("oumraRamadanImageUrl"),
+    hajjImageUrl: img("hajjImageUrl"),
+    makkahImageUrl: img("makkahImageUrl"),
+    medineImageUrl: img("medineImageUrl"),
+    menuIhramImageUrl: img("menuIhramImageUrl"),
+    menuMosqueUrl: img("menuMosqueUrl"),
+    historyGallery1Url: img("historyGallery1Url"),
+    historyGallery2Url: img("historyGallery2Url"),
+    historyGallery3Url: img("historyGallery3Url"),
+    historyGallery4Url: img("historyGallery4Url"),
+    historyGallery5Url: img("historyGallery5Url"),
+    historyGallery6Url: img("historyGallery6Url"),
+    historyTeam1Url: img("historyTeam1Url"),
+    historyTeam2Url: img("historyTeam2Url"),
+    partnerIataUrl: img("partnerIataUrl"),
+    partnerCohoUrl: img("partnerCohoUrl"),
+    partnerMinistryUrl: img("partnerMinistryUrl"),
     heroTitle: pickLocalized(c.heroTitle, locale),
     heroSubtitle: pickLocalized(c.heroSubtitle, locale),
     footerDescription: pickLocalized(c.footerDescription, locale),

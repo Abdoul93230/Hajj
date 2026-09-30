@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "HajjManager Pro — The management platform for Hajj & Umrah agencies",
-    "description": "Pilgrim registry, packages and trips, payments and receipts, document review, QR badges, SMS and a pilgrim portal: HajjManager Pro equips Hajj & Umrah agencies with a complete digital back office."
+    "title": "hajj-e.com — The management platform for Hajj & Umrah agencies",
+    "description": "Pilgrim registry, packages and trips, payments and receipts, document review, QR badges, SMS and a pilgrim portal: hajj-e.com equips Hajj & Umrah agencies with a complete digital back office."
   },
   "nav": {
     "features": "Features",
@@ -207,7 +207,7 @@
     "superadminSpace": "Platform administration",
     "contactLink": "Email the team",
     "rights": "All rights reserved.",
-    "editor": "HajjManager Pro"
+    "editor": "hajj-e.com"
   },
   "notFound": {
     "title": "This page does not exist on the platform website",

@@ -6,6 +6,7 @@ import { isSuperAdmin } from "@/lib/permissions";
 import bcrypt from "bcryptjs";
 import { notifyAgencyCreated } from "@/lib/agency-notify";
 import { tenantPublicUrl } from "@/lib/tenant-slug";
+import { newTenantTheme, readPortalAssetMode } from "@/lib/tenant-assets";
 
 // GET — liste toutes les agences (hors platform)
 export async function GET() {
@@ -50,6 +51,10 @@ export async function POST(req: Request) {
       adminName,
       adminEmail,
       adminPassword,
+      // Point de départ des visuels du portail :
+      //   true  → configuration actuelle (photos de l'agence de référence)
+      //   false → visuels neutres à personnaliser (défaut)
+      useTemplateConfig,
     } = body;
 
     if (!name || !slug || !email || !adminName || !adminEmail || !adminPassword) {
@@ -61,6 +66,10 @@ export async function POST(req: Request) {
     if (existing) {
       return NextResponse.json({ error: "Ce slug est déjà utilisé" }, { status: 409 });
     }
+
+    // Visuels du portail : « configuration actuelle » ou placeholders neutres.
+    // Le logo par défaut est celui de la plateforme (hajj-e.com) dans les deux cas.
+    const theme = newTenantTheme(useTemplateConfig === true);
 
     // Créer le tenant et l'admin en transaction
     const result = await prisma.$transaction(async (tx) => {
@@ -74,6 +83,7 @@ export async function POST(req: Request) {
           country: country || "NE",
           plan: plan || "STARTER",
           status: "ACTIVE",
+          theme,
         },
       });
 
@@ -128,6 +138,8 @@ export async function POST(req: Request) {
         // Renvoyés à la console superadmin pour affichage/copie dans la modale
         publicUrl,
         loginUrl,
+        // Visuels appliqués au portail (récapitulatif dans la modale)
+        assetMode: readPortalAssetMode(theme),
         notifications,
       },
       { status: 201 }

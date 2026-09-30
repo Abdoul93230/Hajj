@@ -1,8 +1,9 @@
-import { Compass } from "lucide-react";
+import Image from "next/image";
 import NextLink from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { PLATFORM_LOGO_URL, PLATFORM_NAME } from "@/lib/platform-brand";
 
 /** Sections de la landing (ancres de la page unique). */
 const SECTIONS = [
@@ -26,18 +27,18 @@ export default async function PlatformHeader({ locale }: { locale: string }) {
   return (
     <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-line">
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center gap-4">
-        {/* Marque */}
+        {/* Marque — logo officiel hajj-e */}
         <Link href="/" locale={locale} className="flex items-center gap-2.5 flex-shrink-0">
-          <span className="w-9 h-9 rounded-xl bg-brand-deep flex items-center justify-center">
-            <Compass className="w-5 h-5 text-gold-light" strokeWidth={2} />
-          </span>
-          <span className="hidden sm:block leading-tight">
-            <span className="block font-black text-ink text-sm tracking-tight">
-              HajjManager <span className="text-gold-dark">Pro</span>
-            </span>
-            <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-ink-soft">
-              Hadj &amp; Oumra
-            </span>
+          <Image
+            src={PLATFORM_LOGO_URL}
+            alt={PLATFORM_NAME}
+            width={132}
+            height={36}
+            priority
+            className="h-9 w-auto"
+          />
+          <span className="hidden sm:block text-[9px] font-bold uppercase tracking-[0.18em] text-ink-soft leading-tight">
+            Hadj &amp; Oumra
           </span>
         </Link>
 
