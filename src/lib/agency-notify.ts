@@ -3,6 +3,11 @@ import { isMailConfigured, sendNotificationEmail } from "@/lib/mail";
 import { normalizePhone } from "@/lib/sms";
 import { deliverSms } from "@/lib/sms-service";
 import { isDeliverableEmail, isNigerNumber } from "@/lib/phone";
+import {
+  buildAgencyCreatedEmailText,
+  buildAgencyCreatedSmsBody,
+  type AgencyCreatedMessageInput,
+} from "@/lib/agency-messages";
 
 // ─── Notification de création d'agence (plateforme → agence) ─────────────────
 //
@@ -30,6 +35,11 @@ export type AgencyCreatedNotification = {
   sms: NotifyChannel;
 };
 
+// Le CONTENU des messages vit dans `agency-messages.ts` (module pur, testable
+// sans envoi) ; ré-exporté ici pour les appelants qui importent agency-notify.
+export { buildAgencyCreatedEmailText, buildAgencyCreatedSmsBody };
+export type { AgencyCreatedMessageInput };
+
 export async function notifyAgencyCreated(opts: {
   tenant: { id: string; name: string; email?: string | null; phone?: string | null };
   admin: { name: string; email: string };
@@ -37,28 +47,27 @@ export async function notifyAgencyCreated(opts: {
   adminPassword: string;
   /** Base publique (NEXT_PUBLIC_APP_URL) pour construire le lien de connexion. */
   appUrl?: string | null;
+  /**
+   * URL du PORTAIL PUBLIC de l'agence (vu par les pèlerins), en plus de
+   * l'espace de gestion — voir `tenantPublicUrl()` dans lib/tenant-slug.
+   */
+  publicUrl?: string | null;
 }): Promise<AgencyCreatedNotification> {
   const base = String(opts.appUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/+$/, "");
   const loginUrl = `${base}/agency-admin/login`;
 
-  const emailText = [
-    `Bonjour ${opts.admin.name},`,
-    ``,
-    `Votre espace agence « ${opts.tenant.name} » vient d'être créé sur la plateforme.`,
-    ``,
-    `Lien de connexion : ${loginUrl}`,
-    `Identifiant : ${opts.admin.email}`,
-    `Mot de passe : ${opts.adminPassword}`,
-    ``,
-    `IMPORTANT : ce mot de passe est provisoire. Vous devrez impérativement le changer à votre première connexion avant d'accéder à votre espace.`,
-    ``,
-    `— La plateforme Hajj & Oumra`,
-  ].join("\n");
-
-  // SMS : texte sans accents composés → reste en GSM-7 (moins de segments facturés)
-  const smsBody =
-    `${opts.tenant.name} : votre espace agence est pret. ` +
-    `${loginUrl} - identifiant ${opts.admin.email} - mot de passe ${opts.adminPassword} (provisoire : changement obligatoire a la premiere connexion)`;
+  // Les deux messages sont construits par des fonctions PURES : contenu
+  // vérifiable isolément (et sans risque d'envoi accidentel en test).
+  const messageInput = {
+    tenantName: opts.tenant.name,
+    adminName: opts.admin.name,
+    adminEmail: opts.admin.email,
+    adminPassword: opts.adminPassword,
+    loginUrl,
+    publicUrl: opts.publicUrl ?? null,
+  };
+  const emailText = buildAgencyCreatedEmailText(messageInput);
+  const smsBody = buildAgencyCreatedSmsBody(messageInput);
 
   // ── Canal 1 : EMAIL (agence, sinon admin) ─────────────────────────────────
   const agencyEmail = String(opts.tenant.email ?? "").trim();

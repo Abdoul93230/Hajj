@@ -121,6 +121,39 @@ export function platformLandingUrl(locale: string): string | null {
   return `${proto}://${root}/${locale}`;
 }
 
+/**
+ * URL PUBLIQUE du portail d'une agence (la vitrine vue par les pèlerins).
+ *
+ * Sert notamment aux notifications de création de compte : l'agence reçoit
+ * l'adresse de son espace de GESTION *et* celle de son site public.
+ *
+ *   • sous-domaines activés + domaine plateforme déclaré
+ *       → `https://<slug>.<domaine>`  (ex. https://zam.hajj-e.com)
+ *     (l'accès racine redirige vers la locale par défaut : URL courte, utile en
+ *      SMS, sans chemin à rallonge) ;
+ *   • sinon (mono-domaine, développement) → `<base>/<locale>` (ex.
+ *      http://localhost:3000/fr).
+ *
+ * Renvoie `null` si aucune base exploitable : l'appelant décide (on n'invente
+ * jamais d'URL).
+ */
+export function tenantPublicUrl(
+  slug: string,
+  appUrl?: string | null,
+  locale = "fr"
+): string | null {
+  const cleanSlug = (slug ?? "").trim();
+  const base = String(appUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/+$/, "");
+  const root = platformRootDomains()[0];
+
+  if (cleanSlug && root && subdomainRoutingEnabled()) {
+    const proto = base.startsWith("http://") ? "http" : "https";
+    return `${proto}://${cleanSlug}.${root}`;
+  }
+
+  return base ? `${base}/${locale}` : null;
+}
+
 /** Valeur exploitable du cookie « zam_dev_mode » (sinon null). */
 export function devModeFromCookie(value: string | null | undefined): DevMode | null {
   const v = (value ?? "").trim().toLowerCase();

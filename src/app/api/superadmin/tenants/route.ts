@@ -5,6 +5,7 @@ import { getSession } from "@/lib/session";
 import { isSuperAdmin } from "@/lib/permissions";
 import bcrypt from "bcryptjs";
 import { notifyAgencyCreated } from "@/lib/agency-notify";
+import { tenantPublicUrl } from "@/lib/tenant-slug";
 
 // GET — liste toutes les agences (hors platform)
 export async function GET() {
@@ -107,17 +108,26 @@ export async function POST(req: Request) {
     const appUrl =
       process.env.NEXT_PUBLIC_APP_URL ?? (host ? `${proto}://${host}` : new URL(req.url).origin);
 
+    // Le message présente DEUX adresses : le portail public (vu par les pèlerins)
+    // et l'espace de gestion. En mode sous-domaines → https://<slug>.<domaine>.
+    const publicUrl = tenantPublicUrl(result.tenant.slug, appUrl);
+    const loginUrl = `${appUrl.replace(/\/+$/, "")}/agency-admin/login`;
+
     const notifications = await notifyAgencyCreated({
       tenant: result.tenant,
       admin: { name: result.admin.name, email: result.admin.email },
       adminPassword,
       appUrl,
+      publicUrl,
     }).catch(() => null);
 
     return NextResponse.json(
       {
         tenant: result.tenant,
         admin: { id: result.admin.id, email: result.admin.email, name: result.admin.name },
+        // Renvoyés à la console superadmin pour affichage/copie dans la modale
+        publicUrl,
+        loginUrl,
         notifications,
       },
       { status: 201 }

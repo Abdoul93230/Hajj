@@ -73,6 +73,10 @@ export default function CreateTenantModal({
   const [done, setDone] = useState<{
     tenant: Record<string, unknown>;
     notifications: Notifications;
+    /** Adresse du portail public de l'agence (pèlerins). */
+    publicUrl: string | null;
+    /** Adresse de l'espace de gestion (admin). */
+    loginUrl: string | null;
   } | null>(null);
 
   function setField(field: keyof FormData, value: string) {
@@ -112,9 +116,15 @@ export default function CreateTenantModal({
         return;
       }
       // On affiche d'abord le récapitulatif — dont l'état des notifications
-      // (email / SMS) renvoyé par l'API. La liste est rafraîchie quand le
-      // superadmin ferme le récapitulatif (« Terminer »).
-      setDone({ tenant: data.tenant, notifications: (data.notifications ?? null) as Notifications });
+      // (email / SMS) et les DEUX adresses de l'agence (portail public + gestion),
+      // renvoyées par l'API. La liste est rafraîchie quand le superadmin ferme le
+      // récapitulatif (« Terminer »).
+      setDone({
+        tenant: data.tenant,
+        notifications: (data.notifications ?? null) as Notifications,
+        publicUrl: typeof data.publicUrl === "string" ? data.publicUrl : null,
+        loginUrl: typeof data.loginUrl === "string" ? data.loginUrl : null,
+      });
     } catch {
       setError("Erreur réseau");
     } finally {
@@ -148,9 +158,14 @@ export default function CreateTenantModal({
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3.5">
               <p className="text-green-400 text-sm font-bold">Agence créée ✓</p>
               <p className="text-gray-300 text-sm mt-1">
-                {String(done.tenant.name)} — l&apos;administrateur peut désormais se connecter
-                sur <span className="text-white font-medium">/agency-admin/login</span>
+                {String(done.tenant.name)} — ces deux adresses ont été transmises à l&apos;agence
+                (email, et SMS au Niger) :
               </p>
+            </div>
+
+            <div className="space-y-2">
+              <UrlRow label="Portail public (pèlerins)" url={done.publicUrl} />
+              <UrlRow label="Espace de gestion (admin)" url={done.loginUrl} />
             </div>
 
             <div className="space-y-3">
@@ -393,6 +408,42 @@ function NotifyLine({
     <p className={`text-xs ${tone} leading-relaxed`}>
       {icon} {label} : {mark} {res.status === "SENT" ? `envoyé à ${res.to}` : (res.error ?? "non envoyé")}
     </p>
+  );
+}
+
+/**
+ * Adresse de l'agence (portail public / espace de gestion) avec copie en un clic.
+ * Affichée après création pour que le superadmin puisse la partager lui-même.
+ */
+function UrlRow({ label, url }: { label: string; url: string | null }) {
+  const [copied, setCopied] = useState(false);
+  if (!url) return null;
+
+  return (
+    <div className="flex items-center gap-2 bg-gray-900/60 border border-gray-700 rounded-xl px-3 py-2.5">
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500">{label}</p>
+        <p className="text-sm text-white truncate" dir="ltr" title={url}>
+          {url}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(url);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          } catch {
+            // Presse-papiers indisponible (contexte non sécurisé, permission) :
+            // l'adresse reste sélectionnable à la main.
+          }
+        }}
+        className="flex-shrink-0 px-2.5 py-1.5 rounded-lg bg-gray-700 text-gray-300 text-xs font-semibold hover:bg-gray-600 transition-colors"
+      >
+        {copied ? "Copié ✓" : "Copier"}
+      </button>
+    </div>
   );
 }
 
