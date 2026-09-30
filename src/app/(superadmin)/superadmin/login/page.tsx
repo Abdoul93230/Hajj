@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SuperAdminLoginForm from "./LoginForm";
+import { PLATFORM_NAME } from "@/lib/platform-brand";
 
 export const metadata: Metadata = { title: "Connexion Super Admin" };
 
@@ -12,7 +13,7 @@ export default function SuperAdminLoginPage() {
             SA
           </div>
           <h1 className="text-white text-2xl font-bold">Super Admin</h1>
-          <p className="text-gray-400 text-sm mt-1">Hajj Platform — Accès restreint</p>
+          <p className="text-gray-400 text-sm mt-1">{PLATFORM_NAME} — Accès restreint</p>
         </div>
         <SuperAdminLoginForm />
       </div>

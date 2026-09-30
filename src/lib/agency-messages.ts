@@ -4,6 +4,8 @@
 // sans risque d'envoi accidentel. L'expédition (SMTP / SMS) reste dans
 // `agency-notify.ts`.
 
+import { PLATFORM_NAME } from "@/lib/platform-brand";
+
 export type AgencyCreatedMessageInput = {
   tenantName: string;
   adminName: string;
@@ -33,7 +35,8 @@ export function buildAgencyCreatedEmailText(input: AgencyCreatedMessageInput): s
     ``,
     `IMPORTANT : ce mot de passe est provisoire. Vous devrez impérativement le changer à votre première connexion avant d'accéder à votre espace.`,
     ``,
-    `— La plateforme Hajj & Oumra`,
+    // Signature de la PLATEFORME (hajj-e.com), pas de l'agence
+    `— ${PLATFORM_NAME}`,
   ].join("\n");
 }
 

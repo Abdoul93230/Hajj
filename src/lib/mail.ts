@@ -1,5 +1,6 @@
 import "server-only";
 import nodemailer from "nodemailer";
+import { PLATFORM_NAME } from "@/lib/platform-brand";
 
 // ─── CONFIGURATION SMTP (Gmail + App Password) ────────────────────────────────
 // Voir .env : SMTP_USER (axionaa.academy@gmail.com) + SMTP_APP_PASSWORD
@@ -9,7 +10,9 @@ const SMTP_PORT = Number(process.env.SMTP_PORT ?? 465);
 const SMTP_USER = process.env.SMTP_USER ?? "";
 // L'app password Google peut contenir des espaces : on les retire
 const SMTP_APP_PASSWORD = (process.env.SMTP_APP_PASSWORD ?? "").replace(/\s+/g, "");
-const SMTP_FROM_NAME = process.env.SMTP_FROM_NAME ?? "ZAM Hajj & Oumra";
+// Nom affiché par défaut : celui de la PLATEFORME (hajj-e.com), jamais celui
+// d'une agence en dur (une agence a son propre nom passé en paramètre).
+const SMTP_FROM_NAME = process.env.SMTP_FROM_NAME ?? PLATFORM_NAME;
 
 const BRAND = "#0f5132"; // couleur emerald de la plateforme
 
@@ -48,6 +51,13 @@ export async function sendNotificationEmail(opts: {
   to: string;
   userName?: string | null;
   tenantName: string;
+  /**
+   * Nom affiché en PIED de message (« Message envoyé par … »).
+   * Par défaut : l'agence (les messages aux pèlerins sont signés par leur
+   * agence). Les messages qui engagent la PLATEFORME (création d'agence…)
+   * passent explicitement `PLATFORM_NAME`.
+   */
+  footerName?: string | null;
   subject: string;
   text: string;
 }): Promise<{ messageId: string }> {
@@ -59,6 +69,9 @@ export async function sendNotificationEmail(opts: {
   }
 
   const text = String(opts.text ?? "").trim();
+  // Pied de message : l'agence par défaut (messages aux pèlerins), sinon le nom
+  // transmis explicitement (messages émis par la plateforme).
+  const footerName = String(opts.footerName ?? "").trim() || opts.tenantName;
 
   const info = await transporter.sendMail({
     from: fromHeader(opts.tenantName),
@@ -79,7 +92,7 @@ export async function sendNotificationEmail(opts: {
         </div>
         <div style="background-color:#f9fafb;padding:14px 32px;border-top:1px solid #e5e7eb;">
           <p style="color:#9ca3af;font-size:12px;margin:0;text-align:center;">
-            Message envoyé par ${opts.tenantName}
+            Message envoyé par ${footerName}
           </p>
         </div>
       </div>

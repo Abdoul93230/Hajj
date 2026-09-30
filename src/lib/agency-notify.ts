@@ -1,5 +1,6 @@
 import "server-only";
 import { isMailConfigured, sendNotificationEmail } from "@/lib/mail";
+import { PLATFORM_NAME } from "@/lib/platform-brand";
 import { normalizePhone } from "@/lib/sms";
 import { deliverSms } from "@/lib/sms-service";
 import { isDeliverableEmail, isNigerNumber } from "@/lib/phone";
@@ -89,6 +90,9 @@ export async function notifyAgencyCreated(opts: {
         to: emailTo,
         userName: opts.admin.name,
         tenantName: opts.tenant.name,
+        // Le pied de ce message engage la PLATEFORME (c'est elle qui crée le
+        // compte), pas l'agence qui vient d'être créée.
+        footerName: PLATFORM_NAME,
         subject: "Votre espace agence est prêt",
         text: emailText,
       });

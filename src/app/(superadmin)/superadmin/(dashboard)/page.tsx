@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { PLATFORM_NAME } from "@/lib/platform-brand";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -52,7 +53,7 @@ export default async function SuperAdminDashboard() {
       {/* En-tête */}
       <div>
         <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-gray-400 mt-1">Vue globale de la plateforme Hajj</p>
+        <p className="text-gray-400 mt-1">Vue globale de la plateforme {PLATFORM_NAME}</p>
       </div>
 
       {/* Stats */}
