@@ -39,8 +39,8 @@ export type PaginationState<T> = {
 /**
  * Découpe une liste en pages et expose l'état complet du paginateur.
  *
- * La taille de page est choisie automatiquement selon le volume (voir
- * `resolvePageSize`) et reste ajustable par l'utilisateur.
+ * La taille de page vaut 10 par défaut et reste ajustable par l'utilisateur
+ * (10 / 25 / 50 / 100).
  *
  * @param items    Liste déjà filtrée / triée.
  * @param resetKey Décrit les critères de filtrage : tout changement remet la
@@ -50,7 +50,7 @@ export function usePagination<T>(items: T[], resetKey: string | number = ""): Pa
   const total = items.length;
   const [preferredSize, setPreferredSize] = useState<number | null>(null);
 
-  const pageSize  = resolvePageSize(total, preferredSize);
+  const pageSize  = resolvePageSize(preferredSize);
   const pageCount = pageCountOf(total, pageSize);
 
   // Contexte de pagination : tout changement de critère (recherche, filtre,
@@ -119,12 +119,6 @@ export default function Pagination<T>({
 
   if (!paginated) return null;
 
-  // La taille automatique peut sortir de la liste des options (ex. 13) : on
-  // l'ajoute pour que le <select> reflète toujours la réalité.
-  const sizes: number[] = (PAGE_SIZE_OPTIONS as readonly number[]).includes(pageSize)
-    ? [...PAGE_SIZE_OPTIONS]
-    : [...PAGE_SIZE_OPTIONS, pageSize].sort((a, b) => a - b);
-
   return (
     <div className={`flex flex-wrap items-center justify-end gap-3 ${className}`}>
 
@@ -144,7 +138,7 @@ export default function Pagination<T>({
             onChange={e => setPageSize(Number(e.target.value))}
             className="text-[11px] py-1 px-2 border border-gray-200 rounded-lg bg-white text-gray-500 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/30"
           >
-            {sizes.map(s => <option key={s} value={s}>{s}</option>)}
+            {PAGE_SIZE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
         </label>
       )}

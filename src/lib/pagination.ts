@@ -1,13 +1,10 @@
 /**
- * Pagination « intelligente » partagée par les listes de l'espace agence.
+ * Pagination partagée par les listes de l'espace agence.
  *
  * Principes :
- *  - la taille de page s'adapte au volume : tant que tout tient sur une page,
- *    aucun paginateur n'est affiché (zéro bruit visuel) ;
- *  - au-delà, on vise au plus ~4 pages et on rééquilibre la taille de page pour
- *    éviter une dernière page quasi vide (26 pèlerins → 2 pages de 13, et non
- *    une page de 25 suivie d'une page d'un seul élément) ;
- *  - l'utilisateur peut forcer une taille (10 / 25 / 50 / 100) ;
+ *  - 10 éléments par page par défaut, ajustable (10 / 25 / 50 / 100) ;
+ *  - tant que tout tient sur une page, aucun paginateur n'est affiché
+ *    (zéro bruit visuel) ;
  *  - la page courante est ramenée dans les bornes quand les filtres changent ou
  *    après une suppression.
  */
@@ -15,30 +12,13 @@
 /** Tailles de page proposées dans le sélecteur. */
 export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100] as const;
 
-/** Taille de page « naturelle » pour un volume donné (au plus ~4 pages). */
-export function autoPageSize(total: number): number {
-  if (total <= 100) return 25;   // petites listes : 1 à 4 pages
-  if (total <= 400) return 50;   // listes moyennes : 3 à 8 pages
-  return 100;                    // grosses listes
-}
+/** Taille de page appliquée tant que l'utilisateur n'a rien choisi. */
+export const DEFAULT_PAGE_SIZE = 10;
 
-/** Rééquilibre la taille de page pour éviter une dernière page quasi vide. */
-export function balancedPageSize(total: number, size: number): number {
-  const s = Math.max(1, Math.trunc(size));
-  if (total <= s) return Math.max(s, total || 1);
-  const pages = Math.ceil(total / s);
-  const lastPage = total % s === 0 ? s : total % s;
-  // Dernière page « orpheline » (≤ 15 % d'une page pleine) : on répartit.
-  if (pages > 1 && lastPage <= Math.max(2, Math.floor(s * 0.15))) {
-    return Math.ceil(total / pages);
-  }
-  return s;
-}
-
-/** Taille effective de page : préférence utilisateur, sinon calcul adaptatif. */
-export function resolvePageSize(total: number, preferred?: number | null): number {
+/** Taille effective de page : préférence utilisateur, sinon 10 par défaut. */
+export function resolvePageSize(preferred?: number | null): number {
   if (preferred && preferred > 0) return Math.trunc(preferred);
-  return balancedPageSize(total, autoPageSize(total));
+  return DEFAULT_PAGE_SIZE;
 }
 
 /** Nombre de pages (toujours ≥ 1). */
