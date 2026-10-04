@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { resolveLogoUrl } from "@/lib/tenant-theme";
+import DocumentViewer, { isPdfUrl } from "@/components/ui/DocumentViewer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -91,7 +93,12 @@ function Row({ label, value, bold }: { label: string; value: string; bold?: bool
 
 // ─── Single receipt block ─────────────────────────────────────────────────────
 
-function Receipt({ payment, tenant, totalAmount, paidBefore, totalPaid, remaining }: Props) {
+type ReceiptProps = Props & {
+  /** Ouvre la pièce jointe dans la visionneuse intégrée (écran uniquement). */
+  onViewReceipt?: () => void;
+};
+
+function Receipt({ payment, tenant, totalAmount, paidBefore, totalPaid, remaining, onViewReceipt }: ReceiptProps) {
   const isRefund      = payment.type === "REFUND";
   const currency      = payment.reservation.offer.currency;
   const num           = recNum(payment.id, payment.reference);
@@ -196,16 +203,21 @@ function Receipt({ payment, tenant, totalAmount, paidBefore, totalPaid, remainin
         {payment.receiptUrl && (
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "2px 0", fontSize: 10 }}>
             <span style={{ color: "#555" }}>Justificatif</span>
-            {/* Cliquable à l'écran : le justificatif reste consultable depuis le reçu */}
-            <a
-              href={payment.receiptUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* Cliquable à l'écran : la pièce jointe s'ouvre dans la visionneuse
+                intégrée (un PDF s'y affiche même si le navigateur le
+                téléchargerait au lieu de l'ouvrir dans un onglet). */}
+            <button
+              type="button"
+              onClick={() => onViewReceipt?.()}
               className="no-print"
-              style={{ color: "#2563eb", fontWeight: 600, textDecoration: "underline" }}
+              style={{
+                color: "#2563eb", fontWeight: 600, textDecoration: "underline",
+                background: "none", border: "none", padding: 0, cursor: "pointer",
+                font: "inherit",
+              }}
             >
               Voir la pièce jointe
-            </a>
+            </button>
             <span className="print-copy" style={{ fontWeight: 600 }}>Pièce jointe archivée</span>
           </div>
         )}
@@ -282,6 +294,9 @@ function Receipt({ payment, tenant, totalAmount, paidBefore, totalPaid, remainin
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export default function ReceiptView(props: Props) {
+  // La pièce jointe (PDF ou image) s'ouvre dans une visionneuse intégrée
+  const [viewReceipt, setViewReceipt] = useState(false);
+
   // props contient paidBefore, transmis à Receipt via spread
   return (
     <>
@@ -405,7 +420,7 @@ export default function ReceiptView(props: Props) {
       {/* ── Receipt (screen) ── */}
       <div className="screen-wrap">
         <div className="receipt-paper">
-          <Receipt {...props} />
+          <Receipt {...props} onViewReceipt={() => setViewReceipt(true)} />
         </div>
 
         {/* Cut line + 2nd copy (print only) — uniquement pour l'agence (2 exemplaires) */}
@@ -418,6 +433,18 @@ export default function ReceiptView(props: Props) {
           </>
         )}
       </div>
+
+      {/* Visionneuse intégrée de la pièce jointe (PDF ou image) */}
+      {viewReceipt && props.payment.receiptUrl && (
+        <DocumentViewer
+          url={props.payment.receiptUrl}
+          title="Justificatif de paiement"
+          subtitle={props.payment.reference ?? undefined}
+          isPdf={isPdfUrl(props.payment.receiptUrl)}
+          labels={{ download: "Télécharger", openTab: "Ouvrir dans un onglet", close: "Fermer" }}
+          onClose={() => setViewReceipt(false)}
+        />
+      )}
     </>
   );
 }

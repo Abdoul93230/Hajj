@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Pagination, { usePagination } from "@/components/ui/Pagination";
+import DocumentViewer, { isPdfUrl } from "@/components/ui/DocumentViewer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -876,7 +877,11 @@ function PaymentItem({ payment: p, currency, onEdit, onDelete }: {
   onDelete: () => void;
 }) {
   const isRefund = p.type === "REFUND";
+  // Visionneuse du justificatif joint : un PDF s'y affiche dans l'application
+  // (l'ouverture dans un nouvel onglet dépend du lecteur PDF du navigateur).
+  const [viewReceipt, setViewReceipt] = useState(false);
   return (
+    <>
     <div className={`w-full flex items-stretch gap-3 px-3.5 py-2.5 rounded-xl border transition ${isRefund ? "bg-red-50/70 border-red-100" : p.status === "PENDING" ? "bg-orange-50/60 border-orange-100" : "bg-white border-gray-100 hover:border-gray-200 hover:shadow-sm"}`}>
 
       {/* Filet d'état : vert encaissé · orange en attente · rouge remboursement · gris annulé */}
@@ -926,17 +931,16 @@ function PaymentItem({ payment: p, currency, onEdit, onDelete }: {
           {p.reference && <span className="font-mono text-gray-500">· N° {p.reference}</span>}
         </p>
         {p.receiptUrl && (
-          <a
-            href={p.receiptUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => setViewReceipt(true)}
             className="inline-flex items-center gap-1 text-[11px] text-blue-600 hover:text-blue-800 font-medium mt-1 bg-blue-50/80 hover:bg-blue-100 px-2 py-0.5 rounded transition"
           >
             <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
             </svg>
             Voir le justificatif joint
-          </a>
+          </button>
         )}
         {p.notes && <p className="text-[11px] text-gray-400 italic mt-0.5">{p.notes}</p>}
       </div>
@@ -962,6 +966,19 @@ function PaymentItem({ payment: p, currency, onEdit, onDelete }: {
         </button>
       </div>
     </div>
+
+    {/* Visionneuse du justificatif joint (PDF ou image) */}
+    {viewReceipt && p.receiptUrl && (
+      <DocumentViewer
+        url={p.receiptUrl}
+        title="Justificatif de paiement"
+        subtitle={`${TYPE_LABEL[p.type]} · ${fmt(p.amount, currency)}`}
+        isPdf={isPdfUrl(p.receiptUrl)}
+        labels={{ download: "Télécharger", openTab: "Ouvrir dans un onglet", close: "Fermer" }}
+        onClose={() => setViewReceipt(false)}
+      />
+    )}
+    </>
   );
 }
 
@@ -997,6 +1014,8 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
   const [transferRef, setTransferRef] = useState(payment?.transferRef ?? "");
   const [receiptUrl,  setReceiptUrl]  = useState(payment?.receiptUrl ?? "");
   const [uploadingReceipt, setUploadingReceipt] = useState(false);
+  // Visionneuse du justificatif téléversé (aperçu PDF ou image)
+  const [viewReceipt, setViewReceipt] = useState(false);
 
   const [paidAt,    setPaidAt]    = useState(
     payment ? new Date(payment.paidAt).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
@@ -1227,17 +1246,16 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
 
             {receiptUrl ? (
               <div className="flex items-center justify-between bg-white border border-green-200 rounded-lg p-2 text-xs">
-                <a
-                  href={receiptUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => setViewReceipt(true)}
                   className="text-green-700 font-semibold hover:underline truncate max-w-[240px] flex items-center gap-1.5"
                 >
                   <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Justificatif enregistré (cliquer pour voir)
-                </a>
+                </button>
                 <button
                   type="button"
                   onClick={() => {
@@ -1328,6 +1346,18 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
           </div>
         </form>
       </div>
+
+      {/* Visionneuse du justificatif joint (PDF ou image) */}
+      {viewReceipt && receiptUrl && (
+        <DocumentViewer
+          url={receiptUrl}
+          title="Justificatif de paiement"
+          subtitle={pilgrim.name}
+          isPdf={isPdfUrl(receiptUrl)}
+          labels={{ download: "Télécharger", openTab: "Ouvrir dans un onglet", close: "Fermer" }}
+          onClose={() => setViewReceipt(false)}
+        />
+      )}
     </div>
   );
 }

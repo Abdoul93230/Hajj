@@ -19,6 +19,19 @@ export function documentDownloadUrl(url: string, name?: string): string {
   return url.replace("/upload/", `/upload/fl_attachment:${ascii || "document"}/`);
 }
 
+/**
+ * Un fichier est-il un PDF ?
+ *
+ * ⚠️ Les PDF sont stockés sur Cloudinary en `resource_type: "raw"` : leur URL
+ * contient donc « /raw/ » et se termine par « .pdf ». Les deux tests sont
+ * conservés pour couvrir aussi les fichiers historiques enregistrés sans
+ * extension (URL brute qui ne finit pas par « .pdf »).
+ */
+export function isPdfUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  return url.toLowerCase().includes(".pdf") || url.includes("/raw/");
+}
+
 export type DocumentViewerLabels = {
   download: string;
   openTab: string;
