@@ -140,6 +140,28 @@ function fmtDate(s: string) {
   return new Date(s).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
 }
 
+/** Barre d'accent verticale de chaque ligne d'historique (état du paiement). */
+const PAY_ACCENT: Record<string, string> = {
+  COMPLETED: "bg-green-500",
+  PENDING:   "bg-orange-400",
+  CANCELLED: "bg-gray-300",
+};
+
+const MONTHS_SHORT = [
+  "janv.", "févr.", "mars", "avr.", "mai", "juin",
+  "juil.", "août", "sept.", "oct.", "nov.", "déc.",
+];
+
+/** Date éclatée pour le bloc date de la ligne d'historique. */
+function dateParts(s: string) {
+  const d = new Date(s);
+  return {
+    day:   String(d.getDate()).padStart(2, "0"),
+    month: MONTHS_SHORT[d.getMonth()] ?? "",
+    year:  String(d.getFullYear()),
+  };
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 interface Props {
@@ -563,7 +585,7 @@ function PilgrimFinancePanel({
       )}
     </div>
   ) : (
-    <div className={embedded ? "grid grid-cols-1 xl:grid-cols-2 gap-2" : "space-y-2"}>
+    <div className="space-y-2">
       {filteredPmts.map(p => (
         <PaymentItem
           key={p.id}
@@ -837,7 +859,28 @@ function PaymentItem({ payment: p, currency, onEdit, onDelete }: {
 }) {
   const isRefund = p.type === "REFUND";
   return (
-    <div className={`flex items-start gap-3 p-3 rounded-xl border ${isRefund ? "bg-red-50 border-red-100" : p.status === "PENDING" ? "bg-orange-50/60 border-orange-100" : "bg-gray-50 border-gray-100"}`}>
+    <div className={`w-full flex items-stretch gap-3 px-3.5 py-2.5 rounded-xl border transition ${isRefund ? "bg-red-50/70 border-red-100" : p.status === "PENDING" ? "bg-orange-50/60 border-orange-100" : "bg-white border-gray-100 hover:border-gray-200 hover:shadow-sm"}`}>
+
+      {/* Filet d'état : vert encaissé · orange en attente · rouge remboursement · gris annulé */}
+      <span
+        className={`w-1 self-stretch rounded-full flex-shrink-0 ${isRefund ? "bg-red-400" : PAY_ACCENT[p.status] ?? "bg-gray-200"}`}
+        aria-hidden="true"
+      />
+
+      {/* Bloc date (largeur fixe : la liste reste alignée d'une ligne à l'autre) */}
+      <div
+        className="w-14 flex-shrink-0 flex flex-col items-center justify-center border-r border-gray-100 pr-3"
+        title={fmtDate(p.paidAt)}
+      >
+        <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">
+          {dateParts(p.paidAt).month}
+        </span>
+        <span className="text-lg font-black text-gray-800 leading-none">
+          {dateParts(p.paidAt).day}
+        </span>
+        <span className="text-[9px] text-gray-400">{dateParts(p.paidAt).year}</span>
+      </div>
+
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap">
           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${TYPE_COLOR[p.type]}`}>
@@ -847,19 +890,22 @@ function PaymentItem({ payment: p, currency, onEdit, onDelete }: {
             {STATUS_LABEL[p.status]}
           </span>
         </div>
-        <p className={`font-bold text-sm mt-1.5 ${isRefund ? "text-red-600" : "text-gray-900"}`}>
+        <p className={`font-black text-base mt-1 ${isRefund ? "text-red-600" : "text-gray-900"}`}>
           {isRefund ? "−" : ""}{fmt(p.amount, currency)}
         </p>
-        <p className="text-[11px] text-gray-400 mt-0.5">
-          {fmtDate(p.paidAt)}
-          {" · "}{METHOD_LABEL[p.method]}
-          {p.method === "CHECK" && p.checkNumber && (
-            <span className="text-gray-600 font-mono"> · Chèque n°{p.checkNumber}</span>
+        <p className="text-[11px] text-gray-500 mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+          <span className="font-medium text-gray-600">{METHOD_LABEL[p.method]}</span>
+          {p.method === "CHECK" && (
+            <span className="text-gray-600 font-mono">
+              · Chèque n° {p.checkNumber?.trim() || "—"}
+            </span>
           )}
-          {p.method === "BANK_TRANSFER" && p.transferRef && (
-            <span className="text-gray-600 font-mono"> · Réf: {p.transferRef}</span>
+          {p.method === "BANK_TRANSFER" && (
+            <span className="text-gray-600 font-mono">
+              · Réf. {p.transferRef?.trim() || "—"}
+            </span>
           )}
-          {p.reference && <span className="font-mono"> · {p.reference}</span>}
+          {p.reference && <span className="font-mono text-gray-500">· N° {p.reference}</span>}
         </p>
         {p.receiptUrl && (
           <a
@@ -942,8 +988,25 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
 
   const currency = reservation.offer.currency;
 
+  /** Limite de la route d'upload (8 Mo) — contrôlée ici pour un message immédiat. */
+  const MAX_RECEIPT_MB = 8;
+
   async function handleFileUpload(file: File) {
     setErr("");
+
+    // Contrôles côté navigateur : on évite un aller-retour inutile et un refus
+    // serveur peu explicite si le fichier est trop lourd ou d'un format inattendu.
+    if (!/\.(jpe?g|png|webp|pdf)$/i.test(file.name)) {
+      setErr("Format non supporté. Formats acceptés : JPG, PNG, WEBP, PDF.");
+      return;
+    }
+    if (file.size > MAX_RECEIPT_MB * 1024 * 1024) {
+      setErr(
+        `Justificatif trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). Maximum : ${MAX_RECEIPT_MB} Mo.`
+      );
+      return;
+    }
+
     setUploadingReceipt(true);
     try {
       const fd = new FormData();
@@ -1159,7 +1222,15 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
                 </a>
                 <button
                   type="button"
-                  onClick={() => setReceiptUrl("")}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Retirer le justificatif joint ? La pièce ne sera plus accessible depuis le paiement."
+                      )
+                    ) {
+                      setReceiptUrl("");
+                    }
+                  }}
                   className="text-red-500 hover:text-red-700 text-[11px] font-bold px-1.5 py-0.5 rounded hover:bg-red-50"
                   title="Supprimer la pièce jointe"
                 >
@@ -1175,6 +1246,9 @@ function PaymentModal({ payment, defaultType, presetAmount, pilgrim, reservation
                   onChange={(e) => {
                     const f = e.target.files?.[0];
                     if (f) handleFileUpload(f);
+                    // Réinitialise l'input : permet de re-sélectionner le même fichier
+                    // après une erreur (format ou taille).
+                    e.target.value = "";
                   }}
                   className="w-full text-xs text-gray-500 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
                 />

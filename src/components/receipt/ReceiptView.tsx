@@ -180,17 +180,33 @@ function Receipt({ payment, tenant, totalAmount, paidBefore, totalPaid, remainin
         </div>
         <Row label="Type"             value={TYPE_LABEL[payment.type] ?? payment.type} />
         <Row label="Mode de paiement" value={METHOD_LABEL[payment.method] ?? payment.method} />
-        {payment.method === "CHECK" && payment.checkNumber && (
-          <Row label="N° de Chèque" value={payment.checkNumber} bold />
-        )}
-        {payment.method === "BANK_TRANSFER" && payment.transferRef && (
-          <Row label="Réf. / Bordereau" value={payment.transferRef} bold />
+        {(payment.method === "CHECK" || payment.method === "BANK_TRANSFER") && (
+          <Row
+            label={payment.method === "CHECK" ? "N° de Chèque" : "Réf. / Bordereau"}
+            value={
+              (payment.method === "CHECK" ? payment.checkNumber : payment.transferRef)?.trim() ||
+              "non renseigné"
+            }
+            bold={Boolean(
+              (payment.method === "CHECK" ? payment.checkNumber : payment.transferRef)?.trim()
+            )}
+          />
         )}
         {payment.reference && <Row label="N° de Reçu" value={payment.reference} bold />}
         {payment.receiptUrl && (
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "2px 0", fontSize: 10 }}>
             <span style={{ color: "#555" }}>Justificatif</span>
-            <span style={{ color: "#2563eb", fontWeight: 600 }}>Pièce jointe archivée</span>
+            {/* Cliquable à l'écran : le justificatif reste consultable depuis le reçu */}
+            <a
+              href={payment.receiptUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="no-print"
+              style={{ color: "#2563eb", fontWeight: 600, textDecoration: "underline" }}
+            >
+              Voir la pièce jointe
+            </a>
+            <span className="print-copy" style={{ fontWeight: 600 }}>Pièce jointe archivée</span>
           </div>
         )}
       </div>

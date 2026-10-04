@@ -164,6 +164,8 @@ model Payment {
   method        PaymentMethod @default(CASH)
   status        PaymentStatus @default(COMPLETED)
   reference     String?       // numéro de reçu / référence
+  checkNumber   String?       // n° de chèque (mode CHECK)
+  transferRef   String?       // référence virement / bordereau (mode BANK_TRANSFER)
   receiptUrl    String?       // URL du reçu uploadé (Cloudinary)
   notes         String?
   paidAt        DateTime      @default(now())
