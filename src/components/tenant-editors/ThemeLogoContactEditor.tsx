@@ -50,9 +50,22 @@ export default function ThemeLogoContactEditor({
     }
   }
 
+  /** Limite de la route serveur (4 Mo) — contrôlée ici pour un message immédiat. */
+  const MAX_LOGO_MB = 4;
+
   async function uploadLogo(file: File) {
-    setUploading(true);
     setUploadError("");
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Le logo doit être une image (PNG, JPG ou WEBP).");
+      return;
+    }
+    if (file.size > MAX_LOGO_MB * 1024 * 1024) {
+      setUploadError(
+        `Logo trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). Maximum : ${MAX_LOGO_MB} Mo.`
+      );
+      return;
+    }
+    setUploading(true);
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch(`/api/superadmin/tenants/${tenantId}/logo`, {

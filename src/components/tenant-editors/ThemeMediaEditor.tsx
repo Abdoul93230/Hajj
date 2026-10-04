@@ -200,9 +200,22 @@ export default function ThemeMediaEditor({
   const [error, setError] = useState("");
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
+  /** Limite de la route serveur (6 Mo) — contrôlée ici pour un message immédiat. */
+  const MAX_MEDIA_MB = 6;
+
   const upload = async (slot: MediaSlot, file: File) => {
-    setUploading(slot.kind);
     setError("");
+    if (!file.type.startsWith("image/")) {
+      setError("Le fichier doit être une image (PNG, JPG ou WEBP).");
+      return;
+    }
+    if (file.size > MAX_MEDIA_MB * 1024 * 1024) {
+      setError(
+        `Image trop volumineuse (${(file.size / 1024 / 1024).toFixed(1)} Mo). Maximum : ${MAX_MEDIA_MB} Mo.`
+      );
+      return;
+    }
+    setUploading(slot.kind);
     const fd = new FormData();
     fd.append("file", file);
     fd.append("kind", slot.kind);
