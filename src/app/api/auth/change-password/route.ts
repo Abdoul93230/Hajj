@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/session";
+import { getSession, createSession } from "@/lib/session";
 import { logAction } from "@/lib/audit";
 import { validateNewPassword } from "@/lib/password";
+import type { Permission, UserRole } from "@/types";
 
 /**
  * POST /api/auth/change-password
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
   }
 
   const hashedPassword = await bcrypt.hash(newPassword, 12);
-  await prisma.user.update({
+  const updated = await prisma.user.update({
     where: { id: user.id },
     data: {
       password: hashedPassword,
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
       passwordChangedAt: new Date(),
       passwordChangedBy: user.id,
     },
+    include: { tenant: { select: { slug: true, status: true } } },
   });
 
   await logAction({
@@ -58,6 +60,22 @@ export async function POST(req: Request) {
     action: "auth.password_changed",
     resource: "user",
     resourceId: user.id,
+  });
+
+  // ── RECONNEXION AUTOMATIQUE (nouveau token) ────────────────────────────────
+  // On réémet IMMÉDIATEMENT un token de session à jour pour cet utilisateur, avec
+  // ses droits relus en base. Sans cela, le navigateur continuait de naviguer avec
+  // le token délivré à la 1re connexion (mot de passe provisoire) : les requêtes
+  // suivantes du dashboard pouvaient être refusées (403) jusqu'à une reconnexion
+  // manuelle. Le cookie `zam_session` est réécrit par createSession().
+  await createSession({
+    id: updated.id,
+    name: updated.name,
+    email: updated.email,
+    role: updated.role as UserRole,
+    tenantId: updated.tenantId,
+    tenantSlug: updated.tenant.slug,
+    permissions: (updated.permissions ?? []) as Permission[],
   });
 
   return NextResponse.json({ ok: true, mustChangePassword: false });

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 /**
  * Modale NON contournable affichée dans le dashboard agence tant que
@@ -10,7 +9,6 @@ import { useRouter } from "next/navigation";
  * base à chaque requête. Textes en français (convention du dashboard).
  */
 export default function ForcePasswordChange() {
-  const router = useRouter();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -41,8 +39,10 @@ export default function ForcePasswordChange() {
         return;
       }
       setDone(true);
-      // Le layout relit le drapeau au rafraîchissement → la modale disparaît.
-      setTimeout(() => router.refresh(), 900);
+      // Le token vient d'être réémis par /api/auth/change-password : on recharge
+      // la page ENTIÈRE pour repartir avec le nouveau cookie de session (et non
+      // l'ancien token de la 1re connexion). La modale disparaît alors d'elle-même.
+      setTimeout(() => window.location.reload(), 900);
     } catch {
       setError("Erreur réseau. Vérifiez votre connexion.");
     } finally {
