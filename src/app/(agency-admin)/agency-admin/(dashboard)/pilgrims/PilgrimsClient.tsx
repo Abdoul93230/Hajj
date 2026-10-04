@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Pagination, { usePagination } from "@/components/ui/Pagination";
 import AddPilgrimModal from "./AddPilgrimModal";
 import ResetPasswordModal from "./ResetPasswordModal";
 
@@ -229,6 +230,13 @@ export default function PilgrimsClient({
     });
   }, [pilgrims, search, statusFilter, paymentFilter]);
 
+  // Pagination intelligente : aucun paginateur tant que tout tient sur une page,
+  // retour automatique en page 1 dès que la recherche ou un filtre change.
+  const pagination = usePagination(
+    filtered,
+    `${search}|${statusFilter}|${paymentFilter}`
+  );
+
   function openAddModal() {
     setEditPilgrim(null);
     setShowModal(true);
@@ -354,7 +362,10 @@ export default function PilgrimsClient({
 
       {/* ── Table ── */}
       {filtered.length === 0 ? (
-        <EmptyState hasFilter={!!search || statusFilter !== "ALL"} onAdd={openAddModal} />
+        <EmptyState
+          hasFilter={!!search || statusFilter !== "ALL" || paymentFilter !== "ALL"}
+          onAdd={openAddModal}
+        />
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -382,7 +393,7 @@ export default function PilgrimsClient({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {filtered.map((pilgrim) => (
+                {pagination.pageItems.map((pilgrim) => (
                   <PilgrimRow
                     key={pilgrim.id}
                     pilgrim={pilgrim}
@@ -396,12 +407,14 @@ export default function PilgrimsClient({
             </table>
           </div>
 
-          {/* Footer count */}
-          <div className="px-5 py-3 border-t border-gray-50 flex items-center justify-between">
+          {/* Footer : compteurs + pagination intelligente */}
+          <div className="px-5 py-3 border-t border-gray-50 flex flex-wrap items-center justify-between gap-3">
             <p className="text-gray-400 text-xs">
-              {filtered.length} pèlerin{filtered.length > 1 ? "s" : ""} affiché{filtered.length > 1 ? "s" : ""}
+              {filtered.length === pilgrims.length
+                ? `${pilgrims.length} pèlerin${pilgrims.length > 1 ? "s" : ""} au total`
+                : `${filtered.length} pèlerin${filtered.length > 1 ? "s" : ""} sur ${pilgrims.length} · filtres actifs`}
             </p>
-            <p className="text-gray-300 text-xs">{pilgrims.length} total</p>
+            <Pagination pagination={pagination} itemLabel="pèlerin" />
           </div>
         </div>
       )}

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Pagination, { usePagination } from "@/components/ui/Pagination";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -276,6 +277,13 @@ export default function FinancesClient({ payments, pilgrims, offers, selectedYea
     }),
   [summaries, search, offerFilter, payStatusFilter]);
 
+  // Pagination intelligente de la grille pèlerins : aucun paginateur tant que
+  // tous les pèlerins filtrés tiennent sur une seule page.
+  const pilgrimsPagination = usePagination(
+    filtered,
+    `${search}|${offerFilter}|${payStatusFilter}`
+  );
+
   const selectedSummary = selectedId ? summaries.find(s => s.pilgrim.id === selectedId) ?? null : null;
 
   // ── Mode embarqué (fiche pèlerin) : uniquement le détail de CE pèlerin ────
@@ -374,16 +382,19 @@ export default function FinancesClient({ payments, pilgrims, offers, selectedYea
         {filtered.length === 0 ? (
           <EmptyState year={selectedYear} />
         ) : (
-          <div className={`grid gap-4 ${selectedSummary ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`}>
-            {filtered.map(s => (
-              <PilgrimPayCard
-                key={s.pilgrim.id}
-                summary={s}
-                selected={selectedId === s.pilgrim.id}
-                onClick={() => setSelectedId(selectedId === s.pilgrim.id ? null : s.pilgrim.id)}
-              />
-            ))}
-          </div>
+          <>
+            <div className={`grid gap-4 ${selectedSummary ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`}>
+              {pilgrimsPagination.pageItems.map(s => (
+                <PilgrimPayCard
+                  key={s.pilgrim.id}
+                  summary={s}
+                  selected={selectedId === s.pilgrim.id}
+                  onClick={() => setSelectedId(selectedId === s.pilgrim.id ? null : s.pilgrim.id)}
+                />
+              ))}
+            </div>
+            <Pagination pagination={pilgrimsPagination} itemLabel="pèlerin" hideRange className="pt-1" />
+          </>
         )}
       </div>
 
@@ -551,6 +562,12 @@ function PilgrimFinancePanel({
     payments.filter(p => typeFilter === "ALL" || p.type === typeFilter),
   [payments, typeFilter]);
 
+  // Pagination de l'historique : rien à afficher tant que tout tient sur une page.
+  const pmtPagination = usePagination(
+    filteredPmts,
+    `${summary.pilgrim.id}|${typeFilter}`
+  );
+
   async function handleDelete() {
     if (!deleteTarget) return;
     setDeleting(true);
@@ -586,7 +603,7 @@ function PilgrimFinancePanel({
     </div>
   ) : (
     <div className="space-y-2">
-      {filteredPmts.map(p => (
+      {pmtPagination.pageItems.map(p => (
         <PaymentItem
           key={p.id}
           payment={p}
@@ -595,6 +612,7 @@ function PilgrimFinancePanel({
           onDelete={() => setDeleteTarget(p)}
         />
       ))}
+      <Pagination pagination={pmtPagination} itemLabel="versement" className="pt-1" />
     </div>
   );
 
